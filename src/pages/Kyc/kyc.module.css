@@ -1,0 +1,26 @@
+.inputfield{
+    /* height: 50px; */
+    border: 1px solid #CDCDCD;
+    background-color: white;
+}
+.edit{
+   width: 100%;
+   display: flex;
+   justify-content: end;
+}
+.circle{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e9e9e9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.labeldiv{
+    width: 14%;
+}
+.status{
+    padding: 10px;
+    font-weight: 600;
+}

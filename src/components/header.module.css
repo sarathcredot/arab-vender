@@ -1,0 +1,81 @@
+.header_container{
+    padding: 0 90px;
+}
+.header{
+  width:100% ;
+   padding: 20px 0;
+   display: flex;
+   justify-content: space-between;
+
+}
+
+.headercontainer{
+  padding: 150px 120px;
+}
+.outerWrapper{
+  display: flex;
+  justify-content: space-between;
+}
+.leftcontainer{
+  line-height: 48px;
+  width: 40%;
+}
+.inputfield{
+  border-radius: 0;
+  /* background: none; */
+  height: 60px;
+  border: 1px solid #CDCDCD !important;
+
+background-color: #FFF !important
+
+
+}
+.inputfield::placeholder {
+  color: black;
+}
+.inputfield:focus {
+  outline: none; 
+  /* border: 1px solid #CDCDCD; */
+  border: none;
+
+}
+.subtitle{
+  font-size: 12px;
+}
+.uploadfile{
+  background-color: black;
+  border-radius: 32px;
+  color: white;
+  padding: 0 18px;
+  margin-bottom: 0;
+  height: 36px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  gap: 10px;
+
+}
+.filediv{
+  display: flex;
+  align-items: center;
+  border: 1px solid #CDCDCD;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  height: 60px;
+
+}
+/* input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background:black;
+  padding: 10px 20px;
+  border-radius: 32px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+} */
+
+/* input[type=file]::file-selector-button:hover {
+  background: #0d45a5;
+} */
