@@ -168,7 +168,7 @@ const UserProfile = () => {
     }
   }, [adminData, adminRefetch]);
 
-  document.title = "Profile | collin";
+  document.title = "Profile | Arab-deals";
 
   return (
     <React.Fragment>

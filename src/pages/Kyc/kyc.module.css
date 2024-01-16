@@ -1,7 +1,8 @@
 .inputfield{
     /* height: 50px; */
-    border: 1px solid #CDCDCD;
-    background-color: white;
+    border: 1px solid #CDCDCD !important;
+    background-color: white!important;
+    border-radius: 0 !important;
 }
 .edit{
    width: 100%;
@@ -18,9 +19,11 @@
     align-items: center;
 }
 .labeldiv{
-    width: 14%;
+    width: 18%;
 }
 .status{
     padding: 10px;
+    background-color: #f7f4f4;
     font-weight: 600;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

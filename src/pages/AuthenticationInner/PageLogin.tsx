@@ -9,7 +9,7 @@ const PageLogin = () => {
 
   const [passwordShow, setPasswordShow] = useState(false);
 
-  document.title = "Login | collin ";
+  document.title = "Login | Arab-deals ";
   return (
     <React.Fragment>
       <div className="auth-page">

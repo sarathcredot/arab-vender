@@ -3,8 +3,23 @@ import { Row, Col, Card, CardBody, CardHeader, Button, Input } from "reactstrap"
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
+import { ToastContainer, toast } from "react-toastify";
+
+const KYC_STATUS=gql`query GetKycStatus($input: VendorRecordKycStatusInput!) {
+  getKycStatus(input: $input) {
+    record {
+      _id
+      isBlocked
+      isKycCompleted
+      outletStatus
+      companyStatus
+    }
+    message
+  }
+}`
+
 
 const GET_PRODUCTS = gql`
   query GetProductsByAdmin($input: ProductFilters) {
@@ -54,8 +69,8 @@ interface Product {
 
 const ProductListing = () => {
   document.title =
-    "Responsive Table | Collin ";
-
+    "Product | Arab Deals ";
+    const navigate = useNavigate();
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -64,6 +79,11 @@ const ProductListing = () => {
   const [maxRecords, setMaxRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const id=localStorage.getItem("vendorid")
+  const { loading:kycloading, error:kycerror, data:kycData } = useQuery(KYC_STATUS, {
+    variables: { input:{_id:id} },
+  });
+  console.log(kycData);
 
   const { data,refetch } = useQuery(GET_PRODUCTS, {
     variables: {
@@ -116,6 +136,15 @@ const ProductListing = () => {
 
   const totalPages = Math.ceil(maxRecords / pageSize);
 
+const handlekycstatus=()=>{
+if(kycData?.getKycStatus?.record?.isKycCompleted){
+navigate("/add-product")
+}
+else {
+  toast.error("Complete Your KYC and Add Products")
+}
+}
+
   const handleNextPage = () => {
     if (currentPage + 1 <= totalPages) {
       setCurrentPage(currentPage + 1);
@@ -130,24 +159,25 @@ const ProductListing = () => {
     <React.Fragment>
       <div className="page-content">
         <div className="container-fluid">
+        <ToastContainer />
           <Breadcrumbs title="Dashboard" breadcrumbItem="Product" link="/dashboard" />
           <Row>
             <Col lg={12}>
              
                 <div className="d-flex justify-content-end mb-3">
-                <Link to="/add-product">
+                {/* <Link to="/add-product"> */}
                   <button
                     style={{
                       backgroundColor: "black",
                       color: "white",
                       width: "100px",
                       height: "40px",
-                      borderRadius: "10px",
-                    }}
+                      borderRadius: "0px",cursor:"pointer",boxShadow:"none",border:"none"
+                    }} onClick={handlekycstatus}
                   >
                     Add Product
                   </button>
-                  </Link>
+                  {/* </Link> */}
                 </div>
              
             </Col>

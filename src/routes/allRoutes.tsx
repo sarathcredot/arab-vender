@@ -129,6 +129,7 @@ import AddCmsSection from "src/pages/Cms/AddcmsSection";
 import AddCmstwosection from "src/pages/Cms/AddcmsTwo";
 import Kyc from "../pages/Kyc/kyc"
 import Signup from "src/pages/Authentication/Signup";
+import Brand from "src/pages/Brand/brand";
 interface RouteProps {
   path: string;
   component: any;
@@ -251,6 +252,7 @@ const adminRoutes: Array<RouteProps> = [
   {path: "/colors", component: <ColorList/>},
   {path: "/size", component: <SizeList/>},
 {path:"/kyc",component:<Kyc/>},
+{path:"/brand",component:<Brand/>},
   // this route should be at the end of all other routes
   { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
 ];

@@ -32,6 +32,9 @@ import { useRecoilValue } from "recoil";
 import { kycStatus } from "../../state/atom";
 import styles from "./kyc.module.css";
 import { MdEdit } from "react-icons/md";
+import { FaFileImage } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
+import { Link } from "react-router-dom";
 const ADD_VENTOR_COMPANY = gql`
   mutation UpdateVendorCompany(
     $input: UpdateVendorCompanyInput!
@@ -59,16 +62,11 @@ const ADD_VENTOR_COMPANY = gql`
   }
 `;
 const ADD_VENTOR_OUTLET = gql`
-  mutation Mutation(
-    $input: UpdateVendorOutletInput!
-    $images: [Upload]
-    $fileMap: JSONObject
-  ) {
-    updateVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
-      _id
-      message
-    }
+mutation Mutation($input: UpdateVendorOutletInput!, $images: [Upload], $fileMap: JSONObject) {
+  updateVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
+    message
   }
+}
 `;
 // const VENDOR_DETAILS=gql`query GetVendorAllKycRecordByVendor($input: VendorAllKycRecordByVendorInput!) {
 //   getVendorAllKycRecordByVendor(input: $input) {
@@ -156,6 +154,9 @@ const CategoryList: React.FC<addCompany> = () => {
     },
     orange:{
       color:"orange"
+    },
+    blue:{
+      color:"blue"
     }
   };
   const {
@@ -171,6 +172,7 @@ const CategoryList: React.FC<addCompany> = () => {
       companyName: "",
       companyType: "",
       crNumber: "",
+      crLicense:""
     },
   });
 
@@ -202,12 +204,14 @@ const CategoryList: React.FC<addCompany> = () => {
   const [CreateVendor] = useMutation(ADD_VENTOR_COMPANY);
   const [addOutlet] = useMutation(ADD_VENTOR_OUTLET);
   const [files, setFiles] = useState<any[]>(["", ""]);
-  const [ofiles, setOfiles] = useState<any[]>(["", ""]);
+  const [ofiles, setOfiles] = useState<any[]>(["", "",""]);
   const [isEdit, setIsedit] = useState(false);
   const [company, setCompany] = useState(false);
   const [companydetail, setcompanyDetail] = useState<any>(null);
+  const [outletstatus,setOutletstatus]=useState<any>(null)
+  const [outletform,setOutletform]=useState(false)
   const id = localStorage.getItem("vendorid");
-  const { loading, error, data } = useQuery(VENDOR_DETAILS, {
+  const { loading, error, data ,refetch} = useQuery(VENDOR_DETAILS, {
     variables: { input: { _id: id } },
   });
   console.log(data);
@@ -217,7 +221,28 @@ const CategoryList: React.FC<addCompany> = () => {
     setcompanyDetail(
       data?.getVendorAllKycRecordByVendor?.record?.companyStatus
     );
-  }, [data]);
+    setOutletstatus(data?.getVendorAllKycRecordByVendor?.record?.outletStatus)
+setValue1("outletName",data?.getVendorAllKycRecordByVendor?.record?.outletName || '')
+setValue1("country",data?.getVendorAllKycRecordByVendor?.record?.outletCountry || '')
+setValue1("district",data?.getVendorAllKycRecordByVendor?.record?.outletDistrict || '')
+setValue1("village",data?.getVendorAllKycRecordByVendor?.record?.outletVillage || '')
+setValue1("address",data?.getVendorAllKycRecordByVendor?.record?.outletAddress || '')
+setValue1("contactPersonName",data?.getVendorAllKycRecordByVendor?.record?.outletContactPersonName || '')
+setValue1("contactPersonNumber",data?.getVendorAllKycRecordByVendor?.record?.outletAddress || '')
+setValue1("contactPersonDesignation",data?.getVendorAllKycRecordByVendor?.record?.outletContactPersonDesignation || '')
+setValue("companyName",data?.getVendorAllKycRecordByVendor?.record?.companyName)
+setValue("companyType",data?.getVendorAllKycRecordByVendor?.record?.companyType)
+setValue("crNumber",data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber)
+
+  }, [data,refetch]);
+  console.log(outletstatus);
+  const handleFileChangeCompany = (index: number, file: File | null) => {
+    setFiles((prevFiles) => {
+      const newFiles = [...prevFiles];
+      newFiles[index] = file;
+      return newFiles;
+    });
+  };
   const onSubmit = async (values: any) => {
     console.log("click");
     console.log(values);
@@ -226,12 +251,13 @@ const CategoryList: React.FC<addCompany> = () => {
 
     const id = localStorage.getItem("vendorid");
     const fileMap = {
-      crLicence: 0,
+      crLicense: 0,
       cooCertificate: 1,
     };
     try {
       console.log(id);
-      const isFilesEmpty = files.every((file) => file === "");
+      // const isFilesEmpty = files.every((file) => file === "");
+      const isFilesEmpty = files.every((file) => !file);
 
       const response = await CreateVendor({
         variables: {
@@ -253,7 +279,7 @@ const CategoryList: React.FC<addCompany> = () => {
         setcompanyDetail(
           data?.getVendorAllKycRecordByVendor?.record?.companyStatus
         );
-        setCompany(true);
+        setCompany(false);
       }
     } catch (e: any) {
       console.log("fdd");
@@ -262,22 +288,33 @@ const CategoryList: React.FC<addCompany> = () => {
     }
   };
   console.log(companydetail);
+  const handleFileChange = (index: number, file: File | null) => {
+    setOfiles((prevFiles) => {
+      const newFiles = [...prevFiles];
+      newFiles[index] = file;
+      return newFiles;
+    });
+  };
+
 
   const onSubmitOutlet = async (values: any) => {
-    console.log("click");
+    console.log("click",ofiles);
     const id = localStorage.getItem("vendorid");
+    console.log(values);
+    
     const fileMap = {
       interiorImage: 0,
       outletLicense: 1,
       exteriorImage: 2,
     };
     try {
-      const isFilesEmpty = files.every((file) => file === "");
+      const isFilesEmpty = ofiles.every((file) => !file);
+console.log(isFilesEmpty);
 
       const response = await addOutlet({
         variables: {
           input: { ...values, vendorId: id },
-          images: isFilesEmpty ? [] : files,
+          images: isFilesEmpty ? [] : ofiles ,
           fileMap,
         },
       });
@@ -285,9 +322,11 @@ const CategoryList: React.FC<addCompany> = () => {
       if (response) {
         toast.success(response?.data?.updateVendorOutlet?.message);
         reset1();
+        setOutletform(false)
       }
     } catch (e: any) {
       console.log("fdd");
+console.log(e);
 
       console.error("Error:", e.message);
     }
@@ -297,13 +336,24 @@ const CategoryList: React.FC<addCompany> = () => {
       <div className="page-content">
         <Container fluid={true} style={{ marginTop: "40px" }}>
           <Breadcrumb title="Dashboard" breadcrumbItem="Kyc" link="/" />
+          <div style={{paddingLeft:"20px",marginBottom:"20px"}}><span style={{marginRight:"20px",fontWeight:"500"}}>KYC Status </span>            <span
+  className={styles.status}
+  style={
+    data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === true
+      ? styless.green:styless.red
+      // : data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === 'REJECTED'
+     
+  }
+>
+  {data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted ==true ? "COMPLETED":"NOT COMPLETE"}
+</span></div>
           <ToastContainer />
-          <Card style={{ padding: "20px" }}>
+          <Card style={{ padding: "20px",boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)",borderRadius:"7px" }}>
             {companydetail == "PENDING" || company ? (
               <Row>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                   <Col lg={12}>
-                    <h4 className="mb-3">Company detail</h4>
+                    <h4 className="mb-3">Company Details</h4>
                     <div
                       style={{
                         display: "flex",
@@ -367,19 +417,21 @@ const CategoryList: React.FC<addCompany> = () => {
                         />
                       </div>
                       <div style={{ width: "50%" }}>
-                        <Label style={{ color: "#737373" }}>Cr Licence</Label>
+                        <Label style={{ color: "#737373" }}>Cr License</Label>
                         <Input
-                          name="crLicence"
+                          name="crLicense"
                           type="file"
                           className={styles.inputfield}
-                          onChange={(event) => {
-                            setFiles((e) => {
-                              const e1 = (e[0] = event?.target.files?.[0]);
-                              const e2 = e[1];
+                        onChange={(event:any) => handleFileChangeCompany(0, event?.target.files?.[0])}
+// value={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.originalName}
+                          // onChange={(event) => {
+                          //   setFiles((e) => {
+                          //     const e1 = (e[0] = event?.target.files?.[0]);
+                          //     const e2 = e[1];
 
-                              return [e1, e2];
-                            });
-                          }}
+                          //     return [e1, e2];
+                          //   });
+                          // }}
                         />
                       </div>
                     </div>
@@ -398,16 +450,19 @@ const CategoryList: React.FC<addCompany> = () => {
                           name="cooCertificate"
                           type="file"
                           className={styles.inputfield}
-                          onChange={(event) => {
-                            setFiles((e) => {
-                              const e1 = e[0];
-                              const e2 = (e[1] = event?.target.files?.[0]);
-                              return [e1, e2];
-                            });
-                          }}
+                        onChange={(event:any) => handleFileChangeCompany(1, event?.target.files?.[0])}
+
+                          // onChange={(event) => {
+                          //   setFiles((e) => {
+                          //     const e1 = e[0];
+                          //     const e2 = (e[1] = event?.target.files?.[0]);
+                          //     return [e1, e2];
+                          //   });
+                          // }}
                         />
                       </div>
                     </div>
+                    <div style={{display:"flex",gap:"15px"}}>
                     <button
                       style={{
                         background: "black",
@@ -421,6 +476,19 @@ const CategoryList: React.FC<addCompany> = () => {
                     >
                       Submit
                     </button>
+                    <button
+                      style={{
+                        background: "#E30613",
+                        color: "white",
+                        padding: "10px",
+                        border: "none",
+                        width: "176px",
+                        height: "52px",
+                      }}
+                      onClick={()=>{setCompany(false)}}
+                    >
+                      Cancel
+                    </button></div>
                   </Col>
                 </Form>
               </Row>
@@ -428,7 +496,7 @@ const CategoryList: React.FC<addCompany> = () => {
               <Row>
                 <div className={styles.edit}>
                   {" "}
-                  {companydetail !== "UNDER_VERIFICATION" ? (
+                  {companydetail == "REJECTED" ? (
                     <div
                       className={styles.circle}
                       onClick={() => setCompany(!company)}
@@ -439,17 +507,17 @@ const CategoryList: React.FC<addCompany> = () => {
                     ""
                   )}
                 </div>
-                <h4 className="mb-3">Company detail</h4>
-                <div className="mb-3 d-flex align-center">
-                <div className={styles.labeldiv}> status </div> 
+                <h4 className="mb-3">Company Details</h4>
+                <div className="mb-3 d-flex align-items-center">
+                <div className={styles.labeldiv}> Status </div> 
                 <span
   className={styles.status}
   style={
-    companydetail === 'COMPLETE'
+    companydetail === 'COMPLETED'
       ? styless.green
-      : companydetail === 'REJECT'
+      : companydetail === 'REJECTED'
       ? styless.red
-    :styless.orange
+    : companydetail === 'UNDER_VERIFICATION' ? styless.blue:styless.orange
   }
 >
   {companydetail}
@@ -475,12 +543,20 @@ const CategoryList: React.FC<addCompany> = () => {
                     }
                   </span>
                 </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Attachments </div>
+                 <div> 
+                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Cr License</div></Link>
+                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Coo Certificate</div></Link>
+                 </div>
+                 
+                </div>
               </Row>
             )}
           </Card>
           {/* outlet */}
-          <Card style={{ padding: "20px" }}>
-            <Row>
+          <Card style={{ padding: "20px" ,boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)",borderRadius:"7px"}}>
+            {outletstatus=='PENDING'  || outletform ?(<Row>
               <Form onSubmit={handleSubmit1(onSubmitOutlet)}>
                 <Col lg={12}>
                   <h4 className="mb-3 mt-4">Outlet detail</h4>
@@ -592,7 +668,7 @@ const CategoryList: React.FC<addCompany> = () => {
                       </Label>
                       <Controller
                         control={control1}
-                        name="contactPersonName"
+                        name="contactPersonNumber"
                         render={({ field: { onChange, value } }) => (
                           <Input
                             type="text"
@@ -664,14 +740,15 @@ const CategoryList: React.FC<addCompany> = () => {
                         name="outletLicense"
                         className={styles.inputfield}
                         type="file"
-                        onChange={(event) => {
-                          setOfiles((e) => {
-                            const e1 = (e[0] = event?.target.files?.[0]);
-                            const e2 = e[1];
-                            const e3 = e[2];
-                            return [e1, e2, e3];
-                          });
-                        }}
+                        onChange={(event:any) => handleFileChange(0, event?.target.files?.[0])}
+                        // onChange={(event) => {
+                        //   setOfiles((e) => {
+                        //     const e1 = (e[0] = event?.target.files?.[0]);
+                        //     const e2 = e[1];
+                        //     const e3 = e[2];
+                        //     return [e1, e2, e3];
+                        //   });
+                        // }}
                       />
                     </div>
                     <div style={{ width: "50%" }}>
@@ -680,14 +757,15 @@ const CategoryList: React.FC<addCompany> = () => {
                         name="interiorImage"
                         type="file"
                         className={styles.inputfield}
-                        onChange={(event) => {
-                          setOfiles((e) => {
-                            const e1 = e[0];
-                            const e2 = (e[1] = event?.target.files?.[0]);
-                            const e3 = e[2];
-                            return [e1, e2, e3];
-                          });
-                        }}
+                        onChange={(event:any) => handleFileChange(1, event?.target.files?.[0])}
+                        // onChange={(event) => {
+                        //   setOfiles((e) => {
+                        //     const e1 = e[0];
+                        //     const e2 = (e[1] = event?.target.files?.[0]);
+                        //     const e3 = e[2];
+                        //     return [e1, e2, e3];
+                        //   });
+                        // }}
                       />
                     </div>
                   </div>
@@ -704,14 +782,15 @@ const CategoryList: React.FC<addCompany> = () => {
                         name="exteriorImage"
                         className={styles.inputfield}
                         type="file"
-                        onChange={(event) => {
-                          setOfiles((e) => {
-                            const e1 = e[0];
-                            const e2 = e[1];
-                            const e3 = e[2] == event?.target.files?.[0];
-                            return [e1, e2, e3];
-                          });
-                        }}
+                        onChange={(event:any) => handleFileChange(2, event?.target.files?.[0])}
+                        // onChange={(event) => {
+                        //   setOfiles((e) => {
+                        //     const e1 = e[0];
+                        //     const e2 = e[1];
+                        //     const e3 = e[2] == event?.target.files?.[0];
+                        //     return [e1, e2, e3];
+                        //   });
+                        // }}
                       />
                     </div>
                   </div>
@@ -730,7 +809,114 @@ const CategoryList: React.FC<addCompany> = () => {
                   </button>
                 </Col>
               </Form>
-            </Row>
+            </Row>):
+            
+               <Row>
+                <div className={styles.edit}>
+                  {" "}
+                  {outletstatus == "REJECTED" ? (
+                    <div
+                      className={styles.circle}
+                      onClick={() => setOutletform(!outletform)}
+                    >
+                      <MdEdit />
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <h4 className="mb-3">Outlet Details</h4>
+                <div className="mb-3 d-flex align-items-center">
+                <div className={styles.labeldiv}> Status </div> 
+                <span
+  className={styles.status}
+  style={
+    outletstatus == 'COMPLETED'
+      ? styless.green
+      : outletstatus == 'REJECTED'
+      ? styless.red
+    : outletstatus == 'UNDER_VERIFICATION' ? styless.blue:styless.orange
+  }
+>
+  {outletstatus}
+</span>                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Outlet Name </div>
+                  <span>
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletName}
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Village </div>
+                  <span>
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> District </div>
+                  <span>
+                    {
+                      data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletDistrict
+                    }
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Country </div>
+                  <span>
+                    {
+                      data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletCountry
+                    }
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Contact Person Name </div>
+                  <span>
+                    {
+                      data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonName
+                    }
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Contact Person Number </div>
+                  <span>
+                    {
+                      data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonNumber
+                    }
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Contact Person Designation </div>
+                  <span>
+                    {
+                      data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonDesignation
+                    }
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Address </div>
+                  <span>
+                    {
+                      data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletAddress
+                    }
+                  </span>
+                </div>
+                <div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Attachments </div>
+                 <div> 
+                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Outlet Licence</div></Link>
+                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Interior Image</div></Link>
+                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Exterior Image</div></Link>
+                 </div>
+                 
+                </div>
+              </Row>
+              }
           </Card>
         </Container>
       </div>

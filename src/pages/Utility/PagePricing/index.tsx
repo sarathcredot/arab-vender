@@ -80,7 +80,7 @@ const yearData = [
 ];
 
 const PagePricing = () => {
-  document.title = "Pricing Page | collin";
+  document.title = "Pricing Page | Arab-deals";
 
   const [activeTab, toggleTab] = useState("1");
   const [activeTab2, toggleTab2] = useState("1");
