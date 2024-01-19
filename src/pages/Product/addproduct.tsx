@@ -33,7 +33,8 @@ import Catatributes from "./catattribute"
 import FileUpload from "react-drag-n-drop-image";
 import { Icon } from "@ailibs/feather-react-ts";
 import Catattributes from "./catattribute"
-
+import { RiHealthBookFill } from "react-icons/ri";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ProductInfoInput {
   [key: string]: string;
@@ -59,6 +60,9 @@ interface ProductForm {
   productCode:number;
   productInfo:string[];
   productShortInfo:string;
+  brandName:string;
+  categoryNamePath:string;
+  _id:string;
 }
 interface ProductData {
   _id: string;
@@ -81,28 +85,29 @@ interface ProductData {
   skuId: number;
   categoryNamePath: string;
   isBlocked: boolean;
+  brandName:string;
+
 }
 
 interface AddProductProps {
   Edit?: boolean;
-  editedProduct?: ProductData | undefined; // Add this line
+  editedProduct?: any | undefined; // Add this line
   // ... other properties
 }
 const CREATE_PRODUCT = gql`
-  mutation Mutation($input: ProductInput!, $images: [Upload]) {
-    createProduct(input: $input, images: $images) {
-      product {
-        _id
-      }
-    }
+mutation CreateProduct($input: ProductInput!, $images: [Upload]) {
+  createProduct(input: $input, images: $images) {
+    message
   }
+}
 `;
 const UPDATE_PRODUCT = gql`
-  mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload]) {
-    updateProduct(input: $input, images: $images) {
-      _id
-    }
+mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload]) {
+  updateProduct(input: $input, images: $images) {
+    _id
+    message
   }
+}
 `;
 const GET_CATEGORY = gql`
 query GetAllCategoriesOfVendor($input: vendorIdInput!) {
@@ -152,13 +157,29 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     shouldFocusError: true,
     mode: "onBlur",
   });
+  interface IAttribute {
+    _id:string
 
+  }
+  console.log(Edit);
+  console.log(editedProduct);
+  
+  const navigate = useNavigate();
+const [createproduct]=useMutation(CREATE_PRODUCT)
+const [updateproduct]=useMutation(UPDATE_PRODUCT)
   const [categoryData,setCategoryData]=useState<any>([])
   const [brandData,setBrandData]=useState<any>([])
   const [selectedCategory,setSelectedCategory]=useState("")
   const [productInfo, setProductInfo] = useState<string[]>()
   const [remarks, setRemarks] = useState<any>([""]);
-
+const [attributeid,setattributeid]=useState<IAttribute[]| []>([]);
+const [selectedbrand,setselectedbrand]=useState<any>({})
+  // get attributeid values
+  const handleAttributesSelectChange = (selectedValues: IAttribute[]) => {
+    console.log("Selected Values:", selectedValues);
+setattributeid((selectedValues))
+    // You can do further processing with the selected values here
+  };
   const handleAddRemark = () => {
     setRemarks([...remarks, ""]); 
   };
@@ -168,6 +189,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     updatedRemarks.splice(index, 1); // Remove the remark at the specified index
     setRemarks(updatedRemarks);
   };
+console.log(categoryData);
+console.log("select",selectedCategory);
 
 const id=localStorage?.getItem("vendorid")
 const {
@@ -200,7 +223,28 @@ const {
   },
 });
 
+useEffect(()=>{
+  setValue("productName",editedProduct?.productName || "")
+ 
+setValue("description",editedProduct?.description || "")
+setValue("sellingPrice",editedProduct?.sellingPrice || 0 )
+setValue("price",editedProduct?.price||"")
+setValue("rating",editedProduct?.rating)
+setValue("offerPrice",editedProduct?.offerPrice)
+setValue("productCode",editedProduct?.productCode)
+setValue("mrp",editedProduct?.mrp)
+setValue("productShortInfo",editedProduct?.productShortInfo)
+setValue("shortDescription",editedProduct?.shortDescription)
+setValue("skuId",editedProduct?.skuId || "")
+setValue("stock",editedProduct?.stock)
+setValue("tags",editedProduct?.tags)
+setValue("brandName",editedProduct?.brandName || "")
+setValue("categoryNamePath",editedProduct?.categoryNamePath ||"")
 
+setRemarks(editedProduct?.productInfo)
+
+
+},[editedProduct])
 useEffect(()=>{
 setCategoryData(categoryDataResponse?.getAllCategoriesOfVendor?.records || [])
 setBrandData(brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records)
@@ -215,29 +259,100 @@ setBrandData(brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records)
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
   const getSelectedCategoryData = () => {
     // Find the selected category in categoryData based on _id
-    const selectedCategoryData = categoryData.find((category:any) => category._id === selectedCategory);
+    if(editedProduct){
+      const selectedCategoryData=editedProduct?.categoryId
+      return selectedCategoryData
+    }
+    else{
+
+      const selectedCategoryData = categoryData.find((category:any) => category._id === selectedCategory);
+      return selectedCategoryData?._id;
+    }
+
     
     
-    return selectedCategoryData;
   };
   
+
+
  
 
-  const onSubmit: SubmitHandler<ProductForm> = async (data) => {
-    console.log(data);
-    // if (data?.toUpload && data.toUpload.length > 0) {
+  const onSubmit: SubmitHandler<ProductForm> = async (data:any) => {
+    
+    console.log("click");
+    
+    data.attribute=attributeid
+    console.log("data",data);
 
-    // }
-    try {
+const formdatas={
+ _id:editedProduct?._id,
+  isBlocked:editedProduct ? editedProduct?.isBlocked:data?.isBlocked,
+  brandId:selectedbrand?.id,
+  brandName:selectedbrand?.name,
+  categoryId:Edit ? editedProduct?.categoryId: selectedCategory,
+  description:data?.description,
+  offerPrice:parseInt(data?.offerPrice),
+  vendorId:id,
+  material:data?.material,
+  mrp:parseInt(data?.mrp),
+  price:parseInt(data?.price),
+  productCode:parseInt(data?.productCode),
+  productInfo:remarks,
+  productName:data?.productName,
+  productShortInfo:data?.productShortInfo,
+  rating:parseInt(data?.rating),
+  sellingPrice:parseInt(data?.sellingPrice),
+  shortDescription:data?.shortDescription,
+  skuId:data?.skuId,
+  stock:parseInt(data?.stock),
+  tags:(data?.tags).join(' '),
+  attributes:attributeid
+}    
+    console.log("formdatas",formdatas);
+    
+
+    const file= data?.images.map((image:any)=>  image.file)
+
+  
+    // if (data?.image && data.image.length > 0) {
+      
+      // }
+      try {
+        if(Edit){
+          console.log("click");
+          // formdatas._id=editedProduct?._id,
+        
+
+           const response=await updateproduct({variables:{ input:{...formdatas}, images:file}})
+           console.log(response);
+           if(response)
+           {
+             toast.success(response?.data?.createProduct?.message)
+             navigate("/product")
+           }
+         
+        
+        }
+        else{
+
+          const response=await createproduct({variables:{ input:{...formdatas}, images:file}})
+          console.log(response);
+          if(response)
+          {
+            toast.success(response?.data?.createProduct?.message)
+            navigate("/product")
+          }
+        }
      
     } catch (error:any) {
+     console.log(error);
      
     }
   };
 
   const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
     useDropzone();
-
+   
   return (
     <React.Fragment>
       <div className="page-content">
@@ -275,7 +390,8 @@ setBrandData(brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records)
                           <label>Category:</label>
                           <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
         <DropdownToggle caret disabled={Edit}>
-          {selectedCategory ? getSelectedCategoryData()?.fullCategoryName : "Select Category"}
+        {editedProduct && editedProduct?.categoryNamePath}
+          {selectedCategory ? categoryData.find((category:any) => category._id === getSelectedCategoryData())?.fullCategoryName : "Select Category"}
           <FontAwesomeIcon icon={faAngleDown} style={{ marginRight: "5px" }} />
         </DropdownToggle>
         <DropdownMenu>
@@ -287,11 +403,18 @@ setBrandData(brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records)
         </DropdownMenu>
       </Dropdown>
                         </FormGroup>
-                        <Catattributes selectedCategoryData={getSelectedCategoryData()} />
+                        <Catattributes selectedCategoryData={getSelectedCategoryData()} onSelectChange={handleAttributesSelectChange} editedProduct={editedProduct}/>
                    
 <FormGroup>
 <Label for="name">Brand:</Label>
-<Input type="select">
+<Input type="select" onChange={(event:any) => {
+    const selectedBrand = brandData.find((brand:any) => brand.brandName === event.target.value);
+
+    // Check if a brand is found before updating the state
+    if (selectedBrand) {
+      setselectedbrand({ name: selectedBrand.brandName, id: selectedBrand._id });
+    }
+  }}>
 <option value="">Select</option>
 {brandData?.map((brand:any,index:number)=>{
   return(
@@ -701,6 +824,7 @@ setBrandData(brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records)
                     setValue={setValue}
                     watch={watch}
                     control={control}
+                    editedProduct={editedProduct}
                   />
                   {/* )} */}
                   {/* /> */}
@@ -741,22 +865,20 @@ function CustomBody() {
   return <div>Select / Drag and drop Photos</div>;
 }
 
-const MediaUpload: React.FC<any> = ({ setValue, watch, control }) => {
+const MediaUpload: React.FC<any> = ({ setValue, watch, control,editedProduct }) => {
   const [files, setFiles] = useState([]);
   const images = watch("images", []);
   const media = watch("media", []);
+console.log(editedProduct);
 
   const onChange = (file: any) => {
     console.log(file);
     setValue("images", file);
     setFiles(file);
-    // setFiles(toUpload || []);
+   
   };
-  // console.log("fileup12",media);
-
-  // useEffect(() => {
-  //   setFiles(toUpload || []);
-  // }, [media, toUpload]);
+ console.log(files);
+ 
   useEffect(() => {
     setFiles(images || []);
   }, []);

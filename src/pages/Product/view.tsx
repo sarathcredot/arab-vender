@@ -3,15 +3,17 @@ import { Row, Col, Card, CardBody, Container, CardHeader } from "reactstrap";
 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Dropdown, DropdownButton } from "react-bootstrap";
-import { gql, useQuery } from "@apollo/client";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useSearchParams, useNavigate,useLocation } from "react-router-dom";
 
 import Cleave from "cleave.js/react";
 import "cleave.js/dist/addons/cleave-phone.in";
 import { Link } from "react-router-dom";
 import { boolean } from "yup";
 import AddProduct from "./addproduct";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 interface ProductData {
   _id: string;
   color: string;
@@ -34,6 +36,7 @@ interface ProductData {
   categoryNamePath: string;
   categoryId: string;
   isBlocked:boolean;
+  status:string;
 }
 interface IVariant {
   _id: string;
@@ -44,9 +47,12 @@ interface IVariant {
 }
 
 const ProductDetails = () => {
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const _id = searchParams.get("_id");
+  // const _id = searchParams.get("_id");
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const productId = params.get('_id');
   const [product, setProduct] = useState<ProductData>();
   const [productVariants, setProductVariants] = useState<IVariant[]>([]);
   const [selectedVSize, setSelectedVSize] = useState<string>("");
@@ -60,39 +66,51 @@ const ProductDetails = () => {
     undefined
   );
 
-  const GET_PRODUCT = gql`
-    query GetVariants($input: ProductId!) {
-      getProductByAdmin(input: $input) {
-        product {
-          _id
-          categoryId
-          categoryIdPath
-          categoryNamePath
-          color
-          images {
-            fileType
-            fileURL
-            mimeType
-            originalName
-          }
-          description
-          isBlocked
-          material
-          mrp
-          price
-          productCode
-          productName
-          rating
-          sellingPrice
-          shortDescription
-          size
-          skuId
-          stock
-          tags
+  const GET_PRODUCTDETAIL = gql`
+  query GetProductByVendor($input: ProductId!) {
+    getProductByVendor(input: $input) {
+      message
+      product {
+        _id
+        attributes {
+          attributeValueId
+          attributeValue
+          attributeName
+          attributeDescription
+          attributeId
+        }
+        brandId
+        brandName
+        categoryId
+        categoryIdPath
+        categoryNamePath
+        description
+        material
+        isBlocked
+        mrp
+        offerPrice
+        price
+        productCode
+        productInfo
+        productName
+        productShortInfo
+        rating
+        sellingPrice
+        shortDescription
+        skuId
+        status
+        stock
+        tags
+        vendorId
+        images {
+          originalName
+          fileURL
+          fileType
         }
       }
     }
-  `;
+  }
+`;
   const GET_VARIANTS = gql`
     query Variants($input: VariantsInput!) {
       getVariants(input: $input) {
@@ -106,73 +124,59 @@ const ProductDetails = () => {
       }
     }
   `;
-
-  const {
-    data: data,
-    loading: loading,
-    error: error,
-    refetch: refetch,
-  } = useQuery(GET_PRODUCT, {
-    variables: {
-      input: {
-        _id: _id,
-      },
-    },
-    skip: !_id,
+const PREVIEW=gql`mutation Mutation($input: ProductPreviewInput!) {
+  submitProductForPreviewByVendor(input: $input) {
+    _id
+    message
+  }
+}`
+  const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
+    variables: { input: { _id: productId } },
   });
-  const {
-    data: data2,
-    loading: loading2,
-    error: error2,
-    refetch: refetch2,
-  } = useQuery(GET_VARIANTS, {
-    variables: {
-      input: {
-        _id: _id,
-      },
-    },
-    skip: !_id,
-  });
-  console.log("data------------", data);
 
+const [preview]=useMutation(PREVIEW)
   useEffect(() => {
-    if (data && data.getProductByAdmin && data.getProductByAdmin.product) {
-      let product: ProductData = data.getProductByAdmin.product;
+    if (data && data.getProductByVendor && data.getProductByVendor.product) {
+      let product: ProductData = data.getProductByVendor.product;
       setProduct(product);
       setSelectedVSize(product.size);
       setSelectedVColor(product.color);
       setSelectedImage(product.images[0]?.fileURL || "");
     }
+    
+    
+    
   }, [data]);
 
-  useEffect(() => {
-    if (data2 && data2.getVariants && data2.getVariants.variants) {
-      let variants: IVariant[] = data2.getVariants.variants;
-      setProductVariants(variants);
+  const handleaddVariant = () => {
 
-      let colors: { name: string; colorCode: string }[] = [];
-      let sizes: string[] = [];
+    // if (kycData?.getKycStatus?.record?.isKycCompleted) {
+      navigate(`/add-variant/?id=${productId}`);
+      
+    // } else {
+      // toast.error("Complete Your KYC and Add Products");
+    // }
+  }; 
+ 
+ const handlePreview=async(e:any)=>{
+  console.log("click");
+  e.preventDefault(); 
+  try{
 
-      variants.forEach((variant) => {
-        if (colors.filter((item) => item.name === variant.color).length === 0) {
-          colors.push({ colorCode: variant.colorCode, name: variant.color });
-        }
-        if (!sizes.includes(variant.size)) {
-          sizes.push(variant.size);
-        }
-      });
-      setVColors(colors);
-      setVSizes(sizes);
-    }
-  }, [data2]);
-  const handlecolorChange = (color: string) => {
-    setSelectedVColor(color);
-    setSelectedVSize("");
-  };
-  const handleImageClick = (imageURL: string | undefined) => {
-    // Check if imageURL is defined, if not, provide a default value (empty string)
-    setSelectedImage(imageURL || "");
-  };
+    const response=await preview({variables:{input:{
+      _id:data?.getProductByVendor?.product?._id
+    }}}).then((data:any)=>{
+      console.log("data",data);
+      toast.success(data?.data?.submitProductForPreviewByVendor?.message)
+    })
+    // console.log(response);
+  }
+  catch(error){
+    toast.error((error as Error).message);
+console.log(error)
+  }
+ 
+ }
 
   const getProductVariant = (size: string): string => {
     for (let product of productVariants) {
@@ -235,7 +239,7 @@ const ProductDetails = () => {
                 key={`vc-${color.name}`}
               >
                 <button
-                  onClick={() => handlecolorChange(color.name)}
+                  // onClick={() => handlecolorChange(color.name)}
                   style={{
                     borderRadius: "30px",
                     width: "60px",
@@ -319,15 +323,16 @@ const ProductDetails = () => {
         <AddProduct Edit={true} editedProduct={editedProduct} />
       ) : (
         <div className="page-content">
+           <ToastContainer />
           <Container fluid={true}>
             <Breadcrumbs title="Product" breadcrumbItem="Product Details"  link="/product"/>
             <div className="d-flex justify-content-end mb-3" style={{gap:"20px"}}>
-              <Link
+              {/* <Link
                 to={`/add-variant?productCode=${product?.productCode}&productId=${product?._id}&category=${product?.categoryId}`}
                 style={{ textDecoration: "none" }}
-              >
+              > */}
                 <button
-                  // onClick={handleEditProduct}
+                  onClick={handleaddVariant}
 
                   style={{
                     backgroundColor: "black",
@@ -339,7 +344,8 @@ const ProductDetails = () => {
                 >
                   Add Variant
                 </button>
-              </Link>
+              {/* </Link> */}
+              
               <button
                 onClick={handleEditProduct}
                 style={{
@@ -413,7 +419,7 @@ const ProductDetails = () => {
                   </CardHeader>
 
                   <CardBody>
-                    <form action="#">
+                    {/* <form > */}
                       <div>
                         <Row>
                           <Col xl={6}>
@@ -497,9 +503,9 @@ const ProductDetails = () => {
                                     <img
                                       src={item?.fileURL}
                                       className="w-full rounded-2xl object-cover products-image"
-                                      onClick={() =>
-                                        handleImageClick(item?.fileURL)
-                                      }
+                                      // onClick={() =>
+                                      //   handleImageClick(item?.fileURL)
+                                      // }
                                       alt={`product detail ${index + 1}`}
                                       style={{
                                         width: "100px",
@@ -605,7 +611,22 @@ const ProductDetails = () => {
                           </Col>
                         </Row>
                       </div>
-                    </form>
+                      {product?.status=='PENDING'&&<>
+                      <div className="border mt-3 border-dashed"></div>
+                      <button
+                
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  // width: "100px",
+                  height: "40px",
+                  borderRadius: "10px",marginTop:"20px"
+                 
+                }} onClick={handlePreview}
+              >
+                Send For Review
+              </button></>}
+                    {/* </form> */}
                   </CardBody>
                 </Card>
               </Col>

@@ -14,6 +14,8 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Link, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const KYC_STATUS = gql`
   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -31,50 +33,32 @@ const KYC_STATUS = gql`
 `;
 
 const PRODUCT_LIST = gql`
-query GetProductsByVendor($input: ProductByVendorFilters) {
-  getProductsByVendor(input: $input) {
-    maxRecords
-    records {
-      _id
-      vendorId
-      brandId
-      brandName
-      productName
-      shortDescription
-      skuId
-      description
-      productInfo
-      productShortInfo
-      material
-      images {
-        fileType
-        fileURL
-        mimeType
-        originalName
-      }
-      rating
-      sellingPrice
-      price
-      mrp
-      tags
-      productCode
-      categoryId
-      categoryNamePath
-      categoryIdPath
-      isBlocked
-      stock
-      status
-      offerPrice
-      attributes {
-        attributeId
-        attributeName
-        attributeValueId
-        attributeValue
-        attributeDescription
+query GetVariantsTableByVendor($input: ProductVariantsByVendorFilter!) {
+    getVariantsTableByVendor(input: $input) {
+      maxRecords
+      message
+      records {
+        _id
+        stock
+        status
+        productName
+        isBlocked
+        images {
+          fileType
+          fileURL
+          mimeType
+          originalName
+        }
+        attributes {
+          attributeDescription
+          attributeId
+          attributeName
+          attributeValue
+          attributeValueId
+        }
       }
     }
   }
-}
 `;
 
 interface Product {
@@ -87,12 +71,19 @@ interface Product {
     fileURL: string;
   }[];
   isBlocked: boolean;
+  stock:string;
   status:string;
 }
 
 const ProductListing = () => {
   document.title = "Product | Arab Deals ";
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const productId = params.get('_id');
+console.log(productId);
+
+  
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -119,15 +110,15 @@ const ProductListing = () => {
   } = useQuery(PRODUCT_LIST, {
     variables: {
       input: {
-        vendorId: id, page:currentPage,size: pageSize,query: searchTerm
+        _id: productId,page:currentPage,size: pageSize
       },
     },
   });
 console.log("pro",productListData);
 
 useEffect(()=>{
-  setProducts(productListData?.getProductsByVendor?.records);
-    setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
+  setProducts(productListData?.getVariantsTableByVendor?.records);
+    setMaxRecords(productListData?.getVariantsTableByVendor?.maxRecords);
 },[productListData])
 const [productListDatas,setProductDatas]=useState([])
 console.log(products);
@@ -200,9 +191,11 @@ console.log(products);
 
   const totalPages = Math.ceil(maxRecords / pageSize);
 
-  const handlekycstatus = () => {
+  const handleaddVariant = () => {
+
     if (kycData?.getKycStatus?.record?.isKycCompleted) {
-      navigate("/add-product");
+      navigate(`/add-variant/?id=${productId}`);
+      
     } else {
       toast.error("Complete Your KYC and Add Products");
     }
@@ -243,9 +236,9 @@ console.log(products);
                     boxShadow: "none",
                     border: "none",
                   }}
-                  onClick={handlekycstatus}
+                  onClick={handleaddVariant}
                 >
-                  Add Product
+                  Add Varient
                 </button>
                 {/* </Link> */}
               </div>
@@ -281,51 +274,25 @@ console.log(products);
                       >
                         <Thead>
                           <Tr>
-                            <Th>ProductCode</Th>
+                           
                             <Th data-priority="1">Name</Th>
-                            <Th data-priority="3">Category</Th>
-                            <Th data-priority="1">Image</Th>
+                            <Th data-priority="1">Stock</Th>
                             <Th data-priority="3">Status</Th>
-                            <Th data-priority="3">Active/Block</Th>
-                            <Th data-priority="3">Action</Th>
+                            <Th data-priority="3">View</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
                           {products?.map((product: Product, index: number) => (
                             <Tr key={index}>
-                              <Td>{product.productCode}</Td>
-                              <Td>{product.productName}</Td>
+                             <Td>{product?.productName}</Td> 
+                              <Td>{product?.stock}</Td>
+                              <Td>{product?.status}</Td>
                              
-                              <Td>{product?.categoryNamePath}</Td>
-                              <Td>
-                                <img
-                                  src={product.images[0]?.fileURL}
-                                  alt={product?.productName}
-                                  width={80}
-                                  height={80}
-                                />
-                              </Td>
-                              <Td>{product.status.replace(/_/g, ' ')}</Td>
+                             
                               <Td>
                                 {product.isBlocked ? "Blocked" : "Active"}
                               </Td>
                               <Td>
-                                <div style={{display:"flex",gap:"10px" }}>
-                                <Button
-                                  color="white"
-                                  style={{
-                                    backgroundColor: "black",
-                                    alignItems: "center",
-                                    color: "white",
-                                  }}
-                                  tag={Link}
-                                  to={{
-                                    pathname: "/list-variant",
-                                    search: `?_id=${product._id}`,
-                                  }}
-                                >
-                                  View varients
-                                </Button>
                                 <Button
                                   color="white"
                                   style={{
@@ -339,9 +306,8 @@ console.log(products);
                                     search: `?_id=${product._id}`,
                                   }}
                                 >
-                                  View Details
+                                  View
                                 </Button>
-                                </div>
                               </Td>
                             </Tr>
                           ))}
