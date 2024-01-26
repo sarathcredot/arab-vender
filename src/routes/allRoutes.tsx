@@ -256,7 +256,7 @@ const adminRoutes: Array<RouteProps> = [
 {path:"/kyc",component:<Kyc/>},
 {path:"/brand",component:<Brand/>},
   // this route should be at the end of all other routes
-  { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
+  { path: "/", exact: true, component: <Navigate to="/login" /> },
 ];
 
 const authRoutes: Array<RouteProps> = [

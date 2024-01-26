@@ -22,14 +22,14 @@ const PageLogin = () => {
                     <div className="mb-4 mb-md-5 text-center">
                       <Link to="/dashboard" className="d-block auth-logo">
                         <img src={logo} alt="" height="28" />{" "}
-                        <span className="logo-txt">collin</span>
+                        <span className="logo-txt">Arab-deals</span>
                       </Link>
                     </div>
                     <div className="auth-content my-auto">
                       <div className="text-center">
                         <h5 className="mb-0">Welcome Back !</h5>
                         <p className="text-muted mt-2">
-                          Sign in to continue to collin.
+                          Sign in to continue to arabdeal.
                         </p>
                       </div>
                       <form className="custom-form mt-4 pt-2">

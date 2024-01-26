@@ -5,11 +5,14 @@ import { useNavigate } from 'react-router';
 // Request Interceptor
 export const requestInterceptor = new ApolloLink(
   (operation: Operation, forward: NextLink): Observable<any> => {
+    console.log(localStorage.getItem('token'));
+    
     // Modify the operation before it is sent
     operation.setContext({
       headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
         // Authorization: localStorage.getItem('token'),
-        Authorization: "Bearer eyJhbGciOiJIUz1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OTdkMDU5OGIyNmMxMjEwZmZmZWRkYSIsImlhdCI6MTcwNDQ0ODA5MCwiZXhwIjoxNzA0NDUxNjkwfQ.Nmf-2t9pkrdIWfeubNImaVD5bV081lKP7FUWC4aVE4M"
+        // Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWJmYTcyNzk3MWQ4NzkyYWY4Y2Q2ZCIsImlhdCI6MTcwNTc3MTExMywiZXhwIjoxNzA1Nzc0NzEzfQ.v2q-QrqU5_UbRT_8M84Ufu5ppP7PxI5DGeMQmJO3Kj8"
         // `Bearer ${localStorage.getItem('token')}`,
       },
     });
@@ -29,8 +32,8 @@ export const responseInterceptor = new ApolloLink(
           // Check if there are errors in the result
           if (result.errors && result.errors.some((error: any) => error.extensions?.code === "UNAUTHORIZED")){
             console.log("Redirecting to login page");
-            localStorage.removeItem("admin_token");
-            // window.location.href="/login"
+            localStorage.removeItem("token");
+            window.location.href="/login"
           } else {
             observer.next(result);
           }
@@ -63,6 +66,8 @@ const getAuthToken = () => {
 
 export const authLink = new ApolloLink((operation, forward) => {
   const token = getAuthToken();
+  console.log(token);
+  
   operation.setContext(({ headers }: any) => ({
     headers: {
       ...headers,

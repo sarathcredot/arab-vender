@@ -56,37 +56,43 @@ const UserProfile = () => {
 
   const [data, setData] = useState<AdminData>();
 
-  const GET_ADMIN = gql`
-    query Record {
-      getAdminRecord {
-        record {
-          email
-          fullName
-          profilePic {
-            fileURL
-          }
+  const GET_VENDOR = gql`
+  query GetVendorRecordByVendor($input: VendorRecordByVendorInput!) {
+    getVendorRecordByVendor(input: $input) {
+      message
+      record {
+        profilePic {
+          fileType
+          fileURL
+          originalName
+          mimeType
         }
+        mobileNumber
+        fullName
+        email
       }
     }
+  }
   `;
 
   const UPDATAE_PROFILE = gql`
-    mutation Mutation($input: AdminEditProfileInput!, $image: Upload) {
-      updateAdminProfile(input: $input, image: $image) {
-        _id
-        message
-      }
+  mutation Mutation($input: VendorEditProfileInput!, $image: Upload) {
+    updateVendorProfile(input: $input, image: $image) {
+      _id
+      message
     }
+  }
   `;
 
   const [updateProfile] = useMutation(UPDATAE_PROFILE);
 
   const {
-    loading: adminLoading,
-    error: adminError,
-    data: adminData,
-    refetch: adminRefetch,
-  } = useQuery(GET_ADMIN);
+    loading: vendorLoading,
+    error: vendorError,
+    data: vendorData,
+    refetch: vendorRefetch,
+  } = useQuery(GET_VENDOR,{variables:{input:{_id:localStorage.getItem("vendorid")}}});
+console.log(vendorData);
 
   // useEffect(() => {
   //   const authUser: any = localStorage.getItem("authUser");
@@ -117,20 +123,23 @@ const UserProfile = () => {
     initialValues: {
       email: "",
 
-      password: "",
+      fullName: "",
       image: null,
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid email format"),
-      password: Yup.string().min(6, "Password must be at least 6 characters"),
+      fullName: Yup.string().min(6, "FullName must be at least 6 characters"),
     
     }),
     onSubmit: async (values) => {
+      console.log(values);
+      
       try {
         let variables: any = {
           input: {
+            _id:localStorage.getItem("vendorid"),
             email: values?.email,
-            password: values?.password,
+            fullName: values?.fullName,
           },
         };
 
@@ -144,10 +153,11 @@ const UserProfile = () => {
         const response = await updateProfile({
           variables,
         });
+console.log(response);
 
         if (response) {
-          adminRefetch();
-          localStorage.setItem("adminData", JSON.stringify("admin_collin_Data updated"));
+          vendorRefetch();
+          localStorage.setItem("ventorData", JSON.stringify("vendor updated"));
           toast.success("Successfully Updated Profile");
           formik.resetForm();
         }
@@ -160,13 +170,13 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (
-      adminData &&
-      adminData.getAdminRecord &&
-      adminData.getAdminRecord.record
+      vendorData &&
+      vendorData?.getVendorRecordByVendor &&
+      vendorData?.getVendorRecordByVendor?.record
     ) {
-      setData(adminData.getAdminRecord.record);
+      setData(vendorData?.getVendorRecordByVendor?.record);
     }
-  }, [adminData, adminRefetch]);
+  }, [vendorData, vendorRefetch]);
 
   document.title = "Profile | Arab-deals";
 
@@ -229,30 +239,30 @@ const UserProfile = () => {
                       className="form-control"
                       placeholder="Enter new email"
                       type="text"
-                      value={formik.values?.email}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    />
+                 value={formik.values?.email}
+            onChange={formik.handleChange}
+                   onBlur={formik.handleBlur}
+                  />
 
-                    {formik.touched.email && formik.errors.email && (
-                      <div className="text-danger">{formik.errors.email}</div>
-                    )}
+                     {formik.touched.email && formik.errors.email && (
+                       <div className="text-danger">{formik.errors.email}</div>
+                    )} 
 
-                    <Label className="form-label pt-2">Password</Label>
+                    <Label className="form-label pt-2">FullName</Label>
                     <Input
-                      name="password"
+                      name="fullName"
                       className="form-control"
-                      placeholder="Enter new password"
-                      type="password"
-                      value={formik.values?.password}
+                      placeholder="Enter name"
+                      type="text"
+                      value={formik.values?.fullName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
 
-                    {formik.touched.password && formik.errors.password && (
+                    {formik.touched.fullName && formik.errors.fullName && (
                       <div className="text-danger">
-                        {formik.errors.password}
-                      </div>
+                        {formik.errors.fullName} 
+                       </div>
                     )}
                     <Label for="profileImage " className="pt-2">
                       Pofile Pic

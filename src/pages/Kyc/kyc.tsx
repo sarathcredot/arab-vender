@@ -172,7 +172,7 @@ const CategoryList: React.FC<addCompany> = () => {
       companyName: "",
       companyType: "",
       crNumber: "",
-      crLicense:""
+      // crLicense:""
     },
   });
 
@@ -262,7 +262,7 @@ setValue("crNumber",data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber
       const response = await CreateVendor({
         variables: {
           input: { ...values, vendorId: id },
-          images: isFilesEmpty ? [] : files,
+          images: isFilesEmpty ? [] : files.filter((e)=>typeof e!=='string'),
           fileMap,
         },
       });
@@ -273,9 +273,10 @@ setValue("crNumber",data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber
         toast.success("Company Data Updated Successfully ");
         reset();
         console.log(response?.data?.updateVendorCompany?.record);
-        const { loading, error, data } = useQuery(VENDOR_DETAILS, {
-          variables: { input: { _id: id } },
-        });
+        refetch()
+        // const { loading, error, data } = useQuery(VENDOR_DETAILS, {
+        //   variables: { input: { _id: id } },
+        // });
         setcompanyDetail(
           data?.getVendorAllKycRecordByVendor?.record?.companyStatus
         );
@@ -314,7 +315,7 @@ console.log(isFilesEmpty);
       const response = await addOutlet({
         variables: {
           input: { ...values, vendorId: id },
-          images: isFilesEmpty ? [] : ofiles ,
+          images: isFilesEmpty ? [] : ofiles.filter((e)=>typeof e!=='string') ,
           fileMap,
         },
       });
@@ -323,6 +324,7 @@ console.log(isFilesEmpty);
         toast.success(response?.data?.updateVendorOutlet?.message);
         reset1();
         setOutletform(false)
+        refetch()
       }
     } catch (e: any) {
       console.log("fdd");
@@ -476,7 +478,7 @@ console.log(e);
                     >
                       Submit
                     </button>
-                    <button
+                    {companydetail !== "PENDING" && <button
                       style={{
                         background: "#E30613",
                         color: "white",
@@ -488,7 +490,8 @@ console.log(e);
                       onClick={()=>{setCompany(false)}}
                     >
                       Cancel
-                    </button></div>
+                    </button>}
+                    </div>
                   </Col>
                 </Form>
               </Row>
@@ -524,30 +527,31 @@ console.log(e);
 </span>                </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Company Name </div>
-                  <span>
-                    {data?.getVendorAllKycRecordByVendor?.record?.companyName}
-                  </span>
+                  {data?.getVendorAllKycRecordByVendor?.record?.companyName?<span>
+                    { data?.getVendorAllKycRecordByVendor?.record?.companyName}
+                  </span>:""}
                 </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Company Type </div>
-                  <span>
+                 { data?.getVendorAllKycRecordByVendor?.record?.companyType ?<span>
                     {data?.getVendorAllKycRecordByVendor?.record?.companyType}
-                  </span>
+                  </span>:""}
                 </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Cr Number </div>
-                  <span>
+                  {data?.getVendorAllKycRecordByVendor?.record
+                        ?.companyCrNumber ? <span>
                     {
                       data?.getVendorAllKycRecordByVendor?.record
                         ?.companyCrNumber
                     }
-                  </span>
+                  </span>:""}
                 </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Attachments </div>
                  <div> 
-                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Cr License</div></Link>
-                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Coo Certificate</div></Link>
+                 {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL? <Link to={ data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Cr License</div></Link>:""}
+                 {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Coo Certificate</div></Link>:""}
                  </div>
                  
                 </div>
@@ -741,14 +745,7 @@ console.log(e);
                         className={styles.inputfield}
                         type="file"
                         onChange={(event:any) => handleFileChange(0, event?.target.files?.[0])}
-                        // onChange={(event) => {
-                        //   setOfiles((e) => {
-                        //     const e1 = (e[0] = event?.target.files?.[0]);
-                        //     const e2 = e[1];
-                        //     const e3 = e[2];
-                        //     return [e1, e2, e3];
-                        //   });
-                        // }}
+                        
                       />
                     </div>
                     <div style={{ width: "50%" }}>
@@ -758,14 +755,7 @@ console.log(e);
                         type="file"
                         className={styles.inputfield}
                         onChange={(event:any) => handleFileChange(1, event?.target.files?.[0])}
-                        // onChange={(event) => {
-                        //   setOfiles((e) => {
-                        //     const e1 = e[0];
-                        //     const e2 = (e[1] = event?.target.files?.[0]);
-                        //     const e3 = e[2];
-                        //     return [e1, e2, e3];
-                        //   });
-                        // }}
+                       
                       />
                     </div>
                   </div>
@@ -783,14 +773,7 @@ console.log(e);
                         className={styles.inputfield}
                         type="file"
                         onChange={(event:any) => handleFileChange(2, event?.target.files?.[0])}
-                        // onChange={(event) => {
-                        //   setOfiles((e) => {
-                        //     const e1 = e[0];
-                        //     const e2 = e[1];
-                        //     const e3 = e[2] == event?.target.files?.[0];
-                        //     return [e1, e2, e3];
-                        //   });
-                        // }}
+                       
                       />
                     </div>
                   </div>
@@ -840,19 +823,20 @@ console.log(e);
 >
   {outletstatus}
 </span>                </div>
-                <div className="mb-3 d-flex">
+               { data?.getVendorAllKycRecordByVendor?.record?.outletName ?<div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Outlet Name </div>
                   <span>
                     {data?.getVendorAllKycRecordByVendor?.record?.outletName}
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+                {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ?<div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Village </div>
                   <span>
                     {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+                {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletDistrict ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> District </div>
                   <span>
                     {
@@ -860,8 +844,9 @@ console.log(e);
                         ?.outletDistrict
                     }
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+                { data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletCountry ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Country </div>
                   <span>
                     {
@@ -869,8 +854,9 @@ console.log(e);
                         ?.outletCountry
                     }
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+               {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonName ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Contact Person Name </div>
                   <span>
                     {
@@ -878,8 +864,9 @@ console.log(e);
                         ?.outletContactPersonName
                     }
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+               {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Contact Person Number </div>
                   <span>
                     {
@@ -887,8 +874,9 @@ console.log(e);
                         ?.outletContactPersonNumber
                     }
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+               { data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Contact Person Designation </div>
                   <span>
                     {
@@ -896,8 +884,9 @@ console.log(e);
                         ?.outletContactPersonDesignation
                     }
                   </span>
-                </div>
-                <div className="mb-3 d-flex">
+                </div>:""}
+               { data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletAddress?<div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Address </div>
                   <span>
                     {
@@ -905,13 +894,13 @@ console.log(e);
                         ?.outletAddress
                     }
                   </span>
-                </div>
+                </div>:""}
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Attachments </div>
                  <div> 
-                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Outlet Licence</div></Link>
-                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Interior Image</div></Link>
-                  <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Exterior Image</div></Link>
+                  {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ?<Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Outlet Licence</div></Link>:""}
+                  {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL?<Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Interior Image</div></Link>:""}
+                 {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Exterior Image</div></Link>:""}
                  </div>
                  
                 </div>

@@ -33,7 +33,7 @@ import { loginUser, socialLogin } from "../../store/actions";
 
 // import images
 import logo from "../../assets/images/brands/Logo - login.png";
-
+import Select from "react-select"
 //Import config
 import config from "../../config";
 import CarouselPage from "../AuthenticationInner/CarouselPage";
@@ -117,6 +117,60 @@ const [verify]=useMutation(VERIFY_OTP)
 const [resendotp]=useMutation(RESEND_OTP)
 const [selectedImage, setSelectedImage] = useState<{file: any |null, name: string} | null>(null);
 const [vendorid,setVendorid]=useState("")
+
+
+const countryOptions = [
+  { label: "uae", value: "971", flag: "/images/uae.svg" },
+  { label: "india", value: "91", flag: "/images/ind.svg" },
+  { label: "oman", value: "98", flag: "/images/omn.png" },
+  { label: "saudi", value: "966", flag: "/images/sar.png" },
+];
+const defaultOption = countryOptions[0]; 
+interface CustomStyles {
+  control: (provided: Record<string, any>, state: any) => Record<string, any>;
+  menu: (provided: Record<string, any>) => Record<string, any>;
+  option: (provided: Record<string, any>, state: any) => Record<string, any>;
+  indicatorSeparator: () => Record<string, any>;
+  // dropdownIndicator: () => Record<string, any>;
+}
+const [selectedOption, setSelectedOption] = useState(defaultOption?.value);
+
+const handleSelectChange = (selected:any) => {
+  setSelectedOption(selected?.value);
+};
+
+
+const customStyles: CustomStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    // borderRight: 'none',
+    boxShadow: 'none',
+    borderRadius: '.25rem',
+    height: '100%',
+    outline: 'none',
+    // boxShadow: state.isFocused ? 'none' : provided.boxShadow,
+    '&:selected': {
+      border: 'none',
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    width: '90px',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    whiteSpace: 'nowrap',
+    background: state.isSelected ? '#EFEFEF' : 'transparent',
+    color: 'black',
+    // background: 'transparent',
+  }),
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  // dropdownIndicator: () => ({
+  //   display: 'flex',
+  // }),
+};
 const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const file = event.target.files?.[0];
   if (file) {
@@ -128,18 +182,19 @@ const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 useEffect(()=>{
 setValue('fullName',localStorage?.getItem("fullName") || '')
 setValue('mobileNumber',localStorage?.getItem('mobile') || "")
+
 },[localStorage?.getItem("fullName")])
 const onSubmit = async (values: any) => {
-  console.log("click");
   
-console.log(values);
+  
 
   try{  
     let variables: any = {
       input: {
         email: values?.email,
         fullName: values?.fullName,
-        mobileNumber:values?.mobileNumber
+        mobileNumber:values?.mobileNumber,
+        countryCode:localStorage?.getItem("countrycode")
       },
     };
     if (values.image) {
@@ -151,7 +206,7 @@ console.log(values);
     const response = await signupvendor({
       variables,
     });
-    console.log(response);
+    
     
     if(response){
       toast.success("Successfully registered");
@@ -162,14 +217,13 @@ console.log(values);
       localStorage.setItem("vendorid",response?.data?.createVendor?._id)
       localStorage.setItem("token",response?.data?.createVendor?.token)
     }
-    console.log(response);
+
     
-    // const res = await signupvendor({variables:{input:values,image: selectedImage?.file}})
-    // console.log(res)
+   
   }
   catch(error){
     toast.error((error as Error).message);
-console.log(error)
+
   }
 };
 
@@ -177,9 +231,9 @@ const handleResend=async()=>{
   console.log("click");
   
 try{
-  const response=await resendotp({variables:{input:{fullName:localStorage?.getItem("fullName") ,mobileNumber:localStorage?.getItem("mobile")}}})
+  const response=await resendotp({variables:{input:{fullName:localStorage?.getItem("fullName") ,mobileNumber:localStorage?.getItem("mobile"),countryCode:localStorage?.getItem("countrycode")}}})
   console.log(response);
-  toast.success(response?.data?.reSendloginVendorWithOtp?.message)
+  toast.success(response?.data?.reSendVendorMobileOtp?.message)
   
 }
 catch(error){
@@ -233,23 +287,32 @@ if(response){
   }
   catch(error){
     toast.error((error as Error).message);
-console.log(error)
+
+setOtp(['', '', '', '', '', '']);
+
   }
   // 
 
 };
 
 const handleGetOtp = async () => {
-  const response=await getotp({variables:{input:{fullName:fullName,mobileNumber:mobileNumber}}})
-  console.log(response);
+  try{
+  const response=await getotp({variables:{input:{fullName:fullName,mobileNumber:mobileNumber,countryCode:selectedOption}}})
+
   if(response){
     setVendorid(response?.data?.sendVendorMobileOtp?._id)
     toast.success(response?.data?.sendVendorMobileOtp?.message)
     localStorage.setItem('mobile',mobileNumber);
-    localStorage.setItem("fullName",fullName)
+    localStorage.setItem("fullName",fullName);
+    localStorage.setItem("countrycode",selectedOption)
   }
   setShowOtpInput("otp");
-};
+}
+catch(error){
+  toast.error((error as Error).message);
+
+}
+;}
   
 
 
@@ -280,7 +343,7 @@ const handleGetOtp = async () => {
               <>
                 <div style={{ fontSize: "26px", fontWeight: 600 }}>
                   {" "}
-                  Login/Register your account
+                  Register your account
                 </div>
                 <p className={styles.subtitle}>
                   Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
@@ -301,7 +364,39 @@ const handleGetOtp = async () => {
                     onChange={(e) => setFullName(e.target.value)}
                   />
                   <div style={{display:"flex" ,gap:"10px"}}>
-                  {/* <select className={styles.inputfield}><option>gh</option></select> */}
+                
+
+                  <Select 
+                            options={countryOptions}
+                            isSearchable={false}
+                            styles={customStyles}
+                            defaultValue={defaultOption}
+                            onChange={handleSelectChange}
+                            components={{
+                              IndicatorSeparator: () => null,
+                             
+                            }}
+                            getOptionLabel={(option:any) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  width: "51px",
+                                
+                                  padding:"7px"
+                                }}
+ >
+                                <img
+                                  src={option.flag}
+                                  alt={option.label}
+                                  style={{ width: "20px", marginRight: "5px" }}
+                                />
+                              
+                              </div>
+                            )}
+                          />
+
+
                   <Input
                     type="text"
                     placeholder="Enter Mobile Number"
@@ -322,7 +417,8 @@ const handleGetOtp = async () => {
                     {" "}
                     GET OTP
                   </button>
-                  <div>Signup</div>
+                  <Link to="/login"><div style={{textDecoration:"none",color:"black"}}>Already a vendor ?<span style={{color:"red",fontWeight:"500",cursor:"pointer"}}> Login</span></div></Link>
+
                 </div>
               </>
             ) : showOtpInput == "otp" ? (
@@ -368,7 +464,7 @@ const handleGetOtp = async () => {
                 </button>
                 <div style={{ display: "flex" }}>
                   <p>Don't receive otp?</p>
-                  <Link to="#">Resend</Link>{" "}
+                  <span onClick={handleResend} style={{color:"red",fontWeight:"500",cursor:"pointer",paddingLeft:"6px"}}>Resend</span>{" "}
                 </div>
               </div>
             ) : showOtpInput == "verify" ? (

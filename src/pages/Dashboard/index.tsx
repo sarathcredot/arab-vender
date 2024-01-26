@@ -100,7 +100,14 @@ console.log(setKycStatus);
     variables: { input:{_id:id} },
   });
 console.log(data?.getKycStatus);
-
+const token=localStorage?.getItem('token')
+useEffect(() => {
+  if (!token) {
+    navigate("/login");
+  } else {
+    navigate("/dashboard");
+  }
+}, []);
 useEffect(() => {
   if (!loading && !error && data) {
     // Assuming the data structure has a field 'kycStatus'

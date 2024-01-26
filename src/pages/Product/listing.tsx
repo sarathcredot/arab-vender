@@ -124,7 +124,9 @@ const ProductListing = () => {
     },
   });
 console.log("pro",productListData);
-
+useEffect(()=>{
+  refetch();
+},[])
 useEffect(()=>{
   setProducts(productListData?.getProductsByVendor?.records);
     setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
@@ -132,71 +134,37 @@ useEffect(()=>{
 const [productListDatas,setProductDatas]=useState([])
 console.log(products);
 
-  // useEffect(()=>{
-  //   if(productListData){
-  //     setProductDatas(productListData.getProductsByVendor.record||[])
-  //   }
-  // })
+  
 
-  // console.log(productListDatas,"ewasrtdfyughijk")
-  // console.log("",productListData);
-
-  // const {loading:productloading, data:productdata,refetch } = useQuery(GET_PRODUCTS, {
-  //   variables: {
-  //     input: {
-  //       vendorId:"659d62c675adf8360cc0eb90",
-  //       page: 1,
-  //       size:10
-  // size: pageSize,
-  //  page: currentPage,
-  // size: pageSize,
-  // query: searchTerm,
-  // parentCategory: searchTerm,
-  // categories:[searchTerm],
-  // color: [searchTerm],
-  // productSize:[searchTerm]
-  //     },
-  //   },
-  // });
-
-  // console.log(productdata);
-
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error.message}</p>;
-
-  // const products = data.getProductsByAdmin.records;
-  // const maxRecords = data.getProductsByAdmin.maxRecords;
-
-  // console.log(products)
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     console.log("ist");
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("ist");
       
-  //     try {
-  //       console.log("s",currentPage);
+      try {
+        console.log("s",currentPage);
         
-  //       setLoading(true);
-  //       const result = await refetch({
-  //         input: {
-  //           page: currentPage,
-  //           size: pageSize,
-  //           // query: searchTerm,
-  //         },
-  //       });
-  //       console.log(result);
+        setLoading(true);
+        const result = await refetch({
+          input: {
+            vendorId: id,
+            page: currentPage,
+            size: pageSize,
+            query: searchTerm,
+          },
+        });
+        console.log(result);
         
-  //       setProducts(productListData?.getProductsByVendor?.records);
-  //       setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
-  //     } catch (error: any) {
-  //       setError(error.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+        setProducts(result?.data?.getProductsByVendor?.records);
+        setMaxRecords(result?.data?.getProductsByVendor?.maxRecords);
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchData();
-  // }, [searchTerm, currentPage, refetch]);
+    fetchData();
+  }, [searchTerm, currentPage, refetch]);
 
   const totalPages = Math.ceil(maxRecords / pageSize);
 
@@ -254,7 +222,7 @@ console.log(products);
 
           <Row>
             <Col>
-              <Card>
+             { products && products?.length>0 ? <Card>
                 <CardHeader>
                   <h4 className="card-title">Products</h4>
 
@@ -285,8 +253,8 @@ console.log(products);
                             <Th data-priority="1">Name</Th>
                             <Th data-priority="3">Category</Th>
                             <Th data-priority="1">Image</Th>
+                            {/* <Th data-priority="3">Status</Th> */}
                             <Th data-priority="3">Status</Th>
-                            <Th data-priority="3">Active/Block</Th>
                             <Th data-priority="3">Action</Th>
                           </Tr>
                         </Thead>
@@ -305,7 +273,7 @@ console.log(products);
                                   height={80}
                                 />
                               </Td>
-                              <Td>{product.status.replace(/_/g, ' ')}</Td>
+                              {/* <Td>{product.status.replace(/_/g, ' ')}</Td> */}
                               <Td>
                                 {product.isBlocked ? "Blocked" : "Active"}
                               </Td>
@@ -321,12 +289,12 @@ console.log(products);
                                   tag={Link}
                                   to={{
                                     pathname: "/list-variant",
-                                    search: `?_id=${product._id}`,
+                                    search: `?_code=${product?.productCode}`,
                                   }}
                                 >
                                   View varients
                                 </Button>
-                                <Button
+                                {/* <Button
                                   color="white"
                                   style={{
                                     backgroundColor: "black",
@@ -340,7 +308,7 @@ console.log(products);
                                   }}
                                 >
                                   View Details
-                                </Button>
+                                </Button> */}
                                 </div>
                               </Td>
                             </Tr>
@@ -403,7 +371,10 @@ console.log(products);
                     </Col>
                   </Row>
                 </CardBody>
-              </Card>
+              </Card>:
+              <Card style={{display:"flex",justifyContent:"center",alignItems:"center",minHeight:"200px",fontWeight:600}}>
+                No Products
+                </Card>}
             </Col>
           </Row>
         </div>

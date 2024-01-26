@@ -34,31 +34,31 @@ const KYC_STATUS = gql`
 
 const PRODUCT_LIST = gql`
 query GetVariantsTableByVendor($input: ProductVariantsByVendorFilter!) {
-    getVariantsTableByVendor(input: $input) {
-      maxRecords
-      message
-      records {
-        _id
-        stock
-        status
-        productName
-        isBlocked
-        images {
-          fileType
-          fileURL
-          mimeType
-          originalName
-        }
-        attributes {
-          attributeDescription
-          attributeId
-          attributeName
-          attributeValue
-          attributeValueId
-        }
+  getVariantsTableByVendor(input: $input) {
+    maxRecords
+    message
+    records {
+      _id
+      attributes {
+        attributeId
+        attributeName
+        attributeValueId
+        attributeValue
+        attributeDescription
       }
+      images {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      isBlocked
+      productName
+      status
+      stock
     }
   }
+}
 `;
 
 interface Product {
@@ -80,9 +80,9 @@ const ProductListing = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const productId = params.get('_id');
-console.log(productId);
-
+  const productId:any = params.get('_code');
+  const productcode=parseInt(productId)
+  console.log(productcode);
   
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
@@ -110,7 +110,7 @@ console.log(productId);
   } = useQuery(PRODUCT_LIST, {
     variables: {
       input: {
-        _id: productId,page:currentPage,size: pageSize
+        productCode: productcode,page:currentPage,size: pageSize
       },
     },
   });
@@ -277,8 +277,9 @@ console.log(products);
                            
                             <Th data-priority="1">Name</Th>
                             <Th data-priority="1">Stock</Th>
+                            {/* <Th data-priority="3">Status</Th> */}
                             <Th data-priority="3">Status</Th>
-                            <Th data-priority="3">View</Th>
+                            <Th data-priority="3">Action</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -286,7 +287,7 @@ console.log(products);
                             <Tr key={index}>
                              <Td>{product?.productName}</Td> 
                               <Td>{product?.stock}</Td>
-                              <Td>{product?.status}</Td>
+                              {/* <Td>{product?.status}</Td> */}
                              
                              
                               <Td>
@@ -344,7 +345,7 @@ console.log(products);
                                 className="page-link"
                                 onClick={() => setCurrentPage(index)}
                               >
-                                {index}
+                                {index+1}
                               </button>
                             </li>
                           ))}
