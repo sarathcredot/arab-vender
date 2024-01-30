@@ -289,7 +289,7 @@ console.log(products);
                                   tag={Link}
                                   to={{
                                     pathname: "/list-variant",
-                                    search: `?_code=${product?.productCode}`,
+                                    search: `?_code=${product?.productCode}&_id=${product?._id}`,
                                   }}
                                 >
                                   View varients

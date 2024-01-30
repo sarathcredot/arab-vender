@@ -83,6 +83,9 @@ const ProductListing = () => {
   const productId:any = params.get('_code');
   const productcode=parseInt(productId)
   console.log(productcode);
+  const pId=params.get('_id')
+  console.log(pId);
+  
   
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
@@ -194,7 +197,7 @@ console.log(products);
   const handleaddVariant = () => {
 
     if (kycData?.getKycStatus?.record?.isKycCompleted) {
-      navigate(`/add-variant/?id=${productId}`);
+      navigate(`/add-variant/?id=${pId}`);
       
     } else {
       toast.error("Complete Your KYC and Add Products");
