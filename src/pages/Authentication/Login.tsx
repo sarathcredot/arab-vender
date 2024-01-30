@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 
 import PropTypes from "prop-types";
-
+import Select from "react-select"
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
@@ -86,7 +86,7 @@ const Login = (props: any) => {
 
   
   // Inside your component
-  const { error } = useSelector(errorData);
+  // const { error } = useSelector(errorData);
   const navigate = useNavigate();
 document.title = "Login | Arabdeal";
 const {
@@ -107,6 +107,7 @@ const {
 
 const [fullName, setFullName] = useState("");
 const [mobileNumber, setMobileNumber] = useState("");
+const [error, setError] = useState("");
 const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 const [showOtpInput, setShowOtpInput] = useState("register");
 const [vendorotp,setventorotp]=useState("")
@@ -116,6 +117,60 @@ const [verify]=useMutation(VERIFY_OTP)
 const [resendotp]=useMutation(RESEND_OTP)
 const [selectedImage, setSelectedImage] = useState<{file: any |null, name: string} | null>(null);
 const [vendorid,setVendorid]=useState("")
+
+
+const countryOptions = [
+  { label: "uae", value: "971", flag: "/images/uae.svg" },
+  { label: "india", value: "91", flag: "/images/ind.svg" },
+  { label: "oman", value: "98", flag: "/images/omn.png" },
+  { label: "saudi", value: "966", flag: "/images/sar.png" },
+];
+const defaultOption = countryOptions[0]; 
+interface CustomStyles {
+  control: (provided: Record<string, any>, state: any) => Record<string, any>;
+  menu: (provided: Record<string, any>) => Record<string, any>;
+  option: (provided: Record<string, any>, state: any) => Record<string, any>;
+  indicatorSeparator: () => Record<string, any>;
+  // dropdownIndicator: () => Record<string, any>;
+}
+const [selectedOption, setSelectedOption] = useState(defaultOption?.value);
+
+const handleSelectChange = (selected:any) => {
+  setSelectedOption(selected?.value);
+};
+console.log(selectedOption);
+
+const customStyles: CustomStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    // borderRight: 'none',
+    boxShadow: 'none',
+    borderRadius: '.25rem',
+    height: '100%',
+    outline: 'none',
+    // boxShadow: state.isFocused ? 'none' : provided.boxShadow,
+    '&:selected': {
+      border: 'none',
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    width: '90px',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    whiteSpace: 'nowrap',
+    background: state.isSelected ? '#EFEFEF' : 'transparent',
+    color: 'black',
+    // background: 'transparent',
+  }),
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  // dropdownIndicator: () => ({
+  //   display: 'flex',
+  // }),
+};
 const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const file = event.target.files?.[0];
   if (file) {
@@ -128,7 +183,7 @@ const handleResend=async()=>{
   console.log("click");
   
 try{
-  const response=await resendotp({variables:{input:{mobileNumber:localStorage?.getItem("mobile")}}})
+  const response=await resendotp({variables:{input:{mobileNumber:localStorage?.getItem("mobile"),countryCode:localStorage?.getItem("countrycode")}}})
   console.log(response);
   toast.success(response?.data?.reSendloginVendorWithOtp?.message)
   
@@ -172,6 +227,7 @@ const response=await verify({variables:{input:{
 }}})
 console.log(response);
 if(response){
+ 
 localStorage.setItem("token",response?.data?.verifyVendorLoginOtp?.token)
 localStorage.setItem("vendorid",response?.data?.verifyVendorLoginOtp?._id)
 navigate("/dashboard")
@@ -180,6 +236,8 @@ navigate("/dashboard")
   catch(error){
     toast.error((error as Error).message);
 console.log(error)
+setOtp(['', '', '', '', '', '']);
+
   }
   // setShowOtpInput("verify");
 
@@ -187,15 +245,22 @@ console.log(error)
 
 const handleGetOtp = async () => {
   try{
+    if (!mobileNumber.trim()) {
+      setError("Mobile number is required");
+      return;
+    }
 
+    // If validation is successful, clear any previous errors
+    setError("");
   
-  const response=await getotp({variables:{input:{mobileNumber:mobileNumber}}})
-  console.log(response);
+  const response=await getotp({variables:{input:{mobileNumber:mobileNumber,countryCode:selectedOption}}})
+  console.log("response",response);
   if(response){
-    setVendorid(response?.data?.sendVendorMobileOtp?._id)
-    toast.success(response?.data?.sendVendorMobileOtp?.message)
+    setVendorid(response?.data?.loginVendorWithOtp?._id)
+    toast.success(response?.data?.loginVendorWithOtp?.message)
     setShowOtpInput("otp");
     localStorage.setItem("mobile",mobileNumber)
+    localStorage.setItem("countrycode",selectedOption)
   }
 }
  catch(error){
@@ -209,9 +274,7 @@ console.log(error)
 
  
 
- 
- 
-
+const token=localStorage?.getItem('token')
   // useEffect(() => {
   //   if (!token) {
   //     navigate("/login");
@@ -248,14 +311,45 @@ console.log(error)
                 >
                   
                   <div style={{display:"flex" ,gap:"10px"}}>
-                 
+                    
+                  <Select 
+                            options={countryOptions}
+                            isSearchable={false}
+                            styles={customStyles}
+                            defaultValue={defaultOption}
+                            onChange={handleSelectChange}
+                            components={{
+                              IndicatorSeparator: () => null,
+                             
+                            }}
+                            getOptionLabel={(option:any) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  width: "51px",
+                                
+                                  padding:"7px"
+                                }}
+ >
+                                <img
+                                  src={option.flag}
+                                  alt={option.label}
+                                  style={{ width: "20px", marginRight: "5px" }}
+                                />
+                              
+                              </div>
+                            )}
+                          />
                   <Input
                     type="text"
                     placeholder="Enter Mobile Number"
                     className={styles.inputfield}
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
-                  /></div>
+                  />
+                  {error && <div style={{ color: "red" }}>{error}</div>}
+                  </div>
                   <button
                     onClick={handleGetOtp}
                     style={{
@@ -269,7 +363,7 @@ console.log(error)
                     {" "}
                     GET OTP
                   </button>
-                  <div>Signup</div>
+                  <Link to="/signup"><div style={{textDecoration:"none",color:"black"}}>Dont have an account ?<span style={{color:"red",fontWeight:"500",cursor:"pointer"}}> Register here</span></div></Link>
                 </div>
               </>
             ) : showOtpInput == "otp" ? (
@@ -315,7 +409,7 @@ console.log(error)
                 </button>
                 <div style={{ display: "flex" }}>
                   <p>Don't receive otp?</p>
-                  <span onClick={handleResend}>Resend</span>{" "}
+                  <span onClick={handleResend} style={{color:"red",fontWeight:"500",cursor:"pointer",paddingLeft:"6px"}}>Resend</span>{" "}
                 </div>
               </div>
             ) 

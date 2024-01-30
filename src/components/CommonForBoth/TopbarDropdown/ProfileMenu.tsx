@@ -26,14 +26,13 @@ import { createSelector } from "reselect";
 import { gql, useQuery } from "@apollo/client";
 import { addInvoice } from "src/helpers/fakebackend_helper";
 
-
-interface profilePic{
-  fileURL:string
- }
-interface AdminData{
-  email:string;
-  fullName:string;
-  profilePic:profilePic
+interface profilePic {
+  fileURL: string;
+}
+interface AdminData {
+  email: string;
+  fullName: string;
+  profilePic: profilePic;
 }
 
 const ProfileMenu = (props: any) => {
@@ -42,22 +41,21 @@ const ProfileMenu = (props: any) => {
   // }));
 
   const profiledata = createSelector(
-
-    (state : any) => state.profile,
+    (state: any) => state.profile,
     (state) => ({
       success: state.success,
     })
   );
-// Inside your component
-const { success} = useSelector(profiledata);
+  // Inside your component
+  const { success } = useSelector(profiledata);
 
   // Declare a new state variable, which we'll call "menu"
   const [menu, setMenu] = useState<boolean>(false);
-  const [data,setData] = useState<AdminData>()
+  const [data, setData] = useState<AdminData>();
 
   const [username, setusername] = useState("Admin");
   const [logoutModal, setLogoutModal] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getAuthUser = localStorage.getItem("authUser");
@@ -76,42 +74,51 @@ const { success} = useSelector(profiledata);
   }, [success]);
 
   const toggleLogoutModal = () => setLogoutModal(!logoutModal);
-  const handleLogout= async () => {
+  const handleLogout = async () => {
+    localStorage.clear();
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
-    localStorage.removeItem("admin_token")
-    navigate("/login")
-  
-  }
-
-  const GET_ADMIN=gql`
-  query Record {
-    getAdminRecord {
-      record {
-        email
-        fullName
-        profilePic {
-          fileURL
+  const GET_VENDOR = gql`
+    query GetVendorRecordByVendor($input: VendorRecordByVendorInput!) {
+      getVendorRecordByVendor(input: $input) {
+        message
+        record {
+          profilePic {
+            fileType
+            fileURL
+            originalName
+            mimeType
+          }
+          mobileNumber
+          fullName
+          email
         }
       }
     }
-  }
-  `
+  `;
 
-const {
-  loading: adminLoading,
-  error: adminError,
-  data: adminData,
-  refetch: adminRefetch,
-} = useQuery(GET_ADMIN);
-const token = localStorage.getItem("admin_token");
-const adminImage = localStorage.getItem("adminData");
-useEffect(() => {
-  if (adminData && adminData.getAdminRecord && adminData.getAdminRecord.record) {
-    setData(adminData.getAdminRecord.record);
-  }
-}, [token, adminImage,adminData]);
-
-
+  const {
+    loading: vendorLoading,
+    error: vendorError,
+    data: vendorData,
+    refetch: vendorRefetch,
+  } = useQuery(GET_VENDOR, {
+    variables: { input: { _id: localStorage.getItem("vendorid") } },
+  });
+ 
+  const token = localStorage.getItem("token");
+  const adminImage = localStorage.getItem("vendorData");
+  useEffect(() => {
+    if (
+      vendorData &&
+      vendorData?.getVendorRecordByVendor &&
+      vendorData?.getVendorRecordByVendor?.record
+    ) {
+      setData(vendorData.getVendorRecordByVendor.record);
+    }
+  }, [token, adminImage, vendorData]);
 
   return (
     <React.Fragment>
@@ -125,60 +132,55 @@ useEffect(() => {
           id="page-header-user-dropdown"
           tag="button"
         >
-          {data?.profilePic?
-          (
+          {data?.profilePic ? (
             <img
-            className="rounded-circle header-profile-user"
-            src={data?.profilePic?.fileURL}
-            alt="Header Avatar"
-          />
-          ):   <img
-          className="rounded-circle header-profile-user"
-          src={user1}
-          alt="Header Avatar"
-        />
-        }
-         
-          <span className="d-none d-xl-inline-block ms-1 fw-medium">{data?.fullName}</span>
+              className="rounded-circle header-profile-user"
+              src={data?.profilePic?.fileURL}
+              alt="Header Avatar"
+            />
+          ) : (
+            <img
+              className="rounded-circle header-profile-user"
+              src={user1}
+              alt="Header Avatar"
+            />
+          )}
+
+          <span className="d-none d-xl-inline-block ms-1 fw-medium">
+            {data?.fullName}
+          </span>
           <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
         </DropdownToggle>
 
         <DropdownMenu className="dropdown-menu-end">
-
           <Link to={"/profile"} className="dropdown-item">
             <i className="bx bx-user font-size-16 align-middle me-1" />{" "}
             {props.t("Profile")}{" "}
           </Link>{" "}
-
-          {/* <Link to={"/contacts-profile"} className="dropdown-item">
-            <i className="bx bx-wrench font-size-16 align-middle me-1" />
-            {props.t("Settings")}
-          </Link>
-
-          <Link to="/page-lock-screen" className="dropdown-item">
-            <i className="bx bx-lock-open font-size-16 align-middle me-1" />
-            {props.t("Lock screen")}
-          </Link> */}
-
           <div className="dropdown-divider" />
           <Link to="" className="dropdown-item" onClick={toggleLogoutModal}>
             <i className="bx bx-power-off font-size-16 align-middle me-1 text-danger" />
             <span>{props.t("Logout")}</span>
           </Link>
-          
         </DropdownMenu>
       </Dropdown>
 
       <Modal isOpen={logoutModal} toggle={toggleLogoutModal}>
-        <ModalHeader toggle={toggleLogoutModal}>Logout Confirmation</ModalHeader>
-        <ModalBody>
-          Are you sure you want to logout?
-        </ModalBody>
+        <ModalHeader toggle={toggleLogoutModal}>
+          Logout Confirmation
+        </ModalHeader>
+        <ModalBody>Are you sure you want to logout?</ModalBody>
         <ModalFooter>
-          <Button style={{backgroundColor:"rgba(0, 0, 0, 1)"}} onClick={toggleLogoutModal}>
+          <Button
+            style={{ backgroundColor: "rgba(0, 0, 0, 1)" }}
+            onClick={toggleLogoutModal}
+          >
             Cancel
           </Button>
-          <Button  style={{backgroundColor:"rgba(177, 35, 73, 1)"}}  onClick={handleLogout}>
+          <Button
+            style={{ backgroundColor: "rgba(177, 35, 73, 1)" }}
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         </ModalFooter>
@@ -191,7 +193,5 @@ ProfileMenu.propTypes = {
   success: PropTypes.any,
   t: PropTypes.any,
 };
-
-
 
 export default withTranslation()(ProfileMenu);

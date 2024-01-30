@@ -68,21 +68,21 @@ const { layoutMode, showRightSidebar } = useSelector(nonauthData);
             <div className="navbar-brand-box">
               <Link to="/dashboard" className="logo logo-dark">
                 <span className="logo-sm">
-                  <img src={logoSvg} alt="" height="24" />
+                  <img src="/images/Logo.svg" alt="" height="24" />
                 </span>
                 <span className="logo-lg">
-                  <img src={logoSvg} alt="" height="24" />{" "}
+                  <img src="/images/Logo.svg" alt="" height="24" />{" "}
                   {/* <span className="logo-txt">Collin</span> */}
                 </span>
               </Link>
 
               <Link to="/dashboard" className="logo logo-light">
                 <span className="logo-sm">
-                  <img src={logoSvg} alt="" height="24" />
+                  <img src="/images/Logo.svg" alt="" height="24" />
                 </span>
                 <span className="logo-lg">
-                  <img src={logoSvg} alt="" height="24" />{" "}
-                  <span className="logo-txt">Collin</span>
+                  <img src="/images/Logo.svg" alt="" height="24" />{" "}
+                  <span className="logo-txt">Arab Deals</span>
                 </span>
               </Link>
             </div>

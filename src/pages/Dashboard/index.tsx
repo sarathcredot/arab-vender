@@ -90,7 +90,7 @@ const KYC_STATUS=gql`query GetKycStatus($input: VendorRecordKycStatusInput!) {
 }`
 
 const Dashboard = () => {
-  document.title = "Dashboard | collin";
+  document.title = "Dashboard | Arab-deals";
   const navigate = useNavigate();
   const setKycStatus = useSetRecoilState(kycStatus);
 console.log(setKycStatus);
@@ -100,6 +100,14 @@ console.log(setKycStatus);
     variables: { input:{_id:id} },
   });
 console.log(data?.getKycStatus);
+const token=localStorage?.getItem('token')
+useEffect(() => {
+  if (!token) {
+    navigate("/login");
+  } else {
+    navigate("/dashboard");
+  }
+}, []);
 useEffect(() => {
   if (!loading && !error && data) {
     // Assuming the data structure has a field 'kycStatus'
@@ -107,6 +115,8 @@ useEffect(() => {
 
     // Set the Recoil state with the received data
     setKycStatus(receivedKycStatus);
+    localStorage.setItem("kycComplete",data?.getKycStatus?.record?.isKycCompleted)
+   
   }
 }, [loading, error, data, setKycStatus]);
 

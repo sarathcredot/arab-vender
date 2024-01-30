@@ -129,6 +129,8 @@ import AddCmsSection from "src/pages/Cms/AddcmsSection";
 import AddCmstwosection from "src/pages/Cms/AddcmsTwo";
 import Kyc from "../pages/Kyc/kyc"
 import Signup from "src/pages/Authentication/Signup";
+import Brand from "src/pages/Brand/brand";
+import ListVarient from "src/pages/Product/varientlist"
 interface RouteProps {
   path: string;
   component: any;
@@ -177,6 +179,7 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/product/details",component:<View/> },
   { path: "/add-product",component:<Addproduct/> },
   {path:"/add-variant",component:<AddVariant/>},
+  {path:"/list-variant",component:<ListVarient/>},
   {path:"/cmslisting",component:<CmsListing/>},
   {path:"/cmstwolisting",component:<CmstwoListing/>},
   { path: "/cms/details",component:<CmsRecordDetails/>},
@@ -251,8 +254,9 @@ const adminRoutes: Array<RouteProps> = [
   {path: "/colors", component: <ColorList/>},
   {path: "/size", component: <SizeList/>},
 {path:"/kyc",component:<Kyc/>},
+{path:"/brand",component:<Brand/>},
   // this route should be at the end of all other routes
-  { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
+  { path: "/", exact: true, component: <Navigate to="/login" /> },
 ];
 
 const authRoutes: Array<RouteProps> = [

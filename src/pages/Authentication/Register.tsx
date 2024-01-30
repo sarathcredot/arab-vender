@@ -56,7 +56,7 @@ const Register = () => {
     dispatch(apiError(""));
   }, [dispatch]);
 
-  document.title = "Register | collin";
+  document.title = "Register | Arab-deals";
 
   return (
     <React.Fragment>
@@ -70,7 +70,7 @@ const Register = () => {
                     <div className="mb-4 mb-md-5 text-center">
                       <Link to="/dashboard" className="d-block auth-logo">
                         <img src={logo} alt="" height="28" />{" "}
-                        <span className="logo-txt">collin</span>
+                        <span className="logo-txt">Arab-deals</span>
                       </Link>
                     </div>
                     <div className="auth-content my-auto">
