@@ -112,7 +112,7 @@ console.log(brandDataResponse);
   return (
     <>
       <div className="page-content">
-        <Breadcrumb title="Dashboard" breadcrumbItem="Brands" link="/" />
+        <Breadcrumb title="Dashboard" breadcrumbItem="Brands" link="/dashboard" />
         <Container fluid={true}>
           {/* <Nav tabs>
             <NavItem>
