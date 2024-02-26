@@ -275,7 +275,7 @@ console.log(categoryData);
           ))}
         </div>
         <Container fluid={true} style={{ marginTop: "40px" }}>
-          <Breadcrumb title="Dashboard" breadcrumbItem="Category" link="/" />
+          <Breadcrumb title="Dashboard" breadcrumbItem="Category" link="/dashboard" />
           <Row>
             <Col lg={12}>
               <Card>

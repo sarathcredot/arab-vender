@@ -43,6 +43,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
 import styles from "../../components/header.module.css";
 import Header from "src/components/header";
+import { FaSortDown } from "react-icons/fa";
 interface LoginProps {
   history: object;
 }
@@ -105,10 +106,10 @@ const {
     image: "",
   },
 });
-
+const [fullNameError,setFullNameError]=useState("")
 const [fullName, setFullName] = useState("");
 const [mobileNumber, setMobileNumber] = useState("");
-const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+const [otp, setOtp] = useState(["", "", "", "", ""]);
 const [vendorotp,setventorotp]=useState("")
 const [showOtpInput, setShowOtpInput] = useState("register");
 const [signupvendor] = useMutation(SIGNUP);
@@ -117,7 +118,7 @@ const [verify]=useMutation(VERIFY_OTP)
 const [resendotp]=useMutation(RESEND_OTP)
 const [selectedImage, setSelectedImage] = useState<{file: any |null, name: string} | null>(null);
 const [vendorid,setVendorid]=useState("")
-
+const [mobilerror, setMobilError] = useState("");
 
 const countryOptions = [
   { label: "uae", value: "971", flag: "/images/uae.svg" },
@@ -244,8 +245,11 @@ console.log(error)
 
 
 const handleOtpChange = (index: any, value: any) => {
+  const newValue = value.replace(/\D/, ''); // Remove non-numeric characters
   const newOtp = [...otp];
-  newOtp[index] = value;
+  newOtp[index] = newValue.length > 0 ? newValue.charAt(0) : ''; // Take only the first character
+
+  // newOtp[index] = value;
 
   // Move to the previous input if backspace is pressed on an empty input
   if (index > 0 && value === "") {
@@ -256,7 +260,8 @@ const handleOtpChange = (index: any, value: any) => {
   }
 
   // Move to the next input
-  if (index < 5 && value !== "") {
+  if (index < 5 && newValue.length > 0 && !isNaN(newValue)) {
+  // if (index < 5 && value !== "") {
     const nextInput = document.getElementById(`otpInput${index + 1}`);
     if (nextInput) {
       nextInput.focus();
@@ -288,7 +293,7 @@ if(response){
   catch(error){
     toast.error((error as Error).message);
 
-setOtp(['', '', '', '', '', '']);
+setOtp(['', '', '', '', '']);
 
   }
   // 
@@ -297,7 +302,23 @@ setOtp(['', '', '', '', '', '']);
 
 const handleGetOtp = async () => {
   try{
+    if (!fullName.trim() && !mobileNumber.trim()) {
+      setFullNameError("Name is required");
+      setMobilError("Mobile number is required");
+      return;
+    }
+    if(!fullName){
+      setFullNameError("Name is required")
+      return;
+    }
+    if (!mobileNumber.trim()) {
+      setMobilError("Mobile number is required");
+      return;
+    }
+    
+  
   const response=await getotp({variables:{input:{fullName:fullName,mobileNumber:mobileNumber,countryCode:selectedOption}}})
+console.log(response);
 
   if(response){
     setVendorid(response?.data?.sendVendorMobileOtp?._id)
@@ -337,13 +358,13 @@ catch(error){
       <Header />
       <ToastContainer />
       <div className={styles.headercontainer}>
-        <div className={styles.outerWrapper} style={{ display: "flex" }}>
+        <div className={styles.outerWrapper} style={{ display: "flex",alignItems:"center" }}>
           <div className={styles.leftcontainer}>
             {showOtpInput == "register" ? (
               <>
                 <div style={{ fontSize: "26px", fontWeight: 600 }}>
                   {" "}
-                  Register your account
+                  Register to your account
                 </div>
                 <p className={styles.subtitle}>
                   Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
@@ -351,7 +372,7 @@ catch(error){
                 </p>
                 <div
                   style={{
-                    display: "flex",
+                    // display: "flex",
                     flexDirection: "column",
                     gap: "20px",
                   }}
@@ -361,9 +382,12 @@ catch(error){
                     placeholder="Enter Fullname"
                     className={styles.inputfield}
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={(e) => {setFullName(e.target.value)
+                      
+                    }}
                   />
-                  <div style={{display:"flex" ,gap:"10px"}}>
+                   {fullNameError && <div style={{ color: "red" }}>{fullNameError}</div>}
+                  <div style={{display:"flex" ,gap:"10px",marginTop:"23px"}}>
                 
 
                   <Select 
@@ -374,6 +398,7 @@ catch(error){
                             onChange={handleSelectChange}
                             components={{
                               IndicatorSeparator: () => null,
+                              DropdownIndicator:CustomOption ,
                              
                             }}
                             getOptionLabel={(option:any) => (
@@ -381,7 +406,7 @@ catch(error){
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
-                                  width: "51px",
+                                  width: "63px",
                                 
                                   padding:"7px"
                                 }}
@@ -389,7 +414,7 @@ catch(error){
                                 <img
                                   src={option.flag}
                                   alt={option.label}
-                                  style={{ width: "20px", marginRight: "5px" }}
+                                  style={{ width: "28px", marginRight: "5px" }}
                                 />
                               
                               </div>
@@ -402,8 +427,11 @@ catch(error){
                     placeholder="Enter Mobile Number"
                     className={styles.inputfield}
                     value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
+                    onChange={(e) => {setMobileNumber(e.target.value)
+                      
+                    }}
                   /></div>
+                  {mobilerror && <div style={{ color: "red" }}>{mobilerror}</div>}
                   <button
                     onClick={handleGetOtp}
                     style={{
@@ -411,7 +439,8 @@ catch(error){
                       height: "52px",
                       backgroundColor: "black",
                       color: "white",
-                      marginTop: "20px",
+                      marginTop: "58px",
+                      border:"none",outline:"none"
                     }}
                   >
                     {" "}
@@ -426,7 +455,7 @@ catch(error){
                 {/* Your Verify OTP design goes here */}
                 <div style={{ fontSize: "26px", fontWeight: 600 }}>
                   {" "}
-                  Verify phone number
+                  Verify Phone Number
                 </div>
                 <p>
                   Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
@@ -441,12 +470,8 @@ catch(error){
                       placeholder={digit ? "" : "●"}
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
-                      style={{
-                        width: "40px",
-                        height: "50px",
-                        fontSize: "18px",
-                        textAlign: "center",
-                      }}
+                      className={`${styles.passwordbox} ${digit ? "" : styles["placeholder-color"]}`}
+                     
                     />
                   ))}
                 </div>
@@ -457,13 +482,13 @@ catch(error){
                     height: "52px",
                     backgroundColor: "black",
                     color: "white",
-                    marginTop: "20px",
+                    marginTop: "44px",border:"none"
                   }}
                 >
                   VERIFY OTP
                 </button>
                 <div style={{ display: "flex" }}>
-                  <p>Don't receive otp?</p>
+                  <p>Don't receive OTP?</p>
                   <span onClick={handleResend} style={{color:"red",fontWeight:"500",cursor:"pointer",paddingLeft:"6px"}}>Resend</span>{" "}
                 </div>
               </div>
@@ -583,11 +608,11 @@ catch(error){
               ""
             )}
           </div>
-          <div>
+          <div className={styles.signupimg}>
             <img
               src="/images/otppage.png"
               alt="OTP Image"
-              style={{ marginTop: "-100px" }}
+              // style={{ marginTop: "-100px" }}
             />
           </div>
         </div>
@@ -600,6 +625,10 @@ catch(error){
    
   );
 };
+const CustomOption = ({ innerProps, isDisabled }:any) =>
+  !isDisabled ? (
+    <div {...innerProps} style={{display:"flex",alignItems:"center",paddingRight:"15px",marginBottom:"9px"}}><FaSortDown style={{fontSize:"21px"}}/></div>
+  ) : null;    
 
 export default withRouter(Login);
 Login.propTypes = {

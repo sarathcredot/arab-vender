@@ -377,7 +377,7 @@ console.log(error)
             <Row>
               <Col lg={12}>
                 <Card>
-                  <CardHeader>
+                  <CardHeader style={{display:"none"}}>
                     <Row>
                       <Col xl={6}>
                         <div
@@ -620,7 +620,7 @@ console.log(error)
                   color: "white",
                   // width: "100px",
                   height: "40px",
-                  borderRadius: "10px",marginTop:"20px"
+                 marginTop:"20px",border:"none",padding:"0 10px"
                  
                 }} onClick={handlePreview}
               >

@@ -131,6 +131,7 @@ import Kyc from "../pages/Kyc/kyc"
 import Signup from "src/pages/Authentication/Signup";
 import Brand from "src/pages/Brand/brand";
 import ListVarient from "src/pages/Product/varientlist"
+import VendorWelcome from "src/pages/Vendor/vendor"
 interface RouteProps {
   path: string;
   component: any;
@@ -261,6 +262,7 @@ const adminRoutes: Array<RouteProps> = [
 
 const authRoutes: Array<RouteProps> = [
   //Authentication pages
+  {path:"/vendor",component:<VendorWelcome/>},
   { path: "/login", component: <Login /> },
   {path:"/signup",component:<Signup/>}
   // { path: "/logout", component: <Logout /> },

@@ -128,7 +128,7 @@ useEffect(() => {
            onClick={() =>navigate("/kyc")} >
            <div><RiErrorWarningFill style={{fontSize:"30px",color:"blue",justifyContent:"center",display:"flex",width:"100%"}}/></div>
            {data?.getKycStatus?.record?.outletStatus=='PENDING' ? "Your outlet status is pending": data?.getKycStatus?.record?.outletStatus=='UNDER_VERIFICATION'?"Your outlet status is under verification ":data?.getKycStatus?.record?.outletStatus== 'COMPLETED'?'Your outlet status is Completed':'Your outlet status is rejected'}
-          <p> {data?.getKycStatus?.record?.companyStatus=='PENDING' ? "Your company status is pending": data?.getKycStatus?.record?.companyStatus=='UNDER_VERIFICATION'?"Your company status is under verification ":data?.getKycStatus?.record?.companyStatus== 'COMPLETED'?'Your company status is Completed':'Your company status is rejected'}</p>
+          <p className="mb-0"style={{marginBottom:"0px"}}> {data?.getKycStatus?.record?.companyStatus=='PENDING' ? "Your company status is pending": data?.getKycStatus?.record?.companyStatus=='UNDER_VERIFICATION'?"Your company status is under verification ":data?.getKycStatus?.record?.companyStatus== 'COMPLETED'?'Your company status is Completed':'Your company status is rejected'}</p>
 
            </div>
           {/* Render Breadcrumbs */}

@@ -10,7 +10,7 @@ import {
   Label,
   Alert,
 } from "reactstrap";
-
+import { FaSortDown } from "react-icons/fa";
 import PropTypes from "prop-types";
 import Select from "react-select"
 //redux
@@ -145,7 +145,7 @@ const customStyles: CustomStyles = {
     ...provided,
     // borderRight: 'none',
     boxShadow: 'none',
-    borderRadius: '.25rem',
+    borderRadius: '0',
     height: '100%',
     outline: 'none',
     // boxShadow: state.isFocused ? 'none' : provided.boxShadow,
@@ -195,9 +195,10 @@ console.log(error)
 }
 
 const handleOtpChange = (index: any, value: any) => {
+  const newValue = value.replace(/\D/, '');
   const newOtp = [...otp];
-  newOtp[index] = value;
-
+  // newOtp[index] = value;
+  newOtp[index] = newValue.length > 0 ? newValue.charAt(0) : '';
   // Move to the previous input if backspace is pressed on an empty input
   if (index > 0 && value === "") {
     const prevInput = document.getElementById(`otpInput${index - 1}`);
@@ -207,7 +208,8 @@ const handleOtpChange = (index: any, value: any) => {
   }
 
   // Move to the next input
-  if (index < 5 && value !== "") {
+  if (index < 5 && newValue.length > 0 && !isNaN(newValue)) {
+  // if (index < 5 && value !== "") {
     const nextInput = document.getElementById(`otpInput${index + 1}`);
     if (nextInput) {
       nextInput.focus();
@@ -296,7 +298,7 @@ const token=localStorage?.getItem('token')
               <>
                 <div style={{ fontSize: "26px", fontWeight: 600 }}>
                   {" "}
-                  Login/Register your account
+                  Login to your account
                 </div>
                 <p className={styles.subtitle}>
                   Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
@@ -304,7 +306,7 @@ const token=localStorage?.getItem('token')
                 </p>
                 <div
                   style={{
-                    display: "flex",
+                    // display: "flex",
                     flexDirection: "column",
                     gap: "20px",
                   }}
@@ -314,20 +316,21 @@ const token=localStorage?.getItem('token')
                     
                   <Select 
                             options={countryOptions}
+
                             isSearchable={false}
                             styles={customStyles}
                             defaultValue={defaultOption}
                             onChange={handleSelectChange}
                             components={{
                               IndicatorSeparator: () => null,
-                             
+                             DropdownIndicator:CustomOption ,
                             }}
                             getOptionLabel={(option:any) => (
                               <div
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
-                                  width: "51px",
+                                  width: "63px",
                                 
                                   padding:"7px"
                                 }}
@@ -335,12 +338,15 @@ const token=localStorage?.getItem('token')
                                 <img
                                   src={option.flag}
                                   alt={option.label}
-                                  style={{ width: "20px", marginRight: "5px" }}
+                                  className={styles.flagimg}
+                                  // style={{ width: "28px", marginRight: "5px" }}
                                 />
                               
                               </div>
                             )}
                           />
+                          
+
                   <Input
                     type="text"
                     placeholder="Enter Mobile Number"
@@ -348,8 +354,9 @@ const token=localStorage?.getItem('token')
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
                   />
-                  {error && <div style={{ color: "red" }}>{error}</div>}
+                         
                   </div>
+                  {error && <div style={{ color: "red" }}>{error}</div>}
                   <button
                     onClick={handleGetOtp}
                     style={{
@@ -357,7 +364,9 @@ const token=localStorage?.getItem('token')
                       height: "52px",
                       backgroundColor: "black",
                       color: "white",
-                      marginTop: "20px",
+                      marginTop: "58px",
+                      border:"none",
+                      outline:"none"
                     }}
                   >
                     {" "}
@@ -371,9 +380,9 @@ const token=localStorage?.getItem('token')
                 {/* Your Verify OTP design goes here */}
                 <div style={{ fontSize: "26px", fontWeight: 600 }}>
                   {" "}
-                  Verify phone number
+                  Verify Phone Number
                 </div>
-                <p>
+                <p className={styles.subtitle}>
                   Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
                   lacinia egestas placerat ut sagittionec.
                 </p>
@@ -386,12 +395,12 @@ const token=localStorage?.getItem('token')
                       placeholder={digit ? "" : "●"}
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
-                      style={{
-                        width: "40px",
-                        height: "50px",
-                        fontSize: "18px",
-                        textAlign: "center",
-                      }}
+                      className={`${styles.passwordbox} ${digit ? "" : styles["placeholder-color"]}`} // Apply the class conditionally
+                   
+                      // onChange={(e) => handleOtpChange(index, e.target.value)}
+                      // className={styles.passwordbox}
+                     
+                      
                     />
                   ))}
 </div>
@@ -402,13 +411,13 @@ const token=localStorage?.getItem('token')
                     height: "52px",
                     backgroundColor: "black",
                     color: "white",
-                    marginTop: "20px",
+                    marginTop: "44px",border:"none"
                   }}
                 >
                   VERIFY OTP
                 </button>
                 <div style={{ display: "flex" }}>
-                  <p>Don't receive otp?</p>
+                  <p>Don't receive OTP?</p>
                   <span onClick={handleResend} style={{color:"red",fontWeight:"500",cursor:"pointer",paddingLeft:"6px"}}>Resend</span>{" "}
                 </div>
               </div>
@@ -530,11 +539,11 @@ const token=localStorage?.getItem('token')
               ""
             )}
           </div>
-          <div>
+          <div className={styles.signupimg}>
             <img
               src="/images/otppage.png"
               alt="OTP Image"
-              style={{ marginTop: "-100px" }}
+              // style={{ marginTop: "-100px" }}
             />
           </div>
         </div>
@@ -547,7 +556,10 @@ const token=localStorage?.getItem('token')
    
   );
 };
-
+const CustomOption = ({ innerProps, isDisabled }:any) =>
+  !isDisabled ? (
+    <div {...innerProps} style={{display:"flex",alignItems:"center",paddingRight:"15px",marginBottom:"9px"}}><FaSortDown style={{fontSize:"21px"}}/></div>
+  ) : null;    
 export default withRouter(Login);
 Login.propTypes = {
   history: PropTypes.object,
