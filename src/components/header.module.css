@@ -68,8 +68,8 @@
 }
 .outerWrapper{
   display: flex;
-  justify-content: space-around;
-  gap: 20px;
+  justify-content: center;
+  gap: 100px;
   align-items: center;
 }
 .leftcontainer{
