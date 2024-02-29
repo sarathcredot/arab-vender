@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 // Request Interceptor
 export const requestInterceptor = new ApolloLink(
   (operation: Operation, forward: NextLink): Observable<any> => {
-    console.log(localStorage.getItem('token'));
+    // console.log(localStorage.getItem('token'));
     
     // Modify the operation before it is sent
     operation.setContext({
@@ -28,10 +28,10 @@ export const responseInterceptor = new ApolloLink(
     return new Observable((observer) => {
       const subscription = forward(operation).subscribe({
         next: (result) => {
-          console.log('GraphQL Result:', result?.errors);
+          // console.log('GraphQL Result:', result?.errors);
           // Check if there are errors in the result
           if (result.errors && result.errors.some((error: any) => error.extensions?.code === "UNAUTHORIZED")){
-            console.log("Redirecting to login page");
+            // console.log("Redirecting to login page");
             localStorage.removeItem("token");
             window.location.href="/login"
           } else {
@@ -59,14 +59,14 @@ export const responseInterceptor = new ApolloLink(
 
 
 const getAuthToken = () => {
-  console.log(localStorage.getItem("token"));
+  // console.log(localStorage.getItem("token"));
   
   return localStorage.getItem("token") || null;
 };
 
 export const authLink = new ApolloLink((operation, forward) => {
   const token = getAuthToken();
-  console.log(token);
+  // console.log(token);
   
   operation.setContext(({ headers }: any) => ({
     headers: {

@@ -8,17 +8,76 @@
    justify-content: space-between;
 
 }
+.maincontainer {
+  color: white;
+  background-image: url("../../public/images/bg-4.png");
+  background-size: cover;
+  background-repeat: no-repeat;
 
+}
+.headsection{
+  padding: 92px 92px 164px 92px;
+}
+.middlesection{
+  margin-top: 176px;
+  text-align: center;
+}
+.sellerbox{
+  padding: 125px 120px 120px 150px;
+  background-color: black;
+    display: flex;
+    justify-content: space-around;
+    padding-top: 72px;
+   
+    gap: 40px;
+}
+.startsellingbtn{
+  background-color: black !important;
+    width: 190px;
+    height: 50px;
+    color: white;
+    margin-top: 20px;
+    border: none !important;
+    border-radius: 0 !important;
+}
 .headercontainer{
-  padding: 150px 120px;
+  padding: 0 90px;
+}
+.signupimg{
+  max-width: 551px;
+    max-height: 551px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.passwordbox{
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  text-align: center;
+  border-radius:0;
+  border:1px solid #CDCDCD
+}
+.placeholder-color::placeholder {
+  color: #E9E9E9; /* Change the color value as needed */
+}
+.signupimg img{
+  width: 100%;
+}
+.headercontainer{
+  padding: 125px 120px 120px 150px;
 }
 .outerWrapper{
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 100px;
+  align-items: center;
 }
 .leftcontainer{
   line-height: 48px;
-  width: 40%;
+  width:100%;
+  max-width: 472px;
+  min-width: 300px;
+  /* width: 38%; */
 }
 .inputfield{
   border-radius: 0;
@@ -30,6 +89,10 @@ background-color: #FFF !important
 
 
 }
+.form-control{
+  border-radius:0
+}
+
 .inputfield::placeholder {
   color: black;
 }
@@ -39,8 +102,13 @@ background-color: #FFF !important
   border: none;
 
 }
+.flagimg{
+  width: 19px;
+   margin-right: 5px;
+}
 .subtitle{
   font-size: 12px;
+  line-height: 45px;
 }
 .uploadfile{
   background-color: black;
@@ -79,3 +147,33 @@ background-color: #FFF !important
 /* input[type=file]::file-selector-button:hover {
   background: #0d45a5;
 } */
+@media only screen and (min-width: 600px){
+  .signupimg{
+width: 100%;
+  }
+  /* .passwordbox{
+    width: 39px;
+    height: 39px
+  } */
+}
+@media only screen and (min-width:1700px){
+  .leftcontainer{
+    max-width: 576px;
+  }
+  .passwordbox{
+    width: 39px;
+    height: 39px
+  }
+}
+@media only screen and (max-width:960px){
+  .outerWrapper{
+    flex-direction: column-reverse;
+  }
+
+}
+@media only screen and (min-width: 961px) and (max-width: 1103px){
+  .passwordbox{
+    width: 35px;
+      height: 35px
+  }
+    }

@@ -56,24 +56,42 @@ const UserProfile = () => {
 
   const [data, setData] = useState<AdminData>();
 
+  // const GET_VENDOR = gql`
+  // query GetVendorRecordByVendor($input: VendorRecordByVendorInput!) {
+  //   getVendorRecordByVendor(input: $input) {
+  //     message
+  //     record {
+  //       profilePic {
+  //         fileType
+  //         fileURL
+  //         originalName
+  //         mimeType
+  //       }
+  //       mobileNumber
+  //       fullName
+  //       email
+  //     }
+  //   }
+  // }
+  // `;
+
   const GET_VENDOR = gql`
-  query GetVendorRecordByVendor($input: VendorRecordByVendorInput!) {
-    getVendorRecordByVendor(input: $input) {
-      message
-      record {
-        profilePic {
-          fileType
-          fileURL
-          originalName
-          mimeType
-        }
-        mobileNumber
-        fullName
-        email
+  query GetVendorRecordByVendor {
+  getVendorRecordByVendor {
+    message
+    record {
+      profilePic {
+        fileType
+        fileURL
+        mimeType
+        originalName
       }
+      mobileNumber
+      email
+      fullName
     }
   }
-  `;
+}`
 
   const UPDATAE_PROFILE = gql`
   mutation Mutation($input: VendorEditProfileInput!, $image: Upload) {
@@ -91,8 +109,8 @@ const UserProfile = () => {
     error: vendorError,
     data: vendorData,
     refetch: vendorRefetch,
-  } = useQuery(GET_VENDOR,{variables:{input:{_id:localStorage.getItem("vendorid")}}});
-console.log(vendorData);
+  } = useQuery(GET_VENDOR);
+  console.log("vendorData", vendorData);
 
   // useEffect(() => {
   //   const authUser: any = localStorage.getItem("authUser");
@@ -129,15 +147,15 @@ console.log(vendorData);
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid email format"),
       fullName: Yup.string().min(6, "FullName must be at least 6 characters"),
-    
+
     }),
     onSubmit: async (values) => {
       console.log(values);
-      
+
       try {
         let variables: any = {
           input: {
-            _id:localStorage.getItem("vendorid"),
+            _id: localStorage.getItem("vendorid"),
             email: values?.email,
             fullName: values?.fullName,
           },
@@ -153,7 +171,7 @@ console.log(vendorData);
         const response = await updateProfile({
           variables,
         });
-console.log(response);
+        console.log(response);
 
         if (response) {
           vendorRefetch();
@@ -239,14 +257,14 @@ console.log(response);
                       className="form-control"
                       placeholder="Enter new email"
                       type="text"
-                 value={formik.values?.email}
-            onChange={formik.handleChange}
-                   onBlur={formik.handleBlur}
-                  />
+                      value={formik.values?.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
 
-                     {formik.touched.email && formik.errors.email && (
-                       <div className="text-danger">{formik.errors.email}</div>
-                    )} 
+                    {formik.touched.email && formik.errors.email && (
+                      <div className="text-danger">{formik.errors.email}</div>
+                    )}
 
                     <Label className="form-label pt-2">FullName</Label>
                     <Input
@@ -261,8 +279,8 @@ console.log(response);
 
                     {formik.touched.fullName && formik.errors.fullName && (
                       <div className="text-danger">
-                        {formik.errors.fullName} 
-                       </div>
+                        {formik.errors.fullName}
+                      </div>
                     )}
                     <Label for="profileImage " className="pt-2">
                       Pofile Pic

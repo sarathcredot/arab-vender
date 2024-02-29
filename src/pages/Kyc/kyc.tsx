@@ -336,9 +336,9 @@ console.log(e);
   return (
     <>
       <div className="page-content">
-        <Container fluid={true} style={{ marginTop: "40px" }}>
-          <Breadcrumb title="Dashboard" breadcrumbItem="Kyc" link="/" />
-          <div style={{paddingLeft:"20px",marginBottom:"20px"}}><span style={{marginRight:"20px",fontWeight:"500"}}>KYC Status </span>            <span
+        <Container fluid={true} >
+          <Breadcrumb title="Dashboard" breadcrumbItem="KYC" link="/dashboard" />
+          <div style={{marginBottom:"20px"}}><span style={{marginRight:"20px",fontWeight:"500"}}>KYC Status </span>            <span
   className={styles.status}
   style={
     data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === true
@@ -777,6 +777,7 @@ console.log(e);
                       />
                     </div>
                   </div>
+                  <div style={{display:"flex",gap:"15px"}}>
                   <button
                     type="submit"
                     style={{
@@ -790,6 +791,20 @@ console.log(e);
                   >
                     Submit
                   </button>
+                  {outletstatus !== "PENDING" && <button
+                      style={{
+                        background: "#E30613",
+                        color: "white",
+                        padding: "10px",
+                        border: "none",
+                        width: "176px",
+                        height: "52px",
+                      }}
+                      onClick={()=>{setOutletform(false)}}
+                    >
+                      Cancel
+                    </button>}
+                  </div>
                 </Col>
               </Form>
             </Row>):
