@@ -6,7 +6,7 @@ import SidebarContent from "./SidebarContent";
 const Sidebar = (props: any) => {
   return (
     <React.Fragment>
-      <div className="vertical-menu">
+      <div style ={{background:"black"}} className="vertical-menu">
         <div data-simplebar className="h-100">
           {props.type !== "condensed" ? <SidebarContent /> : <SidebarContent />}
         </div>

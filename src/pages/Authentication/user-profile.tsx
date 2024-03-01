@@ -110,7 +110,7 @@ const UserProfile = () => {
     data: vendorData,
     refetch: vendorRefetch,
   } = useQuery(GET_VENDOR);
-  console.log("vendorData", vendorData);
+  // console.log("vendorData", vendorData);
 
   // useEffect(() => {
   //   const authUser: any = localStorage.getItem("authUser");
@@ -167,6 +167,9 @@ const UserProfile = () => {
             image: values?.image,
           };
         }
+
+        console.log("variables", variables);
+
 
         const response = await updateProfile({
           variables,
@@ -225,7 +228,7 @@ const UserProfile = () => {
                       <div className="text-muted">
                         <h5>{data?.fullName}</h5>
                         <p className="mb-1">Email : {data?.email} </p>
-                        <p className="mb-0">Name: {data?.fullName}</p>
+                        <p className="mb-0">Name : {data?.fullName}</p>
                       </div>
                     </div>
                   </div>
@@ -253,6 +256,7 @@ const UserProfile = () => {
                   >
                     <Label className="form-label">Email</Label>
                     <Input
+                      style={{ backgroundColor: "white" }}
                       name="email"
                       className="form-control"
                       placeholder="Enter new email"
@@ -266,8 +270,9 @@ const UserProfile = () => {
                       <div className="text-danger">{formik.errors.email}</div>
                     )}
 
-                    <Label className="form-label pt-2">FullName</Label>
+                    <Label className="form-label pt-4">Full Name</Label>
                     <Input
+                      style={{ backgroundColor: "white" }}
                       name="fullName"
                       className="form-control"
                       placeholder="Enter name"
@@ -282,10 +287,12 @@ const UserProfile = () => {
                         {formik.errors.fullName}
                       </div>
                     )}
-                    <Label for="profileImage " className="pt-2">
-                      Pofile Pic
+                    <Label for="profileImage " className="pt-4">
+                      Profile Pic
                     </Label>
                     <Input
+                      style={{ backgroundColor: "white" }}
+
                       type="file"
                       id="profileImage"
                       accept="image/*"
@@ -303,7 +310,7 @@ const UserProfile = () => {
                   <div className="text-center mt-4">
                     <Button
                       type="submit"
-                      style={{ backgroundColor: "rgba(0, 0, 0, 1)" }}
+                      style={{ backgroundColor: "rgba(0, 0, 0, 1)", borderRadius: "0px", border: "none" }}
                     >
                       Update Profile
                     </Button>

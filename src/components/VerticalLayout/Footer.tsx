@@ -7,17 +7,17 @@ const Footer = () => {
     <React.Fragment>
       <footer className="footer">
         <Container fluid={true}>
-          {/* <Row>
-            <Col md={6}>{new Date().getFullYear()} © Collin</Col>
+          <Row>
+            <Col md={6}>Arab Deals  © {new Date().getFullYear()}. All Rights Reserved</Col>
             <Col md={6}>
-              <div className="text-sm-end d-none d-sm-block">
+              {/* <div className="text-sm-end d-none d-sm-block">
                 Design & Develop by
                 <Link to="#" className="ms-1 text-decoration-underline">
                   collin
                 </Link>
-              </div>
+              </div> */}
             </Col>
-          </Row> */}
+          </Row>
         </Container>
       </footer>
     </React.Fragment>

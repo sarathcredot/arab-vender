@@ -42,11 +42,11 @@ interface Category {
   isLeaf: boolean;
   sizeChart: sizeChart;
   isBlocked: boolean;
-  fullCategoryName:string
+  fullCategoryName: string
 
 }
 
-interface Props {}
+interface Props { }
 
 const CategoryList: React.FC<Props> = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -103,7 +103,7 @@ const CategoryList: React.FC<Props> = () => {
       }
     }
   `;
-  const id=localStorage?.getItem("vendorid")
+  const id = localStorage?.getItem("vendorid")
   const {
     loading: categoryLoading,
     error: categoryError,
@@ -140,11 +140,11 @@ const CategoryList: React.FC<Props> = () => {
 
   useEffect(() => {
     // if (showSubCategories) {
-      // setCategoryData(childCategoryData?.getAllChildCategories?.records || []);
+    // setCategoryData(childCategoryData?.getAllChildCategories?.records || []);
     // } else {
-      setCategoryData(
-        categoryDataResponse?.getAllCategoriesOfVendor?.records || []
-      );
+    setCategoryData(
+      categoryDataResponse?.getAllCategoriesOfVendor?.records || []
+    );
     // }
   }, [
     categoryLoading,
@@ -214,7 +214,7 @@ const CategoryList: React.FC<Props> = () => {
     setSearchTerm(event.target.value);
     console.log(event.target.value);
   };
-console.log(categoryData);
+  console.log(categoryData);
 
   useEffect(() => {
     if (selectedStatus) {
@@ -228,7 +228,7 @@ console.log(categoryData);
           return (
             isNameMatch &&
             size?.isBlocked ===
-              (selectedStatus.value === "blocked" ? true : false)
+            (selectedStatus.value === "blocked" ? true : false)
           );
         }
       });
@@ -281,21 +281,21 @@ console.log(categoryData);
               <Card>
                 <CardHeader>
                   <Row>
-                    <Col xs={5} style={{display:"flex", gap:"20px",}}>
+                    <Col xs={5} style={{ display: "flex", gap: "20px", }}>
                       <Input
                         type="text"
                         placeholder="Search by name"
                         value={searchTerm}
                         onChange={handleSearch}
-                        style={{ width: "50%",borderRadius:"0" }}
-                        
+                        style={{ width: "50%", borderRadius: "0" }}
+
                       />
-                       <Dropdown
+                      <Dropdown
                         isOpen={statusDropdownOpen}
                         toggle={toggleStatusDropdown}
-                       
+
                       >
-                        <DropdownToggle caret style={{background:"black",borderRadius:"0",boxShadow:"none"}}>
+                        <DropdownToggle caret style={{ background: "black", borderRadius: "0", boxShadow: "none", border: "none" }}>
                           {selectedStatus
                             ? selectedStatus?.label
                             : "Select Status"}{" "}
@@ -314,12 +314,12 @@ console.log(categoryData);
                       </Dropdown>
                     </Col>
 
-                    
-                    
+
+
                   </Row>
                 </CardHeader>
                 <CardBody>
-                 
+
                   <Table
                     responsive
                     className="table table-bordered table-centered mb-0"
@@ -340,12 +340,12 @@ console.log(categoryData);
                           <td>{index + 1}</td>
                           <td>{category?.categoryName}</td>
                           <td>{category?.fullCategoryName}</td>
-                         
+
                           <td>
                             {category?.isBlocked == false ? "Active" : "Block"}
                           </td>
 
-                      
+
                         </tr>
                       ))}
                     </tbody>
@@ -362,7 +362,7 @@ console.log(categoryData);
                     />
                   </Modal>
 
-                 
+
                 </CardBody>
               </Card>
             </Col>
@@ -398,7 +398,7 @@ console.log(categoryData);
     return [currentItems, totalPages];
   }
 
- 
+
 };
 
 export default CategoryList;

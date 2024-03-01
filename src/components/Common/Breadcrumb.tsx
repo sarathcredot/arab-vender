@@ -5,10 +5,10 @@ import { Row, Col, BreadcrumbItem } from "reactstrap";
 interface BreadcrumbProps {
   breadcrumbItem?: string;
   title?: string;
-  link?:any
+  link?: any
 }
 
-const Breadcrumb = ({ breadcrumbItem, title,link }: BreadcrumbProps) => {
+const Breadcrumb = ({ breadcrumbItem, title, link }: BreadcrumbProps) => {
 
   return (
     <Row>
@@ -20,11 +20,14 @@ const Breadcrumb = ({ breadcrumbItem, title,link }: BreadcrumbProps) => {
               <BreadcrumbItem>
                 <Link to={link}>{title}</Link>
               </BreadcrumbItem>
-              <BreadcrumbItem active>
-                <Link to="">
-                  {breadcrumbItem}
+              {breadcrumbItem != "Dashboard" && (
+                <BreadcrumbItem active>
+                  <Link to="">
+                    {breadcrumbItem}
                   </Link>
-              </BreadcrumbItem>
+                </BreadcrumbItem>
+              )}
+
             </ol>
           </div>
         </div>

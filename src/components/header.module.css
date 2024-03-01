@@ -1,13 +1,15 @@
-.header_container{
-    padding: 0 90px;
+.header_container {
+  padding: 0 129px;
 }
-.header{
-  width:100% ;
-   padding: 20px 0;
-   display: flex;
-   justify-content: space-between;
+
+.header {
+  width: 100%;
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
 
 }
+
 .maincontainer {
   color: white;
   background-image: url("../../public/images/bg-4.png");
@@ -15,102 +17,126 @@
   background-repeat: no-repeat;
 
 }
-.headsection{
+
+.headsection {
   padding: 92px 92px 164px 92px;
 }
-.middlesection{
+
+.middlesection {
   margin-top: 176px;
   text-align: center;
 }
-.sellerbox{
+
+.sellerbox {
   padding: 125px 120px 120px 150px;
   background-color: black;
-    display: flex;
-    justify-content: space-around;
-    padding-top: 72px;
-   
-    gap: 40px;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 72px;
+
+  gap: 40px;
 }
-.startsellingbtn{
+
+.startsellingbtn {
   background-color: black !important;
-    width: 190px;
-    height: 50px;
-    color: white;
-    margin-top: 20px;
-    border: none !important;
-    border-radius: 0 !important;
+  width: 190px;
+  height: 50px;
+  color: white;
+  margin-top: 20px;
+  border: none !important;
+  border-radius: 0 !important;
 }
-.headercontainer{
-  padding: 0 90px;
+
+.headercontainer {
+  padding: 0 129px;
 }
-.signupimg{
+
+.signupimg {
   max-width: 551px;
-    max-height: 551px;
-    border-radius: 50%;
-    overflow: hidden;
+  max-height: 551px;
+  border-radius: 50%;
+  overflow: hidden;
 }
-.passwordbox{
+
+.passwordbox {
   width: 50px;
   height: 50px;
   font-size: 18px;
   text-align: center;
-  border-radius:0;
-  border:1px solid #CDCDCD
+  border-radius: 0;
+  border: 1px solid #CDCDCD
 }
+
 .placeholder-color::placeholder {
-  color: #E9E9E9; /* Change the color value as needed */
+  color: #E9E9E9;
+  /* Change the color value as needed */
 }
-.signupimg img{
+
+.signupimg img {
   width: 100%;
 }
-.headercontainer{
-  padding: 125px 120px 120px 150px;
+
+.headercontainer {
+  padding: 125px 120px 120px 129px;
 }
-.outerWrapper{
+
+.outerWrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 100px;
   align-items: center;
+  padding: 0 129px;
 }
-.leftcontainer{
+
+.leftcontainer {
   line-height: 48px;
-  width:100%;
+  width: 100%;
   max-width: 472px;
   min-width: 300px;
   /* width: 38%; */
 }
-.inputfield{
-  border-radius: 0;
+
+.inputfield {
+  border-radius: 0px;
   /* background: none; */
   height: 60px;
   border: 1px solid #CDCDCD !important;
 
-background-color: #FFF !important
-
-
+  background-color: #FFF !important
 }
-.form-control{
-  border-radius:0
+
+.inputfield::-webkit-inner-spin-button,
+.inputfield::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-control {
+  border-radius: 0px
 }
 
 .inputfield::placeholder {
   color: black;
 }
+
 .inputfield:focus {
-  outline: none; 
+  outline: none;
   /* border: 1px solid #CDCDCD; */
   border: none;
 
 }
-.flagimg{
+
+.flagimg {
   width: 19px;
-   margin-right: 5px;
+  margin-right: 5px;
 }
-.subtitle{
+
+.subtitle {
   font-size: 12px;
-  line-height: 45px;
+  line-height: 25px;
 }
-.uploadfile{
+
+.uploadfile {
   background-color: black;
   border-radius: 32px;
   color: white;
@@ -124,7 +150,8 @@ background-color: #FFF !important
   gap: 10px;
 
 }
-.filediv{
+
+.filediv {
   display: flex;
   align-items: center;
   border: 1px solid #CDCDCD;
@@ -133,6 +160,7 @@ background-color: #FFF !important
   height: 60px;
 
 }
+
 /* input[type=file]::file-selector-button {
   margin-right: 20px;
   border: none;
@@ -147,33 +175,38 @@ background-color: #FFF !important
 /* input[type=file]::file-selector-button:hover {
   background: #0d45a5;
 } */
-@media only screen and (min-width: 600px){
-  .signupimg{
-width: 100%;
+@media only screen and (min-width: 600px) {
+  .signupimg {
+    width: 100%;
   }
+
   /* .passwordbox{
     width: 39px;
     height: 39px
   } */
 }
-@media only screen and (min-width:1700px){
-  .leftcontainer{
+
+@media only screen and (min-width:1700px) {
+  .leftcontainer {
     max-width: 576px;
   }
-  .passwordbox{
+
+  .passwordbox {
     width: 39px;
     height: 39px
   }
 }
-@media only screen and (max-width:960px){
-  .outerWrapper{
+
+@media only screen and (max-width:960px) {
+  .outerWrapper {
     flex-direction: column-reverse;
   }
 
 }
-@media only screen and (min-width: 961px) and (max-width: 1103px){
-  .passwordbox{
+
+@media only screen and (min-width: 961px) and (max-width: 1103px) {
+  .passwordbox {
     width: 35px;
-      height: 35px
+    height: 35px
   }
-    }
+}
