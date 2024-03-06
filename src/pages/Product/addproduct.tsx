@@ -64,7 +64,7 @@ interface ProductForm {
   categoryNamePath: string;
   _id: string;
   media: any;
-  images:any
+  images: any
 }
 interface ProductData {
   _id: string;
@@ -111,17 +111,17 @@ const UPDATE_PRODUCT = gql`
   }
 `;
 const GET_CATEGORY = gql`
-  query GetAllCategoriesOfVendor($input: vendorIdInput!) {
-    getAllCategoriesOfVendor(input: $input) {
-      records {
-        _id
-        categoryName
-        fullCategoryName
-        isBlocked
-        isLeaf
-      }
+  query GetAllCategoriesOfVendor {
+  getAllCategoriesOfVendor {
+    records {
+      categoryName
+      _id
+      isBlocked
+      fullCategoryName
+      isLeaf
     }
   }
+}
 `;
 const GET_BRAND = gql`
   query GetAllBrandRecordsWithVendorByVendor(
@@ -203,13 +203,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     error: categoryError,
     data: categoryDataResponse,
     refetch: categoryRefetch,
-  } = useQuery(GET_CATEGORY, {
-    variables: {
-      input: {
-        vendorId: id,
-      },
-    },
-  });
+  } = useQuery(GET_CATEGORY);
 
   const {
     loading: brandLoading,
@@ -219,7 +213,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   } = useQuery(GET_BRAND, {
     variables: {
       input: {
-        vendorId: id,
+        // vendorId: id,
         page: null,
         size: 10,
       },
@@ -227,28 +221,27 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   });
 
   useEffect(() => {
-    if(editedProduct)
-    {
+    if (editedProduct) {
       setValue("productName", editedProduct?.productName || "");
 
-    setValue("description", editedProduct?.description || "");
-    setValue("sellingPrice", editedProduct?.sellingPrice);
-    setValue("price", editedProduct?.price || "");
-    setValue("rating", editedProduct?.rating);
-    setValue("offerPrice", editedProduct?.offerPrice);
-    setValue("productCode", editedProduct?.productCode);
-    setValue("mrp", editedProduct?.mrp);
-    setValue("productShortInfo", editedProduct?.productShortInfo || "");
-    setValue("shortDescription", editedProduct?.shortDescription || "");
-    setValue("skuId", editedProduct?.skuId || "");
-    setValue("stock", editedProduct?.stock);
-    setValue("tags", editedProduct?.tags);
-    setValue("brandName", editedProduct?.brandName || "");
-    setValue("categoryNamePath", editedProduct?.categoryNamePath || "");
-    setValue("media", editedProduct?.images);
-    setRemarks(editedProduct ? editedProduct?.productInfo : [""]);
-    setValue("images",editedProduct?.images)
-  }
+      setValue("description", editedProduct?.description || "");
+      setValue("sellingPrice", editedProduct?.sellingPrice);
+      setValue("price", editedProduct?.price || "");
+      setValue("rating", editedProduct?.rating);
+      setValue("offerPrice", editedProduct?.offerPrice);
+      setValue("productCode", editedProduct?.productCode);
+      setValue("mrp", editedProduct?.mrp);
+      setValue("productShortInfo", editedProduct?.productShortInfo || "");
+      setValue("shortDescription", editedProduct?.shortDescription || "");
+      setValue("skuId", editedProduct?.skuId || "");
+      setValue("stock", editedProduct?.stock);
+      setValue("tags", editedProduct?.tags);
+      setValue("brandName", editedProduct?.brandName || "");
+      setValue("categoryNamePath", editedProduct?.categoryNamePath || "");
+      setValue("media", editedProduct?.images);
+      setRemarks(editedProduct ? editedProduct?.productInfo : [""]);
+      setValue("images", editedProduct?.images)
+    }
   }, [editedProduct]);
   useEffect(() => {
     setCategoryData(
@@ -284,32 +277,32 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     productName: {
       required: "Name is required",
     },
-    description:{
+    description: {
       required: "Description is required",
     },
-    shortDescription:{
+    shortDescription: {
       required: "ShortDescription is required",
     },
-    mrp:{
+    mrp: {
       required: "Mrp is required",
     },
-    sellingPrice:{
+    sellingPrice: {
       required: "SellingPrice is required",
     },
-    tags:{
+    tags: {
       required: "mrp is required",
     },
-    media:{
-      required:"media required"
+    media: {
+      required: "media required"
     },
-    material:{
-      required:"material required"
+    material: {
+      required: "material required"
     },
-    offerPrice:{
-      required:"offerPrice required"
+    offerPrice: {
+      required: "offerPrice required"
     },
-    productCode:{
-      required:"productCode required"
+    productCode: {
+      required: "productCode required"
     },
     productInfo: {
       required: "This field is required.",
@@ -326,12 +319,12 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     brand: {
       required: "Brand is required",
     },
-    rating:{
-      required:"Rating is required",
-       pattern: {
-    value: /^[0-4](\.\d{1,2})?$/, // Adjust the pattern as needed
-    message: "Invalid rating. Please enter a valid value less than 5.",
-  },
+    rating: {
+      required: "Rating is required",
+      pattern: {
+        value: /^[0-4](\.\d{1,2})?$/, // Adjust the pattern as needed
+        message: "Invalid rating. Please enter a valid value less than 5.",
+      },
     },
     images: {
       required: "Please select at least one image",
@@ -353,7 +346,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       categoryId: Edit ? editedProduct?.categoryId : selectedCategory,
       description: data?.description,
       offerPrice: parseInt(data?.offerPrice),
-      vendorId: id,
+      // vendorId: id,
       material: data?.material,
       mrp: parseInt(data?.mrp),
       price: parseInt(data?.price),
@@ -379,33 +372,33 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     //   setFileError("Please select at least one file.");
     // }
     //  else {
-      try {
-        if (Edit) {
-          formdatas.tags = (data?.tags).join(" ");
-          console.log("click");
-          // formdatas._id=editedProduct?._id,
+    try {
+      if (Edit) {
+        formdatas.tags = (data?.tags).join(" ");
+        console.log("click");
+        // formdatas._id=editedProduct?._id,
 
-          const response = await updateproduct({
-            variables: { input: { ...formdatas }, images: file },
-          });
-          console.log(response);
-          if (response) {
-            toast.success(response?.data?.createProduct?.message);
-            navigate("/product");
-          }
-        } else {
-          const response = await createproduct({
-            variables: { input: { ...formdatas }, images: file },
-          });
-          console.log(response);
-          if (response) {
-            toast.success(response?.data?.createProduct?.message);
-            navigate("/product");
-          }
+        const response = await updateproduct({
+          variables: { input: { ...formdatas }, images: file },
+        });
+        console.log(response);
+        if (response) {
+          toast.success(response?.data?.createProduct?.message);
+          navigate("/product");
         }
-      } catch (error: any) {
-        console.log(error);
+      } else {
+        const response = await createproduct({
+          variables: { input: { ...formdatas }, images: file },
+        });
+        console.log(response);
+        if (response) {
+          toast.success(response?.data?.createProduct?.message);
+          navigate("/product");
+        }
       }
+    } catch (error: any) {
+      console.log(error);
+    }
     // }
   };
 
@@ -417,61 +410,61 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumbs
-            title="product"
+            title="Product"
             breadcrumbItem={Edit ? "Edit Product" : "Add Product"}
             link="/product"
           />
 
           <Row>
             <Col lg={12}>
-              <Card>
+              <Card style={{ borderRadius: "0px" }}>
                 <CardBody>
                   <Form
                     onSubmit={handleSubmit(onSubmit)}
                   >
                     <FormGroup>
-                      <Label for="name">Name:</Label>
+                      <Label for="name">Name</Label>
                       <Controller
                         control={control}
                         name="productName"
                         // rules={{ required: "Name is required" }}
-                        render={({ field :{value,onChange}}) => (
+                        render={({ field: { value, onChange } }) => (
                           <>
                             <Input
                               type="text"
                               value={value}
-                          onChange={onChange}
+                              onChange={onChange}
                               // {...field}
                               className={styles.inputfield}
                             />
-                           
+
                           </>
                         )}
                         rules={fieldRules.productName}
                       />
                       {errors?.productName ? (
-                    <div className={styles.errmsg}>
-                      {errors?.productName?.message}
-                    </div>
-                  ) : null}
+                        <div className={styles.errmsg}>
+                          {errors?.productName?.message}
+                        </div>
+                      ) : null}
                     </FormGroup>
                     <FormGroup>
-                      <label>Category:</label>
-                      <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                        <DropdownToggle caret disabled={Edit}>
+                      <label>Category</label>
+                      <Dropdown style={{ borderRadius: "0px" }} isOpen={dropdownOpen} toggle={toggleDropdown}>
+                        <DropdownToggle style={{ borderRadius: "0px", backgroundColor: "black", border: "none" }} caret disabled={Edit}>
                           {editedProduct && editedProduct?.categoryNamePath}
                           {selectedCategory
                             ? categoryData.find(
-                                (category: any) =>
-                                  category._id === getSelectedCategoryData()
-                              )?.fullCategoryName
+                              (category: any) =>
+                                category._id === getSelectedCategoryData()
+                            )?.fullCategoryName
                             : "Select Category"}
                           <FontAwesomeIcon
                             icon={faAngleDown}
-                            style={{ marginRight: "5px" }}
+                            style={{ marginLeft: "5px" }}
                           />
                         </DropdownToggle>
-                        <DropdownMenu>
+                        <DropdownMenu  >
                           {categoryData?.map((category: any) => (
                             <DropdownItem
                               key={category._id}
@@ -489,82 +482,83 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                       editedProduct={editedProduct}
                     />
 
-                    <FormGroup>
-                      <Label for="name">Brand:</Label>
+                    <FormGroup className="mt-3">
+                      <Label for="name">Brand</Label>
                       <Controller
-    control={control}
-    name="brandName"
-    render={({ field: { value, onChange } }) => (
-      <>
-                      <Input
-                        type="select"
-                        value={value}
-                        onChange={(event: any) => {
-                          const selectedBrand = brandData.find(
-                            (brand: any) =>
-                              brand.brandName === event.target.value
-                          );
+                        control={control}
+                        name="brandName"
+                        render={({ field: { value, onChange } }) => (
+                          <>
+                            <Input
+                              type="select"
+                              style={{ borderRadius: "0px", backgroundColor: "white" }}
+                              value={value}
+                              onChange={(event: any) => {
+                                const selectedBrand = brandData.find(
+                                  (brand: any) =>
+                                    brand.brandName === event.target.value
+                                );
 
-                          // Check if a brand is found before updating the state
-                          if (selectedBrand) {
-                            setselectedbrand({
-                              name: selectedBrand.brandName,
-                              id: selectedBrand._id,
-                            });
-                          }
-                          onChange(event);
-                        }}
-                        defaultValue={editedProduct?.brandName || "Select"}
-                      >
-                        <option value="">Select</option>
-                        {brandData?.map((brand: any, index: number) => {
-                          return (
-                            <option key={index} value={brand?.brandName}>
-                              {brand?.brandName}
-                            </option>
-                          );
-                        })}
-                      </Input>
-                      </>
-    )}
-    rules={fieldRules.brand}
-    />
-    {errors?.brandName && (
-    <div className={styles.errmsg}>{errors?.brandName?.message}</div>
-  )}
+                                // Check if a brand is found before updating the state
+                                if (selectedBrand) {
+                                  setselectedbrand({
+                                    name: selectedBrand.brandName,
+                                    id: selectedBrand._id,
+                                  });
+                                }
+                                onChange(event);
+                              }}
+                              defaultValue={editedProduct?.brandName || "Select"}
+                            >
+                              <option value="">Select</option>
+                              {brandData?.map((brand: any, index: number) => {
+                                return (
+                                  <option key={index} value={brand?.brandName}>
+                                    {brand?.brandName}
+                                  </option>
+                                );
+                              })}
+                            </Input>
+                          </>
+                        )}
+                        rules={fieldRules.brand}
+                      />
+                      {errors?.brandName && (
+                        <div className={styles.errmsg}>{errors?.brandName?.message}</div>
+                      )}
                     </FormGroup>
                     <FormGroup>
-                      <Label for="description">Description:</Label>
+                      <Label for="description">Description</Label>
                       <Controller
                         control={control}
                         name="description"
                         // rules={{ required: "Description is required" }}
-                        render={({ field:{value,onChange} }) => (
+                        render={({ field: { value, onChange } }) => (
                           <>
                             <Input
                               type="textarea"
                               value={value}
                               onChange={onChange}
                               className={styles.inputfield}
-                              // {...field}
+                            // {...field}
                             />
-                           
+
                           </>
                         )}
                         rules={fieldRules.description}
                       />
                       {errors?.description ? (
-                    <div className={styles.errmsg}>
-                      {errors?.description?.message}
-                    </div>
-                  ) : null}
+                        <div className={styles.errmsg}>
+                          {errors?.description?.message}
+                        </div>
+                      ) : null}
                     </FormGroup>
 
                     <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="productShortInfo">
-                            Product ShortInfo:
+                            Product ShortInfo
                           </Label>
                           <Controller
                             control={control}
@@ -572,7 +566,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             // rules={{
                             //   required: "Product ShortInfo is required",
                             // }}
-                            render={({ field :{value,onChange}}) => (
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="text"
@@ -581,22 +575,22 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                                   // {...field}
                                   className={styles.inputfield}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.productShortInfo}
                           />
                           {errors?.productShortInfo ? (
-                    <div className={styles.errmsg}>
-                      {errors?.productShortInfo?.message}
-                    </div>
-                  ) : null}
+                            <div className={styles.errmsg}>
+                              {errors?.productShortInfo?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="shortDescription">
-                            Product Short Description:
+                            Product Short Description
                           </Label>
                           <Controller
                             control={control}
@@ -604,166 +598,166 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             // rules={{
                             //   required: "Short Description is required",
                             // }}
-                            render={({ field:{value,onChange} }) => (
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="text"
                                   value={value}
                                   onChange={onChange}
-                                  
+
                                   className={styles.inputfield}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.productName}
                           />
                           {errors?.shortDescription ? (
-                    <div className={styles.errmsg}>
-                      {errors?.shortDescription?.message}
-                    </div>
-                  ) : null}
+                            <div className={styles.errmsg}>
+                              {errors?.shortDescription?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Product Code:</Label>
+                          <Label for="price">Product Code</Label>
                           <Controller
                             control={control}
                             name="productCode"
-                           
-                            render={({ field:{value,onChange} }) => (
+
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="number"
                                   value={value}
                                   onChange={onChange}
-                                 
+
                                   className={styles.inputfield}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.productCode}
                           />
                           {errors?.productCode ? (
-                    <div className={styles.errmsg}>
-                      {errors?.productCode?.message}
-                    </div>
-                  ) : null}
+                            <div className={styles.errmsg}>
+                              {errors?.productCode?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Price:</Label>
+                          <Label for="price">Price</Label>
                           <Controller
                             control={control}
                             name="price"
                             // rules={{ required: "Price is required" }}
-                            render={({ field :{value,onChange}}) => (
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="number"
-                                  
+
                                   value={value}
-                          onChange={onChange}
+                                  onChange={onChange}
                                   className={styles.inputfield}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.price}
                           />
-                           {errors?.price ? (
-                    <div className={styles.errmsg}>
-                      {errors?.price?.message}
-                    </div>
-                  ) : null}
+                          {errors?.price ? (
+                            <div className={styles.errmsg}>
+                              {errors?.price?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="sellingPrice">Selling Price:</Label>
+                          <Label for="sellingPrice">Selling Price</Label>
                           <Controller
                             control={control}
                             name="sellingPrice"
                             render=
-                            {({ field :{value,onChange}}) => (
+                            {({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="number"
                                   value={value}
                                   onChange={onChange}
-                                 
+
                                   className={styles.inputfield}
-                                  
+
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.sellingPrice}
                           />
                           {errors?.sellingPrice ? (
-                    <div className={styles.errmsg}>
-                      {errors?.sellingPrice?.message}
-                    </div>
-                  ) : null}
+                            <div className={styles.errmsg}>
+                              {errors?.sellingPrice?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="mrp">mrp:</Label>
+                          <Label for="mrp">MRP</Label>
                           <Controller
                             control={control}
                             name="mrp"
-                           
-                            render={({ field :{value,onChange}}) => (
+
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="number"
                                   value={value}
-                          onChange={onChange}
-                                 
+                                  onChange={onChange}
+
                                   className={styles.inputfield}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.mrp}
                           />
-                           {errors?.mrp ? (
-                    <div className={styles.errmsg}>
-                      {errors?.mrp?.message}
-                    </div>
-                  ) : null}
+                          {errors?.mrp ? (
+                            <div className={styles.errmsg}>
+                              {errors?.mrp?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="offerPrice">Offer Price:</Label>
+                          <Label for="offerPrice">Offer Price</Label>
                           <Controller
                             control={control}
                             name="offerPrice"
-                           
-                            render={({ field:{value,onChange} }) => (
+
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="number"
-                                  
+
                                   className={styles.inputfield}
                                   value={value}
                                   onChange={onChange}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.offerPrice}
                           />
                           {errors?.offerPrice ? (
-                    <div className={styles.errmsg}>
-                      {errors?.offerPrice?.message}
-                    </div>
-                  ) : null}
+                            <div className={styles.errmsg}>
+                              {errors?.offerPrice?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
@@ -793,12 +787,12 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="stock">Stock:</Label>
+                          <Label for="stock">Stock</Label>
                           <Controller
                             control={control}
                             name="stock"
-                            
-                            render={({ field:{value,onChange} }) => (
+
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="text"
@@ -806,21 +800,21 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                                   onChange={onChange}
                                   className={styles.inputfield}
                                 />
-                               
+
                               </>
                             )}
                             rules={fieldRules.stock}
                           />
-                           {errors?.stock ? (
-                    <div className={styles.errmsg}>
-                      {errors?.stock?.message}
-                    </div>
-                  ) : null}
+                          {errors?.stock ? (
+                            <div className={styles.errmsg}>
+                              {errors?.stock?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="tags">Tags:</Label>
+                          <Label for="tags">Tags</Label>
                           <Controller
                             control={control}
                             name="tags"
@@ -845,35 +839,35 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="rating">Rating:</Label>
+                          <Label for="rating">Rating</Label>
                           <Controller
                             control={control}
                             name="rating"
-                           
-                            render={({ field:{value,onChange} }) => (
+
+                            render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
                                   type="number"
-                                 
+
                                   value={value}
                                   onChange={onChange}
                                   className={styles.inputfield}
                                 />
-                                
+
                               </>
                             )}
                             rules={fieldRules.rating}
                           />
-                           {errors?.rating ? (
-                    <div className={styles.errmsg}>
-                      {errors?.rating?.message}
-                    </div>
-                  ) : null}
+                          {errors?.rating ? (
+                            <div className={styles.errmsg}>
+                              {errors?.rating?.message}
+                            </div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="skuid">SKU ID:</Label>
+                          <Label for="skuid">SKU ID</Label>
                           <Controller
                             control={control}
                             name="skuId"
@@ -896,8 +890,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         </FormGroup>
                       </Col>
                       <FormGroup>
-                        <Label for="productInfo">Product Info:</Label>
-                        
+                        <Label for="productInfo">Product Info</Label>
+
                         {remarks?.map((remark: any, index: any) => (
                           <FormGroup
                             key={index}
@@ -917,12 +911,13 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                                   setRemarks(updatedRemarks);
                                 }}
                                 required
-                                style={{ marginRight: "10px" }}
+                                style={{ marginRight: "10px", borderRadius: "0px", backgroundColor: "white" }}
                               />
                               {index === remarks.length - 1 && (
                                 <Button
                                   color="primary"
                                   onClick={handleAddRemark}
+                                  style={{ borderRadius: "0px" }}
                                 >
                                   + {/* Plus icon */}
                                 </Button>
@@ -932,6 +927,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                                   style={{
                                     marginLeft: "5px",
                                     marginRight: "5px",
+                                    borderRadius: "0px"
                                   }}
                                   color="danger"
                                   onClick={() => handleRemoveRemark(index)}
@@ -944,57 +940,57 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         ))}
                       </FormGroup>
                     </Row>
-                    <FormGroup>
-                      <Label for="material">Material:</Label>
+                    {/* <FormGroup>
+                      <Label for="material">Material</Label>
                       <Controller
                         control={control}
                         name="material"
-                        
-                        render={({ field :{value,onChange} }) => (
+
+                        render={({ field: { value, onChange } }) => (
                           <>
                             <Input
                               type="text"
                               value={value}
                               onChange={onChange}
-                             
+
                               className={styles.inputfield}
                             />
-                            
+
                           </>
                         )}
                         rules={fieldRules.material}
                       />
                       {errors?.material ? (
-                    <div className={styles.errmsg}>
-                      {errors?.material?.message}
-                    </div>
-                  ) : null}
-                    </FormGroup>
-                    
-                    <Card>
+                        <div className={styles.errmsg}>
+                          {errors?.material?.message}
+                        </div>
+                      ) : null}
+                    </FormGroup> */}
+
+                    <Card style={{ borderRadius: "0px" }} >
                       <CardHeader>
                         <label>Media</label>
                       </CardHeader>
                       <CardBody>
-                      <Controller
-      control={control}
-      name="images"
-      render={({ field }) => (
-        <>
-                        <MediaUpload
-                          setValue={setValue}
-                          watch={watch}
+                        <Controller
                           control={control}
-                          editedProduct={editedProduct}
+                          name="images"
+                          render={({ field }) => (
+                            <>
+                              <MediaUpload
+                                setValue={setValue}
+                                watch={watch}
+                                control={control}
+                                editedProduct={editedProduct}
+                              />
+                            </>
+                          )}
+                          rules={fieldRules.images}
                         />
-                        </>
-      )}
-      rules={fieldRules.images}
-      />
-      {errors?.images && (
-  <div className={styles.errmsg}>{String(errors?.images?.message)}</div>
-)}
-                       
+                        {errors?.images && (
+                          <div className={styles.errmsg}>{String(errors?.images?.message)}</div>
+                        )}
+
                       </CardBody>
                     </Card>
 
@@ -1005,7 +1001,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         color: "white",
                         width: "120px",
                         height: "40px",
-                        borderRadius: "10px",
+                        borderRadius: "0px",
+                        border: "none"
                       }}
                     >
                       {Edit ? "Edit Product" : "Add product"}

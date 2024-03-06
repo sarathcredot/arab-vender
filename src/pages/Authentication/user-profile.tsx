@@ -40,6 +40,7 @@ interface AdminData {
   email: string;
   fullName: string;
   profilePic: profilePic;
+  mobileNumber: string
 }
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -150,12 +151,10 @@ const UserProfile = () => {
 
     }),
     onSubmit: async (values) => {
-      console.log(values);
 
       try {
         let variables: any = {
           input: {
-            _id: localStorage.getItem("vendorid"),
             email: values?.email,
             fullName: values?.fullName,
           },
@@ -168,13 +167,11 @@ const UserProfile = () => {
           };
         }
 
-        console.log("variables", variables);
 
 
         const response = await updateProfile({
           variables,
         });
-        console.log(response);
 
         if (response) {
           vendorRefetch();
@@ -200,6 +197,7 @@ const UserProfile = () => {
   }, [vendorData, vendorRefetch]);
 
   document.title = "Profile | Arab-deals";
+  console.log("data-----------", data);
 
   return (
     <React.Fragment>
@@ -207,7 +205,7 @@ const UserProfile = () => {
       <div className="page-content">
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumb title="" breadcrumbItem="Profile" />
+          <Breadcrumb title="Dashboard" breadcrumbItem="Profile" />
 
           <Row>
             <Col lg="12">
@@ -228,7 +226,7 @@ const UserProfile = () => {
                       <div className="text-muted">
                         <h5>{data?.fullName}</h5>
                         <p className="mb-1">Email : {data?.email} </p>
-                        <p className="mb-0">Name : {data?.fullName}</p>
+                        <p className="mb-0">Mobile Number : {data?.mobileNumber}</p>
                       </div>
                     </div>
                   </div>
@@ -264,6 +262,7 @@ const UserProfile = () => {
                       value={formik.values?.email}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
+                      // required
                     />
 
                     {formik.touched.email && formik.errors.email && (
@@ -280,6 +279,7 @@ const UserProfile = () => {
                       value={formik.values?.fullName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
+                      // required
                     />
 
                     {formik.touched.fullName && formik.errors.fullName && (

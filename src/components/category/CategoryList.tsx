@@ -70,17 +70,17 @@ const CategoryList: React.FC<Props> = () => {
   } | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const GET_CATEGORY = gql`
-  query GetAllCategoriesOfVendor($input: vendorIdInput!) {
-    getAllCategoriesOfVendor(input: $input) {
-      records {
-        _id
-        categoryName
-        fullCategoryName
-        isBlocked
-        isLeaf
-      }
+  query GetAllCategoriesOfVendor {
+  getAllCategoriesOfVendor {
+    records {
+      categoryName
+      _id
+      isBlocked
+      fullCategoryName
+      isLeaf
     }
   }
+}
   `;
 
   const GET_CHAILEDCATGORY = gql`
@@ -109,13 +109,7 @@ const CategoryList: React.FC<Props> = () => {
     error: categoryError,
     data: categoryDataResponse,
     refetch: categoryRefetch,
-  } = useQuery(GET_CATEGORY, {
-    variables: {
-      input: {
-        vendorId: id,
-      },
-    },
-  });
+  } = useQuery(GET_CATEGORY);
   console.log(categoryDataResponse)
   // const {
   //   loading: childCategoryLoading,
@@ -274,14 +268,14 @@ const CategoryList: React.FC<Props> = () => {
             </span>
           ))}
         </div>
-        <Container fluid={true} style={{ marginTop: "40px" }}>
+        <Container fluid={true} style={{ marginTop: "0px" }}>
           <Breadcrumb title="Dashboard" breadcrumbItem="Category" link="/dashboard" />
           <Row>
             <Col lg={12}>
-              <Card>
+              <Card style={{ borderRadius: "0px" }}>
                 <CardHeader>
                   <Row>
-                    <Col xs={5} style={{ display: "flex", gap: "20px", }}>
+                    <Col xs={5} style={{ display: "flex", gap: "20px" }}>
                       <Input
                         type="text"
                         placeholder="Search by name"

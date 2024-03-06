@@ -7,7 +7,7 @@ const Sidebar = (props: any) => {
   return (
     <React.Fragment>
       <div style ={{background:"black"}} className="vertical-menu">
-        <div data-simplebar className="h-100">
+        <div data-simplebar className="h-500">
           {props.type !== "condensed" ? <SidebarContent /> : <SidebarContent />}
         </div>
       </div>
