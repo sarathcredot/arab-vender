@@ -63,11 +63,13 @@ function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: a
   console.log(data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [attributeData, setAttributeData] = useState([]) as any;
+
   useEffect(() => {
     setAttributeData(
       data?.getAttributesDetailsWithCategory?.record?.attributes
     );
   }, [data]);
+  
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
 

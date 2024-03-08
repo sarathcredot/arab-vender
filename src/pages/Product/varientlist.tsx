@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody, CardHeader, Button, Input } from "reactstrap"
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -104,7 +104,9 @@ const ProductListing = () => {
   const params = new URLSearchParams(location.search);
   const productId: any = params.get("_code");
   const productcode = parseInt(productId);
-  const pId = params.get("_id");
+
+  const [searchParams, setSearchParms] = useSearchParams();
+  const productCode = searchParams.get("_code");
 
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
@@ -209,7 +211,9 @@ const ProductListing = () => {
 
   const handleaddVariant = () => {
     if (kycData?.getKycStatus?.record?.isKycCompleted) {
-      navigate(`/add-variant/?id=${pId}`);
+      navigate(
+        `/add-variant/?id=${products[0]._id}&&catId=${products[0]?.categoryId}&&code=${productCode}`
+      );
     } else {
       toast.error("Complete Your KYC and Add Variant");
     }
