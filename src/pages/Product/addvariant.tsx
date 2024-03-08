@@ -55,12 +55,13 @@ interface ProductForm {
   material: string;
   size: string;
   color: string;
-  offerPrice: number;
   productCode: number;
   productInfo: string[];
-  productShortInfo: string;
   brandName: string;
   categoryNamePath: string;
+  brandId: string;
+  media: any;
+  images: any;
 }
 interface ProductData {
   _id: string;
@@ -75,6 +76,7 @@ interface ProductData {
   mrp: number;
   productCode: string;
   productName: string;
+  brandId: string;
   rating: number;
   sellingPrice: number;
   price: number;
@@ -85,8 +87,8 @@ interface ProductData {
   isBlocked: boolean;
 }
 const CREATE_VARIENT = gql`
-  mutation Mutation($input: VariantInput!, $images: [Upload]) {
-    createVariant(input: $input, images: $images) {
+  mutation CreateVariant($input: VariantInput!, $images: [Upload], $productDetailImages: [Upload]) {
+    createVariant(input: $input, images: $images, productDetailImages: $productDetailImages) {
       message
     }
   }
@@ -114,12 +116,11 @@ const GET_PRODUCTDETAIL = gql`
         material
         isBlocked
         mrp
-        offerPrice
         price
         productCode
         productInfo
         productName
-        productShortInfo
+        brandId
         rating
         sellingPrice
         shortDescription
@@ -152,9 +153,7 @@ const GET_CATEGORY = gql`
   }
 `;
 const GET_BRAND = gql`
-  query GetAllBrandRecordsWithVendorByVendor(
-    $input: getAllBrandRecordsWithVendorByVendorInput!
-  ) {
+  query GetAllBrandRecordsWithVendorByVendor($input: getAllBrandRecordsWithVendorByVendorInput!) {
     getAllBrandRecordsWithVendorByVendor(input: $input) {
       maxRecords
       message
@@ -174,41 +173,38 @@ const GET_BRAND = gql`
   }
 `;
 
-const AddVariant = ({ }) => {
+const AddVariant = ({}) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const Productid = params.get('id');
+  const categoryId = params.get("catId");
+  const Productid = params.get("id");
+  const productCode = params.get("code");
   console.log(Productid);
 
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
     variables: { input: { _id: Productid } },
   });
+
   console.log(data);
   const [remarks, setRemarks] = useState<any>([""]);
   const navigate = useNavigate();
 
-
   useEffect(() => {
-    setValue("productName", data?.getProductByVendor?.product?.productName)
-    setValue("description", data?.getProductByVendor?.product?.description)
-    setValue("sellingPrice", data?.getProductByVendor?.product?.sellingPrice)
-    setValue("price", data?.getProductByVendor?.product?.price)
-    setValue("rating", data?.getProductByVendor?.product?.rating)
-    setValue("offerPrice", data?.getProductByVendor?.product?.offerPrice)
-    setValue("productCode", data?.getProductByVendor?.product?.productCode)
-    setValue("mrp", data?.getProductByVendor?.product?.mrp)
-    setValue("productShortInfo", data?.getProductByVendor?.product?.productShortInfo)
-    setValue("shortDescription", data?.getProductByVendor?.product?.shortDescription)
-    setValue("skuId", data?.getProductByVendor?.product?.skuId)
-    setValue("stock", data?.getProductByVendor?.product?.stock)
-    setValue("tags", data?.getProductByVendor?.product?.tags)
-    setValue("brandName", data?.getProductByVendor?.product?.brandName)
-    setValue("categoryNamePath", data?.getProductByVendor?.product?.categoryNamePath)
-
-    setRemarks(data?.getProductByVendor?.product?.productInfo)
-
-
-  }, [data])
+    setValue("productName", data?.getProductByVendor?.product?.productName);
+    setValue("description", data?.getProductByVendor?.product?.description);
+    setValue("sellingPrice", data?.getProductByVendor?.product?.sellingPrice);
+    setValue("price", data?.getProductByVendor?.product?.price);
+    setValue("rating", data?.getProductByVendor?.product?.rating);
+    setValue("mrp", data?.getProductByVendor?.product?.mrp);
+    setValue("shortDescription", data?.getProductByVendor?.product?.shortDescription);
+    setValue("skuId", data?.getProductByVendor?.product?.skuId);
+    setValue("stock", data?.getProductByVendor?.product?.stock);
+    setValue("tags", data?.getProductByVendor?.product?.tags);
+    setValue("categoryNamePath", data?.getProductByVendor?.product?.categoryNamePath);
+    setRemarks(data?.getProductByVendor?.product?.productInfo || [""]);
+    setValue("media", "");
+    setValue("images", "");
+  }, [data]);
   const {
     control,
     handleSubmit,
@@ -264,11 +260,7 @@ const AddVariant = ({ }) => {
   };
 
   const handleAddRemark = () => {
-
-
-
     setRemarks([...remarks, ""]);
-
   };
 
   const handleRemoveRemark = (index: any) => {
@@ -306,31 +298,9 @@ const AddVariant = ({ }) => {
     },
   });
   useEffect(() => {
-    setCategoryData(
-      categoryDataResponse?.getAllCategoriesOfVendor?.records || []
-    );
-    setBrandData(
-      brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records
-    );
+    setCategoryData(categoryDataResponse?.getAllCategoriesOfVendor?.records || []);
+    setBrandData(brandDataResponse?.getAllBrandRecordsWithVendorByVendor?.records);
   }, [categoryDataResponse, brandDataResponse]);
-
-  const getSelectedCategoryData = () => {
-    // Find the selected category in categoryData based on _id
-    if (data) {
-      const selectedCategoryData = data?.getProductByVendor?.product?.categoryId
-      return selectedCategoryData;
-    }
-    else {
-
-      const selectedCategoryData = categoryData.find(
-        (category: any) => category._id === selectedCategory
-      );
-      return selectedCategoryData;
-    }
-
-  };
-
-
 
   const onSubmit: SubmitHandler<ProductForm> = async (data1: any) => {
     console.log("click");
@@ -339,7 +309,6 @@ const AddVariant = ({ }) => {
     const productCodeParam = urlSearchParams.get("productCode");
     console.log(data1);
 
-
     // if (!productCodeParam) {
     //   toast.error("Product code not found in query parameters.");
     //   return;
@@ -347,61 +316,71 @@ const AddVariant = ({ }) => {
 
     // Construct the input variables for the mutation
     const formdatas = {
-      brandId: data?.getProductByVendor?.product?.brandId,
-      brandName: data?.getProductByVendor?.product?.brandName,
-      categoryId: data?.getProductByVendor?.product?.categoryId,
       description: data1?.description,
-      offerPrice: parseInt(data1?.offerPrice),
-      vendorId: id,
-      material: data1?.material,
       mrp: parseInt(data1?.mrp),
       price: parseInt(data1?.price),
-      productCode: parseInt(data1?.productCode),
+      productCode: parseInt(productCode || ""),
       productInfo: remarks,
       productName: data1?.productName,
-      productShortInfo: data1?.productShortInfo,
       rating: parseInt(data1?.rating),
       sellingPrice: parseInt(data1?.sellingPrice),
       shortDescription: data1?.shortDescription,
       skuId: data1?.skuId,
       stock: parseInt(data1?.stock),
-      tags: (data1?.tags).join(' '),
+      tags: data?.tags,
       attributes: attributeid,
     };
+
     console.log("formdatas", formdatas);
 
-    console.log(acceptedFiles);
+    const file = data1?.images?.map((image: any) => image.file);
 
+    const medias = data1?.media?.map((media: any) => media.file);
+
+    console.log(data1?.media, "ssssssss");
+
+    // if (data && data?.images?.length < 0) {
+    //   console.log("errorclick");
+
+    //   setFileError("Please select at least one file.");
+    // }
+    //  else {
     try {
-      if (data1?.images && data1?.images.length > 0) {
-        const response = await createvarient({ variables: { input: { ...formdatas }, images: data?.image } })
-        console.log(response);
-        if (response) {
-          toast.success(response?.data?.createVariant?.message)
-          navigate("/product")
-        }
+      console.log(formdatas, "formdatas");
+      const variables: any = {
+        input: formdatas,
+        images: null,
+        productDetailImages: null,
+      };
 
+      if (file?.length > 0) {
+        variables.images = file;
+      }
+
+      if (medias?.length > 0) {
+        variables.productDetailImages = medias;
+      }
+
+      const response = await createvarient({
+        variables,
+      });
+
+      if (response) {
+        toast.success(response?.data?.createvarient?.message);
+        navigate(`/list-variant?_code=${productCode}`);
       }
     } catch (error: any) {
-      // Handle error, e.g., show an error toast
+      console.log(error);
       toast.error(error.message);
-
-      // Log the error for debugging
-      console.error("Add Variant Mutation Error:", error);
     }
   };
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
-    useDropzone();
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone();
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumbs
-            title="product"
-            breadcrumbItem={"Add Varient"}
-            link="/product"
-          />
+          <Breadcrumbs title="product" breadcrumbItem={"Add Varient"} link="/product" />
 
           <Row>
             <Col lg={12}>
@@ -416,119 +395,77 @@ const AddVariant = ({ }) => {
                         rules={{ required: "Name is required" }}
                         render={({ field }) => (
                           <>
-                            <Input
-                              type="text"
-                              id="name"
-                              {...field}
-                              className={styles.inputfield}
-                            />
+                            <Input type="text" id="name" {...field} className={styles.inputfield} />
                             {errors.productName && (
-                              <p className="text-danger">
-                                {errors.productName.message}
-                              </p>
+                              <p className="text-danger">{errors.productName.message}</p>
                             )}
                           </>
                         )}
                       />
                     </FormGroup>
-                    <FormGroup>
+                    {/* <FormGroup>
                       <label>Category</label>
                       <Controller
                         control={control}
                         name="categoryNamePath"
-                        rules={{ required: "Price is required" }}
                         render={({ field }) => (
                           <>
                             <Input
                               type="text"
                               id="categoryNamePath"
                               {...field}
-                              className={styles.inputfield} disabled
+                              className={styles.inputfield}
+                              disabled
                             />
-                            {errors.price && (
-                              <p className="text-danger">
-                                {errors.price.message}
-                              </p>
-                            )}
+                            {errors.price && <p className="text-danger">{errors.price.message}</p>}
                           </>
                         )}
                       />
-                      {/* <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                        <DropdownToggle caret disabled={dropdownDisabled}>
-                          {selectedCategory
-                            ? getSelectedCategoryData()?.fullCategoryName
-                            : "Select Category"}
-                          <FontAwesomeIcon
-                            icon={faAngleDown}
-                            style={{ marginRight: "5px" }}
-                          />
-                        </DropdownToggle>
-                        <DropdownMenu>
-                          {categoryData.map((category: any) => (
-                            <DropdownItem
-                              key={category._id}
-                              onClick={() => setSelectedCategory(category._id)}
-                            >
-                              {category.fullCategoryName}
-                            </DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown> */}
-                    </FormGroup>
+                    </FormGroup> */}
                     <Catattributes
-                      selectedCategoryData={getSelectedCategoryData()}
+                      selectedCategoryData={categoryId}
                       onSelectChange={handleAttributesSelectChange}
                     />
 
                     <FormGroup>
+                      <Label for="price">Product Short Description</Label>
+                      <Controller
+                        control={control}
+                        name="shortDescription"
+                        rules={{ required: "Price is required" }}
+                        render={({ field }) => (
+                          <>
+                            <Input
+                              type="text"
+                              id="shortDescription"
+                              {...field}
+                              className={styles.inputfield}
+                            />
+                            {errors.price && <p className="text-danger">{errors.price.message}</p>}
+                          </>
+                        )}
+                      />
+                    </FormGroup>
+
+                    {/* <FormGroup>
                       <Label for="name">Brand</Label>
                       <Controller
                         control={control}
                         name="brandName"
-                        rules={{ required: "Price is required" }}
                         render={({ field }) => (
                           <>
                             <Input
                               type="text"
                               id="brandName"
                               {...field}
-                              className={styles.inputfield} disabled
+                              className={styles.inputfield}
+                              disabled
                             />
-                            {errors.price && (
-                              <p className="text-danger">
-                                {errors.price.message}
-                              </p>
-                            )}
+                            {errors.price && <p className="text-danger">{errors.price.message}</p>}
                           </>
                         )}
                       />
-                      {/* <Input
-                        type="select"
-                        onChange={(event: any) => {
-                          const selectedBrand = brandData.find(
-                            (brand: any) =>
-                              brand.brandName === event.target.value
-                          );
-
-                         
-                          if (selectedBrand) {
-                            setselectedbrand({
-                              name: selectedBrand.brandName,
-                              id: selectedBrand._id,
-                            });
-                          }
-                        }}
-                      >
-                        <option value="">Select</option>
-                        {brandData?.map((brand: any, index: number) => {
-                          return (
-                            <option key={index} value={brand?.brandName}>
-                              {brand?.brandName}
-                            </option>
-                          );
-                        })}
-                      </Input> */}
-                    </FormGroup>
+                    </FormGroup> */}
                     <FormGroup>
                       <Label for="description">Description</Label>
                       <Controller
@@ -544,9 +481,7 @@ const AddVariant = ({ }) => {
                               {...field}
                             />
                             {errors.description && (
-                              <p className="text-danger">
-                                {errors.description.message}
-                              </p>
+                              <p className="text-danger">{errors.description.message}</p>
                             )}
                           </>
                         )}
@@ -556,79 +491,26 @@ const AddVariant = ({ }) => {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Product ShortInfo</Label>
+                          <Label for="price">MRP</Label>
                           <Controller
                             control={control}
-                            name="productShortInfo"
-                            rules={{ required: "Price is required" }}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  type="text"
-                                  id="productShortInfo"
-                                  {...field}
-                                  className={styles.inputfield}
-                                />
-                                {errors.price && (
-                                  <p className="text-danger">
-                                    {errors.price.message}
-                                  </p>
-                                )}
-                              </>
-                            )}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="price">Product Short Description</Label>
-                          <Controller
-                            control={control}
-                            name="shortDescription"
-                            rules={{ required: "Price is required" }}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  type="text"
-                                  id="shortDescription"
-                                  {...field}
-                                  className={styles.inputfield}
-                                />
-                                {errors.price && (
-                                  <p className="text-danger">
-                                    {errors.price.message}
-                                  </p>
-                                )}
-                              </>
-                            )}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="price">Product Code</Label>
-                          <Controller
-                            control={control}
-                            name="productCode"
-                            rules={{ required: "Price is required" }}
+                            name="mrp"
+                            rules={{ required: "MRP is required" }}
                             render={({ field }) => (
                               <>
                                 <Input
                                   type="number"
-                                  id="productCode"
+                                  id="price"
                                   {...field}
                                   className={styles.inputfield}
                                 />
-                                {errors.price && (
-                                  <p className="text-danger">
-                                    {errors.price.message}
-                                  </p>
-                                )}
+                                {errors.mrp && <p className="text-danger">{errors.mrp.message}</p>}
                               </>
                             )}
                           />
                         </FormGroup>
                       </Col>
+
                       <Col md={6}>
                         <FormGroup>
                           <Label for="price">Price</Label>
@@ -645,15 +527,14 @@ const AddVariant = ({ }) => {
                                   className={styles.inputfield}
                                 />
                                 {errors.price && (
-                                  <p className="text-danger">
-                                    {errors.price.message}
-                                  </p>
+                                  <p className="text-danger">{errors.price.message}</p>
                                 )}
                               </>
                             )}
                           />
                         </FormGroup>
                       </Col>
+
                       <Col md={6}>
                         <FormGroup>
                           <Label for="price">Selling Price</Label>
@@ -667,47 +548,19 @@ const AddVariant = ({ }) => {
                                   type="number"
                                   id="price"
                                   className={styles.inputfield}
-                                  onChange={(e) =>
-                                    field.onChange(Number(e.target.value))
-                                  }
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   value={field.value}
                                 />
                                 {errors.sellingPrice && (
-                                  <p className="text-danger">
-                                    {errors.sellingPrice.message}
-                                  </p>
+                                  <p className="text-danger">{errors.sellingPrice.message}</p>
                                 )}
                               </>
                             )}
                           />
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="price">mrp</Label>
-                          <Controller
-                            control={control}
-                            name="mrp"
-                            rules={{ required: "mrp is required" }}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  type="number"
-                                  id="price"
-                                  {...field}
-                                  className={styles.inputfield}
-                                />
-                                {errors.mrp && (
-                                  <p className="text-danger">
-                                    {errors.mrp.message}
-                                  </p>
-                                )}
-                              </>
-                            )}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
+
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="price">Offer Price</Label>
                           <Controller
@@ -731,30 +584,7 @@ const AddVariant = ({ }) => {
                             )}
                           />
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="isBlocked">Status</Label>
-                          <Controller
-                            control={control}
-                            name="isBlocked"
-                            render={({ field }) => (
-                              <Input
-                                type="select"
-                                id="isBlocked"
-                                className={styles.inputfield}
-                                onChange={(e) =>
-                                  field.onChange(e.target.value === "true")
-                                }
-                              >
-                                <option value="">Select an option</option>
-                                <option value="true">Block</option>
-                                <option value="false">Activate</option>
-                              </Input>
-                            )}
-                          />
-                        </FormGroup>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Row>
                       <Col md={6}>
@@ -773,9 +603,7 @@ const AddVariant = ({ }) => {
                                   className={styles.inputfield}
                                 />
                                 {errors.stock && (
-                                  <p className="text-danger">
-                                    {errors.stock.message}
-                                  </p>
+                                  <p className="text-danger">{errors.stock.message}</p>
                                 )}
                               </>
                             )}
@@ -797,9 +625,7 @@ const AddVariant = ({ }) => {
                                   className={styles.inputfield}
                                 />
                                 {errors.tags && (
-                                  <p className="text-danger">
-                                    {errors.tags.message}
-                                  </p>
+                                  <p className="text-danger">{errors.tags.message}</p>
                                 )}
                               </>
                             )}
@@ -821,9 +647,7 @@ const AddVariant = ({ }) => {
                                   className={styles.inputfield}
                                 />
                                 {errors.rating && (
-                                  <p className="text-danger">
-                                    {errors.rating.message}
-                                  </p>
+                                  <p className="text-danger">{errors.rating.message}</p>
                                 )}
                               </>
                             )}
@@ -845,44 +669,20 @@ const AddVariant = ({ }) => {
                                   className={styles.inputfield}
                                 />
                                 {errors.skuId && (
-                                  <p className="text-danger">
-                                    {errors.skuId.message}
-                                  </p>
+                                  <p className="text-danger">{errors.skuId.message}</p>
                                 )}
                               </>
                             )}
                           />
                         </FormGroup>
                       </Col>
+
                       <FormGroup>
                         <Label for="productInfo">Product Info</Label>
-                        {/* {productInfo?.map((info:any, index:number) => (
-                        <div key={index} className="d-flex mb-2">
-                          <Input
-                            type="text"
-                            value={info}
-                            onChange={(e) =>
-                              handleProductInfoChange(index, e.target.value)
-                            }
-                            placeholder=""
-                          />
 
-                          <ButtonToggle
-                            color="danger"
-                            onClick={() => handleRemoveProductInfo(index)}
-                          >
-                            Remove
-                          </ButtonToggle>
-                        </div>
-                      ))} */}
                         {remarks?.map((remark: any, index: any) => (
-                          <FormGroup
-                            key={index}
-                            style={{ marginBottom: "10px" }}
-                          >
-                            <div
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
+                          <FormGroup key={index} style={{ marginBottom: "10px" }}>
+                            <div style={{ display: "flex", alignItems: "center" }}>
                               <Input
                                 type="text"
                                 id={`remark-${index}`}
@@ -894,7 +694,11 @@ const AddVariant = ({ }) => {
                                   setRemarks(updatedRemarks);
                                 }}
                                 required
-                                style={{ marginRight: "10px", backgroundColor: "white" }}
+                                style={{
+                                  marginRight: "10px",
+                                  borderRadius: "0px",
+                                  backgroundColor: "white",
+                                }}
                               />
                               {index === remarks.length - 1 && (
                                 <Button
@@ -910,7 +714,7 @@ const AddVariant = ({ }) => {
                                   style={{
                                     marginLeft: "5px",
                                     marginRight: "5px",
-                                    borderRadius: "0px"
+                                    borderRadius: "0px",
                                   }}
                                   color="danger"
                                   onClick={() => handleRemoveRemark(index)}
@@ -923,28 +727,7 @@ const AddVariant = ({ }) => {
                         ))}
                       </FormGroup>
                     </Row>
-                    <FormGroup>
-                      <Label for="material">Material</Label>
-                      <Controller
-                        control={control}
-                        name="material"
-                        render={({ field }) => (
-                          <>
-                            <Input
-                              type="text"
-                              id="material"
-                              {...field}
-                              className={styles.inputfield}
-                            />
-                            {errors.material && (
-                              <p className="text-danger">
-                                {errors.material.message}
-                              </p>
-                            )}
-                          </>
-                        )}
-                      />
-                    </FormGroup>
+
                     {/* <FormGroup>
                       <Label for="image">Image:</Label>
                       <Controller
@@ -974,27 +757,47 @@ const AddVariant = ({ }) => {
                         )}
                       />
                     </FormGroup> */}
-                    <Card>
+
+                    <Card style={{ borderRadius: "0px" }}>
                       <CardHeader>
                         <label>Media</label>
                       </CardHeader>
                       <CardBody>
-                        {/* <Controller
-                    {...register("media", {
-                      required: "Please enter media",
-                    })}
-                    control={control}
-                    render={({ field: { onChange, value } }) => ( */}
-                        <MediaUpload
-                          setValue={setValue}
-                          watch={watch}
+                        <Controller
                           control={control}
+                          name="images"
+                          render={({ field }) => (
+                            <>
+                              <MediaUpload
+                                setValue={setValue}
+                                watch={watch}
+                                control={control}
+                                type="images"
+                              />
+                            </>
+                          )}
                         />
-                        {/* )} */}
-                        {/* /> */}
-                        {/* <label style={{ color: "red" }}>
-                    {errors?.media?.message}
-                  </label> */}
+                      </CardBody>
+                    </Card>
+                    <Card style={{ borderRadius: "0px" }}>
+                      <CardHeader>
+                        <label>Product detail Image</label>
+                      </CardHeader>
+                      <CardBody>
+                        <Controller
+                          control={control}
+                          name="media"
+                          render={({ field }) => (
+                            <>
+                              <MediaUpload
+                                setValue={setValue}
+                                watch={watch}
+                                control={control}
+                                type="media"
+                              />
+                            </>
+                          )}
+                        />
                       </CardBody>
                     </Card>
 
@@ -1006,10 +809,10 @@ const AddVariant = ({ }) => {
                         width: "120px",
                         height: "40px",
                         borderRadius: "0px",
-                        border: "none"
+                        border: "none",
                       }}
                     >
-                      Add varient
+                      Add Variant
                     </Button>
                   </Form>
                 </CardBody>
@@ -1029,20 +832,20 @@ function CustomBody() {
   return <div>Select / Drag and drop Photos</div>;
 }
 
-const MediaUpload: React.FC<any> = ({ setValue, watch, control }) => {
+const MediaUpload: React.FC<any> = ({ setValue, watch, control, editedProduct, type }) => {
   const [files, setFiles] = useState([]);
-  const images = watch("images", []);
-  const media = watch("media", []);
+  // console.log(editedProduct);
+  // console.log(media);
 
   const onChange = (file: any) => {
-    console.log(file);
-    setValue("images", file);
+    console.log(file, "Media");
+    setValue(type, file);
     setFiles(file);
   };
-  console.log(files);
+  // console.log(files);
 
   useEffect(() => {
-    setFiles(images || []);
+    setFiles([]);
   }, []);
 
   const onRemoveImage = (id: any) => {
@@ -1052,7 +855,9 @@ const MediaUpload: React.FC<any> = ({ setValue, watch, control }) => {
     console.error(error);
   };
   const removePrev = (n: any) => {
-    setValue("media", media.slice(0, n).concat(media.slice(n + 1)));
+    const updatedFiles = files?.splice(n, 1);
+    setFiles(updatedFiles);
+    setValue(type, updatedFiles);
   };
   return (
     <div>
@@ -1065,7 +870,7 @@ const MediaUpload: React.FC<any> = ({ setValue, watch, control }) => {
         onChange={onChange}
       />
       <div className="upload-image-box">
-        {media?.map((item: any, index: any) => {
+        {files?.map((item: any, index: any) => {
           return (
             <div
               aria-hidden
@@ -1080,7 +885,7 @@ const MediaUpload: React.FC<any> = ({ setValue, watch, control }) => {
             >
               <img
                 style={{ width: 80, height: 80 }}
-                src={item.url || item.preview}
+                src={item.url || item.preview || item?.fileURL}
                 alt="images"
               />
               <div
@@ -1091,38 +896,6 @@ const MediaUpload: React.FC<any> = ({ setValue, watch, control }) => {
                   cursor: "pointer",
                 }}
                 onClick={() => removePrev(index)}
-              >
-                <Icon name="x" size={15} />
-              </div>
-            </div>
-          );
-        })}
-        {files?.map((item: any) => {
-          return (
-            <div
-              aria-hidden
-              style={{
-                width: 80,
-                height: 80,
-                marginRight: 10,
-                position: "relative",
-                flexWrap: "wrap",
-              }}
-              key={item.id}
-            >
-              <img
-                style={{ width: 80, height: 80 }}
-                src={item.preview}
-                alt="images"
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  top: 3,
-                  right: 5,
-                  cursor: "pointer",
-                }}
-                onClick={() => onRemoveImage(item.id)}
               >
                 <Icon name="x" size={15} />
               </div>
