@@ -96,9 +96,12 @@ interface AddProductProps {
   // ... other properties
 }
 const CREATE_PRODUCT = gql`
-  mutation CreateProduct($input: ProductInput!, $images: [Upload]) {
-    createProduct(input: $input, images: $images) {
+  mutation CreateProduct($input: ProductInput!, $images: [Upload],$productDetailImages: [Upload]) {
+    createProduct(input: $input, images: $images,productDetailImages: $productDetailImages) {
       message
+       product {
+      _id
+    }
     }
   }
 `;
@@ -164,8 +167,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   interface IAttribute {
     _id: string;
   }
-  console.log(Edit);
-  console.log(editedProduct);
+  // console.log(Edit);
+  // console.log(editedProduct);
 
   const navigate = useNavigate();
   const [createproduct] = useMutation(CREATE_PRODUCT);
@@ -181,7 +184,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
   // get attributeid values
   const handleAttributesSelectChange = (selectedValues: IAttribute[]) => {
-    console.log("Selected Values:", selectedValues);
+    // console.log("Selected Values:", selectedValues);
     setattributeid(selectedValues);
     // You can do further processing with the selected values here
   };
@@ -194,8 +197,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     updatedRemarks.splice(index, 1); // Remove the remark at the specified index
     setRemarks(updatedRemarks);
   };
-  console.log(categoryData);
-  console.log("select", selectedCategory);
+  // console.log(categoryData);
+  // console.log("select", selectedCategory);
 
   const id = localStorage?.getItem("vendorid");
   const {
@@ -221,6 +224,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   });
 
   useEffect(() => {
+    console.log("editedProduct", editedProduct);
+
     if (editedProduct) {
       setValue("productName", editedProduct?.productName || "");
 
@@ -261,7 +266,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     // Find the selected category in categoryData based on _id
     if (editedProduct) {
       const selectedCategoryData = editedProduct?.categoryId;
-      console.log(selectedCategoryData);
+      // console.log(selectedCategoryData);
 
       return selectedCategoryData;
     } else {
@@ -333,10 +338,10 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
 
   const onSubmit: SubmitHandler<ProductForm> = async (data: any) => {
-    console.log("clickk");
+    // console.log("clickk");
 
     data.attribute = attributeid;
-    console.log("data", data);
+    // console.log("data", data);
 
     const formdatas = {
       _id: editedProduct?._id,
@@ -362,7 +367,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       tags: editedProduct ? (editedProduct?.tags).join(" ") : data?.tags,
       attributes: attributeid,
     };
-    console.log("formdatas", formdatas);
+    // console.log("formdatas", formdatas);
 
     const file = data?.images?.map((image: any) => image.file);
 
@@ -376,21 +381,24 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       if (Edit) {
         formdatas.tags = (data?.tags).join(" ");
         console.log("click");
+        console.log("file", file);
         // formdatas._id=editedProduct?._id,
 
         const response = await updateproduct({
           variables: { input: { ...formdatas }, images: file },
         });
-        console.log(response);
+        console.log("response", response);
         if (response) {
-          toast.success(response?.data?.createProduct?.message);
+          console.log("response?.data?.updateProduct?.message", response?.data?.updateProduct?.message);
+
+          toast.success(response?.data?.updateProduct?.message);
           navigate("/product");
         }
       } else {
         const response = await createproduct({
           variables: { input: { ...formdatas }, images: file },
         });
-        console.log(response);
+        // console.log(response);
         if (response) {
           toast.success(response?.data?.createProduct?.message);
           navigate("/product");
@@ -398,6 +406,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       }
     } catch (error: any) {
       console.log(error);
+      toast.error(error.message)
     }
     // }
   };
@@ -407,6 +416,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
   return (
     <React.Fragment>
+      <ToastContainer />
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumbs
@@ -619,7 +629,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           ) : null}
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="price">Product Code</Label>
                           <Controller
@@ -643,6 +653,35 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           {errors?.productCode ? (
                             <div className={styles.errmsg}>
                               {errors?.productCode?.message}
+                            </div>
+                          ) : null} 
+                        </FormGroup>
+                      </Col> */}
+
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="mrp">MRP</Label>
+                          <Controller
+                            control={control}
+                            name="mrp"
+
+                            render={({ field: { value, onChange } }) => (
+                              <>
+                                <Input
+                                  type="number"
+                                  value={value}
+                                  onChange={onChange}
+
+                                  className={styles.inputfield}
+                                />
+
+                              </>
+                            )}
+                            rules={fieldRules.mrp}
+                          />
+                          {errors?.mrp ? (
+                            <div className={styles.errmsg}>
+                              {errors?.mrp?.message}
                             </div>
                           ) : null}
                         </FormGroup>
@@ -704,34 +743,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           ) : null}
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="mrp">MRP</Label>
-                          <Controller
-                            control={control}
-                            name="mrp"
 
-                            render={({ field: { value, onChange } }) => (
-                              <>
-                                <Input
-                                  type="number"
-                                  value={value}
-                                  onChange={onChange}
-
-                                  className={styles.inputfield}
-                                />
-
-                              </>
-                            )}
-                            rules={fieldRules.mrp}
-                          />
-                          {errors?.mrp ? (
-                            <div className={styles.errmsg}>
-                              {errors?.mrp?.message}
-                            </div>
-                          ) : null}
-                        </FormGroup>
-                      </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="offerPrice">Offer Price</Label>
@@ -783,8 +795,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="stock">Stock</Label>
@@ -812,6 +822,9 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           ) : null}
                         </FormGroup>
                       </Col>
+                    </Row>
+                    <Row>
+
                       <Col md={6}>
                         <FormGroup>
                           <Label for="tags">Tags</Label>
@@ -993,6 +1006,33 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
                       </CardBody>
                     </Card>
+                    <Card style={{ borderRadius: "0px" }} >
+                      <CardHeader>
+                        <label>Product detail Image</label>
+                      </CardHeader>
+                      <CardBody>
+                        <Controller
+                          control={control}
+                          name="images"
+                          render={({ field }) => (
+                            <>
+                              <MediaUpload
+                                setValue={setValue}
+                                watch={watch}
+                                control={control}
+                                editedProduct={editedProduct}
+                              />
+                            </>
+                          )}
+                          rules={fieldRules.images}
+                        />
+                        {errors?.images && (
+                          <div className={styles.errmsg}>{String(errors?.images?.message)}</div>
+                        )}
+
+                      </CardBody>
+                    </Card>
+
 
                     <Button
                       type="submit"
@@ -1005,7 +1045,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         border: "none"
                       }}
                     >
-                      {Edit ? "Edit Product" : "Add product"}
+                      {Edit ? "Edit Product" : "Create product"}
                     </Button>
                   </Form>
                 </CardBody>
@@ -1014,7 +1054,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
           </Row>
         </Container>
       </div>
-      <ToastContainer />
+
     </React.Fragment>
   );
 };
@@ -1034,15 +1074,15 @@ const MediaUpload: React.FC<any> = ({
   const [files, setFiles] = useState([]);
   const images = watch("images", []);
   const media = watch("media", []);
-  console.log(editedProduct);
-  console.log(media);
+  // console.log(editedProduct);
+  // console.log(media);
 
   const onChange = (file: any) => {
-    console.log(file);
+    // console.log(file);
     setValue("images", file);
     setFiles(file);
   };
-  console.log(files);
+  // console.log(files);
 
   useEffect(() => {
     setFiles(images || []);

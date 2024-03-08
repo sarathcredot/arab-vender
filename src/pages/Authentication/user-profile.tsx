@@ -40,7 +40,8 @@ interface AdminData {
   email: string;
   fullName: string;
   profilePic: profilePic;
-  mobileNumber: string
+  mobileNumber: string;
+  countryCode: string
 }
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -90,6 +91,7 @@ const UserProfile = () => {
       mobileNumber
       email
       fullName
+      countryCode
     }
   }
 }`
@@ -226,7 +228,7 @@ const UserProfile = () => {
                       <div className="text-muted">
                         <h5>{data?.fullName}</h5>
                         <p className="mb-1">Email : {data?.email} </p>
-                        <p className="mb-0">Mobile Number : {data?.mobileNumber}</p>
+                        <p className="mb-0">Mobile Number : {data?.countryCode} {data?.mobileNumber}</p>
                       </div>
                     </div>
                   </div>
@@ -262,7 +264,7 @@ const UserProfile = () => {
                       value={formik.values?.email}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      // required
+                    // required
                     />
 
                     {formik.touched.email && formik.errors.email && (
@@ -279,7 +281,7 @@ const UserProfile = () => {
                       value={formik.values?.fullName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      // required
+                    // required
                     />
 
                     {formik.touched.fullName && formik.errors.fullName && (

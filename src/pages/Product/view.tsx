@@ -531,7 +531,25 @@ const ProductDetails = () => {
                     <div className="border mt-3 border-dashed"></div>
 
                     <div className="mt-4">
+
                       <Row>
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-numeral"
+                              className="form-label"
+                            >
+                              {" "}
+                              MRP:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.mrp}
+                            </p>
+                          </div>
+                        </Col>
                         <Col xl={6}>
                           <div
                             className="mb-3"
@@ -565,23 +583,7 @@ const ProductDetails = () => {
                             </p>
                           </div>
                         </Col>
-                        <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-numeral"
-                              className="form-label"
-                            >
-                              {" "}
-                              MRP:
-                            </label>
-                            <p className="form-control-static">
-                              {product?.mrp}
-                            </p>
-                          </div>
-                        </Col>
+
                         <Col xl={6}>
                           <div
                             className="mb-3"

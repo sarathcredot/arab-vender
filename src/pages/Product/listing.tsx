@@ -14,6 +14,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Link, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
+import './listing.css'
 
 // const KYC_STATUS = gql`
 //   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -115,6 +116,7 @@ const ProductListing = () => {
   const [maxRecords, setMaxRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFilter, setselectedFilter] = useState("APPROVED")
   const id = localStorage.getItem("vendorid");
   const {
     loading: kycloading,
@@ -122,6 +124,7 @@ const ProductListing = () => {
     data: kycData,
   } = useQuery(KYC_STATUS);
   console.log(kycData);
+  console.log(currentPage, pageSize, selectedFilter);
 
   const {
     loading: productListLoading,
@@ -131,10 +134,14 @@ const ProductListing = () => {
   } = useQuery(PRODUCT_LIST, {
     variables: {
       input: {
-        page: currentPage, size: pageSize, query: searchTerm
+        page: currentPage, size: pageSize, query: searchTerm, status: selectedFilter
       },
     },
   });
+
+  const handleclick = (value: any) => {
+    setselectedFilter(value)
+  }
   console.log("pro", productListData);
   useEffect(() => {
     refetch();
@@ -162,6 +169,7 @@ const ProductListing = () => {
             page: currentPage,
             size: pageSize,
             query: searchTerm,
+            status: selectedFilter
           },
         });
         console.log(result);
@@ -229,6 +237,24 @@ const ProductListing = () => {
               </div>
             </Col>
           </Row>}
+          <Row style={{ display: "flex", paddingLeft: "12px", paddingRight: "12px" }}>
+            <Col className={selectedFilter === "APPROVED" ? "filter selected" : "filter"}
+              onClick={() => { handleclick("APPROVED") }}
+            >Approved</Col>
+            <Col className={selectedFilter === "UNDER_VERIFICATION" ? "filter selected" : "filter"}
+              onClick={() => { handleclick("UNDER_VERIFICATION") }}
+            >Under Review</Col>
+            <Col className={selectedFilter === "REJECTED" ? "filter selected" : "filter"}
+              onClick={() => { handleclick("REJECTED") }}
+            >Rejected</Col>
+            <Col className={selectedFilter === "PENDING" ? "filter selected" : "filter"}
+              onClick={() => { handleclick("PENDING") }}
+            >Pending</Col>
+            <Col
+              className={selectedFilter === "" ? "filter selected" : "filter"}
+              onClick={() => { handleclick("") }}
+            >All</Col>
+          </Row>
 
 
           <Row>
@@ -280,8 +306,10 @@ const ProductListing = () => {
                       >
                         <Thead>
                           <Tr>
-                            <Th>ProductCode</Th>
+                            <Th>No</Th>
                             <Th data-priority="1">Name</Th>
+                            <Th>Product Code</Th>
+
                             <Th data-priority="3">Category</Th>
                             <Th data-priority="1">Image</Th>
                             {/* <Th data-priority="3">Status</Th> */}
@@ -292,8 +320,10 @@ const ProductListing = () => {
                         <Tbody>
                           {products?.map((product: Product, index: number) => (
                             <Tr key={index}>
-                              <Td>{product.productCode}</Td>
+                              <Td>{index + 1}</Td>
                               <Td>{product.productName}</Td>
+                              <Td>{product.productCode}</Td>
+
 
                               <Td>{product?.categoryNamePath}</Td>
                               <Td>
@@ -411,7 +441,7 @@ const ProductListing = () => {
           </Row>
         </div>
       </div>
-    </React.Fragment>
+    </React.Fragment >
   );
 };
 
