@@ -19,7 +19,6 @@ interface ProductData {
   color: string;
   size: string;
   description: string;
-  material: string;
   shortDescription: string;
   images: {
     fileURL: string;
@@ -33,6 +32,9 @@ interface ProductData {
   skuId: number;
   tags: string;
   stock: string;
+  productDetailImages: {
+    fileURL: string;
+  }[];
   categoryNamePath: string;
   categoryId: string;
   isBlocked: boolean;
@@ -52,65 +54,65 @@ const ProductDetails = () => {
   // const _id = searchParams.get("_id");
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const productId = params.get('_id');
+  const productId = params.get("_id");
   const [product, setProduct] = useState<ProductData>();
   const [productVariants, setProductVariants] = useState<IVariant[]>([]);
   const [selectedVSize, setSelectedVSize] = useState<string>("");
   const [selectedVColor, setSelectedVColor] = useState<string>("");
-  const [vColors, setVColors] = useState<{ name: string; colorCode: string }[]>(
-    []
-  );
+  const [vColors, setVColors] = useState<{ name: string; colorCode: string }[]>([]);
   const [vSizes, setVSizes] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string>("");
-  const [editedProduct, setEditedProduct] = useState<ProductData | undefined>(
-    undefined
-  );
+  const [editedProduct, setEditedProduct] = useState<ProductData | undefined>(undefined);
 
   const GET_PRODUCTDETAIL = gql`
-  query GetProductByVendor($input: ProductId!) {
-    getProductByVendor(input: $input) {
-      message
-      product {
-        _id
-        attributes {
-          attributeValueId
-          attributeValue
-          attributeName
-          attributeDescription
-          attributeId
-        }
-        brandId
-        brandName
-        categoryId
-        categoryIdPath
-        categoryNamePath
-        description
-        material
-        isBlocked
-        mrp
-        offerPrice
-        price
-        productCode
-        productInfo
-        productName
-        productShortInfo
-        rating
-        sellingPrice
-        shortDescription
-        skuId
-        status
-        stock
-        tags
-        vendorId
-        images {
-          originalName
-          fileURL
-          fileType
+    query GetProductByVendor($input: ProductId!) {
+      getProductByVendor(input: $input) {
+        message
+        product {
+          _id
+          attributes {
+            attributeValueId
+            attributeValue
+            attributeName
+            attributeDescription
+            attributeId
+          }
+          brandId
+          brandName
+          categoryId
+          categoryIdPath
+          categoryNamePath
+          description
+          isBlocked
+          mrp
+          offerPrice
+          price
+          productCode
+          productInfo
+          productName
+          productShortInfo
+          rating
+          sellingPrice
+          shortDescription
+          skuId
+          status
+          stock
+          tags
+          vendorId
+          images {
+            originalName
+            fileURL
+            fileType
+          }
+          productDetailImages {
+            originalName
+            fileURL
+            fileType
+          }
         }
       }
     }
-  }
-`;
+  `;
   const GET_VARIANTS = gql`
     query Variants($input: VariantsInput!) {
       getVariants(input: $input) {
@@ -124,17 +126,19 @@ const ProductDetails = () => {
       }
     }
   `;
-  const PREVIEW = gql`mutation Mutation($input: ProductPreviewInput!) {
-  submitProductForPreviewByVendor(input: $input) {
-    _id
-    message
-  }
-}`
+  const PREVIEW = gql`
+    mutation Mutation($input: ProductPreviewInput!) {
+      submitProductForPreviewByVendor(input: $input) {
+        _id
+        message
+      }
+    }
+  `;
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
     variables: { input: { _id: productId } },
   });
 
-  const [preview] = useMutation(PREVIEW)
+  const [preview] = useMutation(PREVIEW);
   useEffect(() => {
     if (data && data.getProductByVendor && data.getProductByVendor.product) {
       let product: ProductData = data.getProductByVendor.product;
@@ -143,13 +147,9 @@ const ProductDetails = () => {
       setSelectedVColor(product.color);
       setSelectedImage(product.images[0]?.fileURL || "");
     }
-
-
-
   }, [data]);
 
   const handleaddVariant = () => {
-
     // if (kycData?.getKycStatus?.record?.isKycCompleted) {
     navigate(`/add-variant/?id=${productId}`);
 
@@ -162,25 +162,22 @@ const ProductDetails = () => {
     console.log("click");
     e.preventDefault();
     try {
-
       const response = await preview({
         variables: {
           input: {
-            _id: data?.getProductByVendor?.product?._id
-          }
-        }
+            _id: data?.getProductByVendor?.product?._id,
+          },
+        },
       }).then((data: any) => {
         console.log("data", data);
-        toast.success(data?.data?.submitProductForPreviewByVendor?.message)
-      })
+        toast.success(data?.data?.submitProductForPreviewByVendor?.message);
+      });
       // console.log(response);
-    }
-    catch (error) {
+    } catch (error) {
       toast.error((error as Error).message);
-      console.log(error)
+      console.log(error);
     }
-
-  }
+  };
 
   const getProductVariant = (size: string): string => {
     for (let product of productVariants) {
@@ -205,11 +202,7 @@ const ProductDetails = () => {
   };
   const isSizeOutOfStock = (size: string): boolean => {
     for (let product of productVariants) {
-      if (
-        product.color == selectedVColor &&
-        product.size == size &&
-        product.stock > 0
-      ) {
+      if (product.color == selectedVColor && product.size == size && product.stock > 0) {
         return false;
       }
     }
@@ -234,8 +227,7 @@ const ProductDetails = () => {
             vColors.map((color) => (
               <div
                 style={{
-                  border:
-                    color.name === selectedVColor ? "1px solid #2B2B2A" : "",
+                  border: color.name === selectedVColor ? "1px solid #2B2B2A" : "",
                   borderRadius: "30px",
                   display: "inline-block",
                   padding: "4px",
@@ -297,8 +289,8 @@ const ProductDetails = () => {
                           ? "#2B2B2A "
                           : "#E3E5E4"
                         : isActive
-                          ? "#2B2B2A "
-                          : "white",
+                        ? "#2B2B2A "
+                        : "white",
                       minWidth: "70px",
                       height: "50px",
                       color: isActive ? "white" : "#2B2B2A",
@@ -360,8 +352,7 @@ const ProductDetails = () => {
                   width: "100px",
                   height: "40px",
                   borderRadius: "0px",
-                  border: "none"
-
+                  border: "none",
                 }}
               >
                 Edit Product
@@ -395,10 +386,7 @@ const ProductDetails = () => {
                             gap: "4px",
                           }}
                         >
-                          <label
-                            htmlFor="sizeDropdown"
-                            className="form-label"
-                          ></label>
+                          <label htmlFor="sizeDropdown" className="form-label"></label>
                           <div className="btn-group" role="group">
                             {renderVariants()}
                           </div>
@@ -413,10 +401,7 @@ const ProductDetails = () => {
                             gap: "4px",
                           }}
                         >
-                          <label
-                            htmlFor="colorDropdown"
-                            className="form-label"
-                          ></label>
+                          <label htmlFor="colorDropdown" className="form-label"></label>
                           <div className="btn-group" role="group">
                             {renderSizeList()}
                           </div>
@@ -430,19 +415,11 @@ const ProductDetails = () => {
                     <div>
                       <Row>
                         <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-date"
-                              className="form-label"
-                            >
+                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                            <label htmlFor="cleave-date" className="form-label">
                               Name:
                             </label>
-                            <p className="form-control-static">
-                              {product?.productName}
-                            </p>
+                            <p className="form-control-static">{product?.productName}</p>
                           </div>
                         </Col>
                       </Row>
@@ -454,15 +431,10 @@ const ProductDetails = () => {
                       <Row>
                         <Col xl={6}>
                           <div className="mb-3">
-                            <label
-                              htmlFor="cleave-time-format"
-                              className="form-label"
-                            >
+                            <label htmlFor="cleave-time-format" className="form-label">
                               Description:
                             </label>
-                            <p className="form-control-static">
-                              {product?.description}
-                            </p>
+                            <p className="form-control-static">{product?.description}</p>
                           </div>
                         </Col>
                       </Row>
@@ -473,16 +445,11 @@ const ProductDetails = () => {
                       <Row>
                         <Col xl={6}>
                           <div className="mb-3">
-                            <label
-                              htmlFor="cleave-time-format"
-                              className="form-label"
-                            >
+                            <label htmlFor="cleave-time-format" className="form-label">
                               {" "}
                               Short Description:
                             </label>
-                            <p className="form-control-static">
-                              {product?.shortDescription}
-                            </p>
+                            <p className="form-control-static">{product?.shortDescription}</p>
                           </div>
                         </Col>
                       </Row>
@@ -493,10 +460,7 @@ const ProductDetails = () => {
                       <Row>
                         <Col xl={6}>
                           <div className="mb-3">
-                            <label
-                              htmlFor="cleave-time-format"
-                              className="form-label"
-                            >
+                            <label htmlFor="cleave-time-format" className="form-label">
                               Images:
                             </label>
 
@@ -531,110 +495,111 @@ const ProductDetails = () => {
                     <div className="border mt-3 border-dashed"></div>
 
                     <div className="mt-4">
-
                       <Row>
                         <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-numeral"
-                              className="form-label"
-                            >
-                              {" "}
-                              MRP:
+                          <div className="mb-3">
+                            <label htmlFor="cleave-time-format" className="form-label">
+                              Product Detail Images:
                             </label>
-                            <p className="form-control-static">
-                              {product?.mrp}
-                            </p>
-                          </div>
-                        </Col>
-                        <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-phone"
-                              className="form-label"
-                            >
-                              Price:
-                            </label>
-                            <p className="form-control-static">
-                              {product?.price}
-                            </p>
-                          </div>
-                        </Col>
 
-                        <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-numeral"
-                              className="form-label"
-                            >
-                              Selling Price:
-                            </label>
-                            <p className="form-control-static">
-                              {product?.sellingPrice}
-                            </p>
-                          </div>
-                        </Col>
-
-                        <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-numeral"
-                              className="form-label"
-                            >
-                              {" "}
-                              Stock:
-                            </label>
-                            <p className="form-control-static">
-                              {product?.stock}
-                            </p>
-                          </div>
-                        </Col>
-                        <Col xl={6}>
-                          <div
-                            className="mb-3"
-                            style={{ display: "flex", gap: "4px" }}
-                          >
-                            <label
-                              htmlFor="cleave-numeral"
-                              className="form-label"
-                            >
-                              {" "}
-                              Tags:
-                            </label>
-                            <p className="form-control-static">
-                              {product?.tags}
-                            </p>
+                            <div style={{ display: "flex" }}>
+                              {product?.productDetailImages.map((item, index) => (
+                                <div
+                                  key={index}
+                                  className="relative"
+                                  style={{ marginRight: "10px" }}
+                                >
+                                  <img
+                                    src={item?.fileURL}
+                                    className="w-full rounded-2xl object-cover products-image"
+                                    // onClick={() =>
+                                    //   handleImageClick(item?.fileURL)
+                                    // }
+                                    alt={`product detail ${index + 1}`}
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                      borderRadius: "8px",
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </Col>
                       </Row>
                     </div>
-                    {product?.status == 'PENDING' && <>
-                      <div className="border mt-3 border-dashed"></div>
-                      <button
+                    <div className="border mt-3 border-dashed"></div>
 
-                        style={{
-                          backgroundColor: "black",
-                          color: "white",
-                          // width: "100px",
-                          height: "40px",
-                          marginTop: "20px", border: "none", padding: "0 10px"
+                    <div className="mt-4">
+                      <Row>
+                        <Col xl={6}>
+                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                            <label htmlFor="cleave-numeral" className="form-label">
+                              {" "}
+                              MRP:
+                            </label>
+                            <p className="form-control-static">{product?.mrp}</p>
+                          </div>
+                        </Col>
+                        <Col xl={6}>
+                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                            <label htmlFor="cleave-phone" className="form-label">
+                              Price:
+                            </label>
+                            <p className="form-control-static">{product?.price}</p>
+                          </div>
+                        </Col>
 
-                        }} onClick={handlePreview}
-                      >
-                        Send For Review
-                      </button></>}
+                        <Col xl={6}>
+                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                            <label htmlFor="cleave-numeral" className="form-label">
+                              Selling Price:
+                            </label>
+                            <p className="form-control-static">{product?.sellingPrice}</p>
+                          </div>
+                        </Col>
+
+                        <Col xl={6}>
+                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                            <label htmlFor="cleave-numeral" className="form-label">
+                              {" "}
+                              Stock:
+                            </label>
+                            <p className="form-control-static">{product?.stock}</p>
+                          </div>
+                        </Col>
+                        <Col xl={6}>
+                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                            <label htmlFor="cleave-numeral" className="form-label">
+                              {" "}
+                              Tags:
+                            </label>
+                            <p className="form-control-static">{product?.tags}</p>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                    {product?.status == "PENDING" && (
+                      <>
+                        <div className="border mt-3 border-dashed"></div>
+                        <button
+                          style={{
+                            backgroundColor: "black",
+                            color: "white",
+                            // width: "100px",
+                            height: "40px",
+                            marginTop: "20px",
+                            border: "none",
+                            padding: "0 10px",
+                          }}
+                          onClick={handlePreview}
+                        >
+                          Send For Review
+                        </button>
+                      </>
+                    )}
                     {/* </form> */}
                   </CardBody>
                 </Card>

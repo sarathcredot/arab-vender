@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-} from "reactstrap";
+import { Row, Col, Card, CardBody, CardHeader, Button, Input } from "reactstrap";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Link, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
-import './listing.css'
+import "./listing.css";
 
 // const KYC_STATUS = gql`
 //   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -32,64 +24,43 @@ import './listing.css'
 // `;
 
 const KYC_STATUS = gql`
-query Record {
-  getKycStatus {
-    record {
-      _id
-      companyStatus
-      isBlocked
-      isKycCompleted
-      outletStatus
+  query Record {
+    getKycStatus {
+      record {
+        _id
+        companyStatus
+        isBlocked
+        isKycCompleted
+        outletStatus
+      }
+      message
     }
-    message
   }
-}`
+`;
 
 const PRODUCT_LIST = gql`
-query GetProductsByVendor($input: ProductByVendorFilters) {
-  getProductsByVendor(input: $input) {
-    maxRecords
-    records {
-      _id
-      vendorId
-      brandId
-      brandName
-      productName
-      shortDescription
-      skuId
-      description
-      productInfo
-      productShortInfo
-      material
-      images {
-        fileType
-        fileURL
-        mimeType
-        originalName
-      }
-      rating
-      sellingPrice
-      price
-      mrp
-      tags
-      productCode
-      categoryId
-      categoryNamePath
-      categoryIdPath
-      isBlocked
-      stock
-      status
-      offerPrice
-      attributes {
-        attributeId
-        attributeName
-        attributeValueId
-        attributeValue
-        attributeDescription
+  query GetProductsByVendor($input: ProductByVendorFilters) {
+    getProductsByVendor(input: $input) {
+      maxRecords
+      records {
+        _id
+        vendorId
+        brandName
+        productName
+        shortDescription
+        images {
+          fileType
+          fileURL
+          mimeType
+          originalName
+        }
+        productCode
+        categoryId
+        categoryNamePath
+        categoryIdPath
       }
     }
   }
-}
 `;
 
 interface Product {
@@ -116,13 +87,9 @@ const ProductListing = () => {
   const [maxRecords, setMaxRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFilter, setselectedFilter] = useState("APPROVED")
+  const [selectedFilter, setselectedFilter] = useState("");
   const id = localStorage.getItem("vendorid");
-  const {
-    loading: kycloading,
-    error: kycerror,
-    data: kycData,
-  } = useQuery(KYC_STATUS);
+  const { loading: kycloading, error: kycerror, data: kycData } = useQuery(KYC_STATUS);
   console.log(kycData);
   console.log(currentPage, pageSize, selectedFilter);
 
@@ -134,26 +101,27 @@ const ProductListing = () => {
   } = useQuery(PRODUCT_LIST, {
     variables: {
       input: {
-        page: currentPage, size: pageSize, query: searchTerm, status: selectedFilter
+        page: currentPage,
+        size: pageSize,
+        query: searchTerm,
+        status: selectedFilter,
       },
     },
   });
 
   const handleclick = (value: any) => {
-    setselectedFilter(value)
-  }
+    setselectedFilter(value);
+  };
   console.log("pro", productListData);
   useEffect(() => {
     refetch();
-  }, [])
+  }, []);
   useEffect(() => {
     setProducts(productListData?.getProductsByVendor?.records);
     setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
-  }, [productListData])
-  const [productListDatas, setProductDatas] = useState([])
+  }, [productListData]);
+  const [productListDatas, setProductDatas] = useState([]);
   console.log(products);
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -169,7 +137,7 @@ const ProductListing = () => {
             page: currentPage,
             size: pageSize,
             query: searchTerm,
-            status: selectedFilter
+            status: selectedFilter,
           },
         });
         console.log(result);
@@ -211,12 +179,9 @@ const ProductListing = () => {
       <div className="page-content">
         <div className="container-fluid">
           <ToastContainer />
-          <Breadcrumbs
-            title="Dashboard"
-            breadcrumbItem="Products"
-            link="/dashboard"
-          />
-          {products && products?.length == 0 && <Row>
+          <Breadcrumbs title="Dashboard" breadcrumbItem="Products" link="/dashboard" />
+
+          <Row>
             <Col lg={12}>
               <div className="d-flex justify-content-end mb-3">
                 <button
@@ -236,127 +201,125 @@ const ProductListing = () => {
                 </button>
               </div>
             </Col>
-          </Row>}
-          <Row style={{ display: "flex", paddingLeft: "12px", paddingRight: "12px" }}>
-            <Col className={selectedFilter === "APPROVED" ? "filter selected" : "filter"}
-              onClick={() => { handleclick("APPROVED") }}
-            >Approved</Col>
-            <Col className={selectedFilter === "UNDER_VERIFICATION" ? "filter selected" : "filter"}
-              onClick={() => { handleclick("UNDER_VERIFICATION") }}
-            >Under Review</Col>
-            <Col className={selectedFilter === "REJECTED" ? "filter selected" : "filter"}
-              onClick={() => { handleclick("REJECTED") }}
-            >Rejected</Col>
-            <Col className={selectedFilter === "PENDING" ? "filter selected" : "filter"}
-              onClick={() => { handleclick("PENDING") }}
-            >Pending</Col>
-            <Col
-              className={selectedFilter === "" ? "filter selected" : "filter"}
-              onClick={() => { handleclick("") }}
-            >All</Col>
           </Row>
 
+          <Row style={{ display: "flex", paddingLeft: "12px", paddingRight: "12px" }}>
+            <Col
+              className={selectedFilter === "" ? "filter selected" : "filter"}
+              onClick={() => {
+                handleclick("");
+              }}
+            >
+              All
+            </Col>
+            <Col
+              className={selectedFilter === "APPROVED" ? "filter selected" : "filter"}
+              onClick={() => {
+                handleclick("APPROVED");
+              }}
+            >
+              Approved
+            </Col>
+            <Col
+              className={selectedFilter === "UNDER_VERIFICATION" ? "filter selected" : "filter"}
+              onClick={() => {
+                handleclick("UNDER_VERIFICATION");
+              }}
+            >
+              Under Review
+            </Col>
+            <Col
+              className={selectedFilter === "REJECTED" ? "filter selected" : "filter"}
+              onClick={() => {
+                handleclick("REJECTED");
+              }}
+            >
+              Rejected
+            </Col>
+            <Col
+              className={selectedFilter === "PENDING" ? "filter selected" : "filter"}
+              onClick={() => {
+                handleclick("PENDING");
+              }}
+            >
+              Pending
+            </Col>
+          </Row>
 
           <Row>
             <Col>
-              {products && products?.length > 0 ? <Card style={{ borderRadius: "0px" }}>
-                <CardHeader>
-                  {/* <h4 className="card-title">Products</h4> */}
+              {products && products?.length > 0 ? (
+                <Card style={{ borderRadius: "0px" }}>
+                  <CardHeader>
+                    {/* <h4 className="card-title">Products</h4> */}
 
-                  <Col xs={5} lg={12} style={{ marginTop: "3px", display: "flex", justifyContent: "space-between" }}>
-                    <Input
-                      type="text"
-                      placeholder="Search Product"
-                      value={searchTerm}
-                      onChange={handleSearch}
-                      style={{ width: "50%", borderRadius: "0px" }}
-                    />
-
-                    <div className="d-flex justify-content-end ">
-                      <button
-                        style={{
-                          backgroundColor: "black",
-                          color: "white",
-                          width: "100px",
-                          height: "40px",
-                          borderRadius: "0px",
-                          cursor: "pointer",
-                          boxShadow: "none",
-                          border: "none",
-                        }}
-                        onClick={handlekycstatus}
-                      >
-                        Add Product
-                      </button>
-                    </div>
-                  </Col>
-
-
-                </CardHeader>
-
-                <CardBody>
-                  <div className="table-rep-plugin">
-                    <div
-                      className="table-responsive mb-0"
-                      data-pattern="priority-columns"
+                    <Col
+                      xs={5}
+                      lg={12}
+                      style={{ marginTop: "3px", display: "flex", justifyContent: "space-between" }}
                     >
-                      <Table
-                        id="tech-companies-1"
-                        className="table table-striped table-bordered"
-                      >
-                        <Thead>
-                          <Tr>
-                            <Th>No</Th>
-                            <Th data-priority="1">Name</Th>
-                            <Th>Product Code</Th>
+                      <Input
+                        type="text"
+                        placeholder="Search Product"
+                        value={searchTerm}
+                        onChange={handleSearch}
+                        style={{ width: "50%", borderRadius: "0px" }}
+                      />
+                    </Col>
+                  </CardHeader>
 
-                            <Th data-priority="3">Category</Th>
-                            <Th data-priority="1">Image</Th>
-                            {/* <Th data-priority="3">Status</Th> */}
-                            <Th data-priority="3">Status</Th>
-                            <Th data-priority="3">Action</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {products?.map((product: Product, index: number) => (
-                            <Tr key={index}>
-                              <Td>{index + 1}</Td>
-                              <Td>{product.productName}</Td>
-                              <Td>{product.productCode}</Td>
+                  <CardBody>
+                    <div className="table-rep-plugin">
+                      <div className="table-responsive mb-0" data-pattern="priority-columns">
+                        <Table id="tech-companies-1" className="table table-striped table-bordered">
+                          <Thead>
+                            <Tr>
+                              <Th>No</Th>
+                              <Th data-priority="1">Name</Th>
+                              <Th>Product Code</Th>
 
+                              <Th data-priority="3">Category</Th>
+                              <Th data-priority="1">Image</Th>
+                              {/* <Th data-priority="3">Status</Th> */}
+                              <Th data-priority="3">Action</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {products?.map((product: Product, index: number) => (
+                              <Tr key={index}>
+                                <Td>{index + 1}</Td>
+                                <Td>{product.productName}</Td>
+                                <Td>{product.productCode}</Td>
 
-                              <Td>{product?.categoryNamePath}</Td>
-                              <Td>
-                                <img
-                                  src={product.images[0]?.fileURL}
-                                  alt={product?.productName}
-                                  width={80}
-                                  height={80}
-                                />
-                              </Td>
-                              {/* <Td>{product.status.replace(/_/g, ' ')}</Td> */}
-                              <Td>
-                                {product.isBlocked ? "Blocked" : "Active"}
-                              </Td>
-                              <Td>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Button
-                                    color="white"
-                                    style={{
-                                      backgroundColor: "black",
-                                      alignItems: "center",
-                                      color: "white",
-                                      borderRadius: "0px"
-                                    }}
-                                    tag={Link}
-                                    to={{
-                                      pathname: "/list-variant",
-                                      search: `?_code=${product?.productCode}&_id=${product?._id}`,
-                                    }}
-                                  >
-                                    View varients
-                                  </Button>
-                                  {/* <Button
+                                <Td>{product?.categoryNamePath}</Td>
+                                <Td>
+                                  <img
+                                    src={product.images[0]?.fileURL}
+                                    alt={product?.productName}
+                                    width={80}
+                                    height={80}
+                                  />
+                                </Td>
+                                {/* <Td>{product.status.replace(/_/g, ' ')}</Td> */}
+                                <Td>
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Button
+                                      color="white"
+                                      style={{
+                                        backgroundColor: "black",
+                                        alignItems: "center",
+                                        color: "white",
+                                        borderRadius: "0px",
+                                      }}
+                                      tag={Link}
+                                      to={{
+                                        pathname: "/list-variant",
+                                        search: `?_code=${product?.productCode}`,
+                                      }}
+                                    >
+                                      View variants
+                                    </Button>
+                                    {/* <Button
                                   color="white"
                                   style={{
                                     backgroundColor: "black",
@@ -371,77 +334,85 @@ const ProductListing = () => {
                                 >
                                   View Details
                                 </Button> */}
-                                </div>
-                              </Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    </div>
-                  </div>
-                  <Row>
-                    <Col>
-                      <div className="d-flex justify-content-end mt-0 ">
-                        <ul className="pagination">
-                          <li
-                            className={`page-item ${currentPage === 0 ? "disabled" : ""
-                              }`}
-                          >
-                            <button
-                              style={{ borderRadius: "0px" }}
-                              className="page-link"
-                              onClick={() => setCurrentPage(currentPage - 1)}
-                              disabled={currentPage === 0}
-                            >
-                              Previous
-                            </button>
-                          </li>
-
-                          {Array.from({ length: totalPages }, (_, index) => (
-                            <li
-                              key={index}
-                              className={`page-item ${currentPage === index ? "active" : ""
-                                }`}
-                            >
-                              <button
-                                style={{ borderRadius: "0px" }}
-                                className="page-link"
-                                onClick={() => setCurrentPage(index)}
-                              >
-                                {index}
-                              </button>
-                            </li>
-                          ))}
-
-                          {currentPage < totalPages - 1 && (
-                            <li
-                              className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
-                                }`}
-                            >
-                              <button
-                                style={{ borderRadius: "0px" }}
-                                className="page-link"
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                                disabled={currentPage === totalPages - 1}
-                              >
-                                Next
-                              </button>
-                            </li>
-                          )}
-                        </ul>
+                                  </div>
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
                       </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card> :
-                <Card style={{ display: "flex", justifyContent: "center", borderRadius: "0px", alignItems: "center", minHeight: "200px", fontWeight: 600 }}>
+                    </div>
+                    <Row>
+                      <Col>
+                        <div className="d-flex justify-content-end mt-0 ">
+                          <ul className="pagination">
+                            <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
+                              <button
+                                style={{ borderRadius: "0px" }}
+                                className="page-link"
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                disabled={currentPage === 0}
+                              >
+                                Previous
+                              </button>
+                            </li>
+
+                            {Array.from({ length: totalPages }, (_, index) => (
+                              <li
+                                key={index}
+                                className={`page-item ${currentPage === index ? "active" : ""}`}
+                              >
+                                <button
+                                  style={{ borderRadius: "0px" }}
+                                  className="page-link"
+                                  onClick={() => setCurrentPage(index)}
+                                >
+                                  {index}
+                                </button>
+                              </li>
+                            ))}
+
+                            {currentPage < totalPages - 1 && (
+                              <li
+                                className={`page-item ${
+                                  currentPage === totalPages - 1 ? "disabled" : ""
+                                }`}
+                              >
+                                <button
+                                  style={{ borderRadius: "0px" }}
+                                  className="page-link"
+                                  onClick={() => setCurrentPage(currentPage + 1)}
+                                  disabled={currentPage === totalPages - 1}
+                                >
+                                  Next
+                                </button>
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              ) : (
+                <Card
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    borderRadius: "0px",
+                    alignItems: "center",
+                    minHeight: "200px",
+                    fontWeight: 600,
+                  }}
+                >
                   No Products
-                </Card>}
+                </Card>
+              )}
             </Col>
           </Row>
         </div>
       </div>
-    </React.Fragment >
+    </React.Fragment>
   );
 };
 

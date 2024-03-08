@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-} from "reactstrap";
+import { Row, Col, Card, CardBody, CardHeader, Button, Input } from "reactstrap";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Link, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
-import { useParams } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // const KYC_STATUS = gql`
 //   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -33,46 +25,52 @@ import { useLocation } from 'react-router-dom';
 // `;
 
 const KYC_STATUS = gql`
-query Record {
-  getKycStatus {
-    record {
-      _id
-      companyStatus
-      isBlocked
-      isKycCompleted
-      outletStatus
+  query Record {
+    getKycStatus {
+      record {
+        _id
+        companyStatus
+        isBlocked
+        isKycCompleted
+        outletStatus
+      }
+      message
     }
-    message
   }
-}`
+`;
 
 const PRODUCT_LIST = gql`
-query GetVariantsTableByVendor($input: ProductVariantsByVendorFilter!) {
-  getVariantsTableByVendor(input: $input) {
-    maxRecords
-    message
-    records {
-      _id
-      attributes {
-        attributeId
-        attributeName
-        attributeValueId
-        attributeValue
-        attributeDescription
+  query GetVariantsTableByVendor($input: ProductVariantsByVendorFilter!) {
+    getVariantsTableByVendor(input: $input) {
+      maxRecords
+      message
+      records {
+        _id
+        attributes {
+          attributeId
+          attributeName
+          attributeValueId
+          attributeValue
+          attributeDescription
+        }
+        images {
+          fileType
+          fileURL
+          mimeType
+          originalName
+        }
+        isBlocked
+        productName
+        status
+        stock
+        productCode
+        skuId
+        categoryNamePath
+        categoryId
+        brandName
       }
-      images {
-        fileType
-        fileURL
-        mimeType
-        originalName
-      }
-      isBlocked
-      productName
-      status
-      stock
     }
   }
-}
 `;
 
 interface Product {
@@ -81,6 +79,16 @@ interface Product {
   productCode: string;
   shortDescription: string;
   categoryNamePath: string;
+  skuId: string;
+  categoryId: string;
+  brandName: string;
+  attributes: {
+    attributeId: string;
+    attributeName: string;
+    attributeValueId: string;
+    attributeValue: string;
+    attributeDescription: string;
+  }[];
   images: {
     fileURL: string;
   }[];
@@ -94,12 +102,9 @@ const ProductListing = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const productId: any = params.get('_code');
-  const productcode = parseInt(productId)
-  console.log(productcode);
-  const pId = params.get('_id')
-  console.log(pId);
-
+  const productId: any = params.get("_code");
+  const productcode = parseInt(productId);
+  const pId = params.get("_id");
 
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
@@ -110,11 +115,7 @@ const ProductListing = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const id = localStorage.getItem("vendorid");
-  const {
-    loading: kycloading,
-    error: kycerror,
-    data: kycData,
-  } = useQuery(KYC_STATUS);
+  const { loading: kycloading, error: kycerror, data: kycData } = useQuery(KYC_STATUS);
   console.log(kycData);
 
   const {
@@ -125,7 +126,7 @@ const ProductListing = () => {
   } = useQuery(PRODUCT_LIST, {
     variables: {
       input: {
-        productCode: productcode, page: currentPage, size: pageSize
+        productCode: productcode,
       },
     },
   });
@@ -134,8 +135,8 @@ const ProductListing = () => {
   useEffect(() => {
     setProducts(productListData?.getVariantsTableByVendor?.records);
     setMaxRecords(productListData?.getVariantsTableByVendor?.maxRecords);
-  }, [productListData])
-  const [productListDatas, setProductDatas] = useState([])
+  }, [productListData]);
+  const [productListDatas, setProductDatas] = useState([]);
   console.log(products);
 
   // useEffect(()=>{
@@ -207,12 +208,10 @@ const ProductListing = () => {
   const totalPages = Math.ceil(maxRecords / pageSize);
 
   const handleaddVariant = () => {
-
     if (kycData?.getKycStatus?.record?.isKycCompleted) {
       navigate(`/add-variant/?id=${pId}`);
-
     } else {
-      toast.error("Complete Your KYC and Add Varient");
+      toast.error("Complete Your KYC and Add Variant");
     }
   };
 
@@ -231,11 +230,7 @@ const ProductListing = () => {
       <div className="page-content">
         <div className="container-fluid">
           <ToastContainer />
-          <Breadcrumbs
-            title="Dashboard"
-            breadcrumbItem="Product"
-            link="/dashboard"
-          />
+          <Breadcrumbs title="Dashboard" breadcrumbItem="Product" link="/dashboard" />
           <Row>
             <Col lg={12}>
               <div className="d-flex justify-content-end mb-3">
@@ -253,7 +248,7 @@ const ProductListing = () => {
                   }}
                   onClick={handleaddVariant}
                 >
-                  Add Varient
+                  Add Variant
                 </button>
                 {/* </Link> */}
               </div>
@@ -278,20 +273,41 @@ const ProductListing = () => {
                 </CardHeader>
 
                 <CardBody>
+                  <div className="mt-4">
+                    <Row>
+                      <Col xl={6}>
+                        <div className="mb-3">
+                          <label htmlFor="cleave-time-format" className="form-label">
+                            Brand
+                          </label>
+                          <div style={{ display: "flex" }}>
+                            {products && products.length > 0 && products[0]?.brandName}
+                          </div>
+                        </div>
+                      </Col>
+                      <Col xl={6}>
+                        <div className="mb-3">
+                          <label htmlFor="cleave-time-format" className="form-label">
+                            Category
+                          </label>
+                          <div style={{ display: "flex" }}>
+                            {products && products.length > 0 && products[0]?.categoryNamePath}
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </div>
                   <div className="table-rep-plugin">
-                    <div
-                      className="table-responsive mb-0"
-                      data-pattern="priority-columns"
-                    >
-                      <Table
-                        id="tech-companies-1"
-                        className="table table-striped table-bordered"
-                      >
+                    <div className="table-responsive mb-0" data-pattern="priority-columns">
+                      <Table id="tech-companies-1" className="table table-striped table-bordered">
                         <Thead>
                           <Tr>
-
                             <Th data-priority="1">Name</Th>
+                            <Th data-priority="1">Image</Th>
+                            <Th data-priority="1">SKU ID</Th>
+                            <Th data-priority="1">Attributes</Th>
                             <Th data-priority="1">Stock</Th>
+
                             {/* <Th data-priority="3">Status</Th> */}
                             <Th data-priority="3">Status</Th>
                             <Th data-priority="3">Action</Th>
@@ -301,13 +317,28 @@ const ProductListing = () => {
                           {products?.map((product: Product, index: number) => (
                             <Tr key={index}>
                               <Td>{product?.productName}</Td>
-                              <Td>{product?.stock}</Td>
                               {/* <Td>{product?.status}</Td> */}
-
-
                               <Td>
-                                {product.isBlocked ? "Blocked" : "Active"}
+                                <img
+                                  src={product.images[0]?.fileURL}
+                                  alt={product?.productName}
+                                  width={80}
+                                  height={80}
+                                />
                               </Td>
+                              <Td>{product?.skuId}</Td>
+                              <Td>
+                                {product.attributes.map((attribute, index) => (
+                                  <div key={index}>
+                                    <p>
+                                      {attribute.attributeName}: {attribute.attributeValue}
+                                    </p>
+                                  </div>
+                                ))}
+                              </Td>
+                              <Td>{product?.stock}</Td>
+
+                              <Td>{product.isBlocked ? "Blocked" : "Active"}</Td>
                               <Td>
                                 <Button
                                   color="white"
@@ -315,7 +346,7 @@ const ProductListing = () => {
                                     backgroundColor: "black",
                                     alignItems: "center",
                                     color: "white",
-                                    borderRadius: "0px"
+                                    borderRadius: "0px",
                                   }}
                                   tag={Link}
                                   to={{
@@ -332,14 +363,11 @@ const ProductListing = () => {
                       </Table>
                     </div>
                   </div>
-                  <Row>
+                  {/* <Row>
                     <Col>
                       <div className="d-flex justify-content-end mt-0 ">
                         <ul className="pagination">
-                          <li
-                            className={`page-item ${currentPage === 0 ? "disabled" : ""
-                              }`}
-                          >
+                          <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
                             <button
                               className="page-link"
                               onClick={() => setCurrentPage(currentPage - 1)}
@@ -353,8 +381,7 @@ const ProductListing = () => {
                           {Array.from({ length: totalPages }, (_, index) => (
                             <li
                               key={index}
-                              className={`page-item ${currentPage === index ? "active" : ""
-                                }`}
+                              className={`page-item ${currentPage === index ? "active" : ""}`}
                             >
                               <button
                                 style={{ borderRadius: "0px" }}
@@ -368,15 +395,15 @@ const ProductListing = () => {
 
                           {currentPage < totalPages - 1 && (
                             <li
-                              className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
-                                }`}
+                              className={`page-item ${
+                                currentPage === totalPages - 1 ? "disabled" : ""
+                              }`}
                             >
                               <button
                                 className="page-link"
                                 onClick={() => setCurrentPage(currentPage + 1)}
                                 disabled={currentPage === totalPages - 1}
                                 style={{ borderRadius: "0px" }}
-
                               >
                                 Next
                               </button>
@@ -385,7 +412,8 @@ const ProductListing = () => {
                         </ul>
                       </div>
                     </Col>
-                  </Row>
+                  </Row> */}
+                  <div className="border mt-3 border-dashed"></div>
                 </CardBody>
               </Card>
             </Col>
