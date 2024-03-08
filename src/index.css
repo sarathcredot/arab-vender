@@ -20,3 +20,7 @@ code {
   margin-top: 15px;
   display: flex;
 }
+
+.modal-content{
+  border-radius: 0px;
+}

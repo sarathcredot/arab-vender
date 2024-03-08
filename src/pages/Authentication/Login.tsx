@@ -183,11 +183,22 @@ const Login = (props: any) => {
     // console.log("click");
 
     try {
-      const response = await resendotp({ variables: { input: { mobileNumber: localStorage?.getItem("mobile"), countryCode: localStorage?.getItem("countrycode") } } })
-      // console.log(response);
-      toast.success(response?.data?.reSendloginVendorWithOtp?.message)
-
+      const response = await getotp({ variables: { input: { mobileNumber: localStorage?.getItem("mobile"), countryCode: localStorage?.getItem("countrycode") } } })
+      console.log("response", response);
+      if (response) {
+        setVendorid(response?.data?.loginVendorWithOtp?._id)
+        toast.success(response?.data?.loginVendorWithOtp?.message)
+        setShowOtpInput("otp");
+        localStorage.setItem("mobile", mobileNumber)
+        localStorage.setItem("countrycode", selectedOption)
+      }
     }
+    // try {
+    //   const response = await resendotp({ variables: { input: { mobileNumber: localStorage?.getItem("mobile"), countryCode: localStorage?.getItem("countrycode") } } })
+    //   // console.log(response);
+    //   toast.success(response?.data?.reSendloginVendorWithOtp?.message)
+
+    // }
     catch (error) {
       toast.error((error as Error).message);
       // console.log(error)
@@ -244,7 +255,7 @@ const Login = (props: any) => {
       }
     }
     catch (error) {
-      toast.error((error as Error).message);
+      toast.error("Invalid OTP! Please verify and re-enter the code");
       // console.log(error)
       setOtp(['', '', '', '', '']);
 
@@ -257,6 +268,10 @@ const Login = (props: any) => {
     try {
       if (!mobileNumber.trim()) {
         setError("Mobile number is required");
+        return;
+      }
+      else if (mobileNumber.length < 8 || mobileNumber.length > 8) {
+        setError("Enter a valid mobile number");
         return;
       }
 
@@ -299,8 +314,8 @@ const Login = (props: any) => {
     <div>
       <Header />
       <ToastContainer />
-      <div className={styles.headercontainer} style={{ paddingLeft: "0px" }}>
-        <div className={styles.outerWrapper} style={{  }}>
+      <div className={styles.headercontainer} style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+        <div className={styles.outerWrapper} style={{}}>
           <div className={styles.leftcontainer}>
             {showOtpInput == "register" ? (
               <>
@@ -309,8 +324,7 @@ const Login = (props: any) => {
                   Login/ Register to your account
                 </div>
                 <p className={styles.subtitle}>
-                  Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
-                  lacinia egestas placerat .
+                  New to Arab Deal? Register now to access exclusive vendor benefits and start selling your products!
                 </p>
                 <div
                   style={{
@@ -356,7 +370,7 @@ const Login = (props: any) => {
 
 
                     <Input
-                      type="text"
+                      type="number"
                       placeholder="Enter Mobile Number"
                       className={styles.inputfield}
                       value={mobileNumber}
@@ -391,8 +405,7 @@ const Login = (props: any) => {
                   Verify Phone Number
                 </div>
                 <p className={styles.subtitle}>
-                  Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
-                  lacinia egestas placerat ut sagittionec.
+                  Almost there! Enter the code sent to your phone to complete the verification process and gain full access to your account
                 </p>
                 <div style={{ display: "flex", gap: "20px" }}>
                   {otp.map((digit, index) => (

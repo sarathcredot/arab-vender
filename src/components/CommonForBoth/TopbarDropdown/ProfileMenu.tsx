@@ -107,7 +107,7 @@ const ProfileMenu = (props: any) => {
   } = useQuery(GET_VENDOR, {
     variables: { input: { _id: localStorage.getItem("vendorid") } },
   });
- 
+
   const token = localStorage.getItem("token");
   const adminImage = localStorage.getItem("vendorData");
   useEffect(() => {
@@ -152,7 +152,7 @@ const ProfileMenu = (props: any) => {
           <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
         </DropdownToggle>
 
-        <DropdownMenu className="dropdown-menu-end">
+        <DropdownMenu className="dropdown-menu-end mt-1" >
           <Link to={"/profile"} className="dropdown-item">
             <i className="bx bx-user font-size-16 align-middle me-1" />{" "}
             {props.t("Profile")}{" "}
@@ -165,21 +165,22 @@ const ProfileMenu = (props: any) => {
         </DropdownMenu>
       </Dropdown>
 
-      <Modal isOpen={logoutModal} toggle={toggleLogoutModal}>
+      <Modal isOpen={logoutModal} toggle={toggleLogoutModal} style={{ border: "none" }}>
         <ModalHeader toggle={toggleLogoutModal}>
           Logout Confirmation
         </ModalHeader>
         <ModalBody>Are you sure you want to logout?</ModalBody>
         <ModalFooter>
           <Button
-            style={{ backgroundColor: "rgba(0, 0, 0, 1)" }}
+            style={{ backgroundColor: "rgba(0, 0, 0, 1)", borderRadius: "0px", border: "none" }}
             onClick={toggleLogoutModal}
           >
             Cancel
           </Button>
           <Button
-            style={{ backgroundColor: "rgba(177, 35, 73, 1)" }}
+            style={{ backgroundColor: "rgba(0, 0, 0, 1)", borderRadius: "0px", border: "none" }}
             onClick={handleLogout}
+
           >
             Logout
           </Button>

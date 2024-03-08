@@ -152,10 +152,10 @@ const SidebarContent = (props: any) => {
       <SimpleBar style={{ maxHeight: "100%" }} ref={ref}>
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
-            <li className="menu-title" style={{ color: "#FFF" }}>
+            {/* <li className="menu-title" style={{ color: "#FFF" }}>
               {props.t("Menu")}{" "}
-            </li>
-            <li className="mt-3 li-sideBar">
+            </li> */}
+            <li className="mt-3 li-sideBar" style={{ borderRadius: "0px" }}>
               <Link to="/dashboard" className="">
                 {/* <FeatherIcon icon="home" /> <span>{props.t("Dashboard")}</span>
                  */}
@@ -171,7 +171,7 @@ const SidebarContent = (props: any) => {
                 <span>{props.t("Dashboard")}</span>
               </Link>
             </li>
-            <li className="mt-3 li-sideBar">
+            <li className="mt-3 li-sideBar" style={{ borderRadius: "0px" }}>
               <Link to="/kyc" className=" ">
                 {/* <FeatherIcon icon="shopping-cart" /><span>{props.t("Products")}</span> */}
                 {/* <svg
@@ -186,7 +186,7 @@ const SidebarContent = (props: any) => {
                 <span>{props.t("KYC")}</span>
               </Link>
             </li>
-            <li className="mt-3 li-sideBar">
+            <li className="mt-3 li-sideBar" style={{ borderRadius: "0px" }}>
               <Link to="/brand" className=" ">
                 {/* <FeatherIcon icon="shopping-cart" /><span>{props.t("Products")}</span> */}
                 {/* <svg
@@ -201,7 +201,7 @@ const SidebarContent = (props: any) => {
                 <span>{props.t("Brand")}</span>
               </Link>
             </li>
-            <li className="mt-3  li-sideBar">
+            <li className="mt-3  li-sideBar" style={{ borderRadius: "0px" }}>
               <Link to="/category" className="">
                 {/* <FeatherIcon icon="grid" /> <span>{props.t("Category")}</span> */}
                 <svg
@@ -235,7 +235,7 @@ const SidebarContent = (props: any) => {
                 <span>{props.t("Size")}</span>
               </Link>
             </li> */}
-            <li className="mt-3 li-sideBar">
+            <li className="mt-3 li-sideBar" style={{ borderRadius: "0px" }}>
               <Link to="/product" className=" ">
                 {/* <FeatherIcon icon="shopping-cart" /><span>{props.t("Products")}</span> */}
                 {/* <svg

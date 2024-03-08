@@ -51,11 +51,11 @@ const GET_ATTRIBUTE = gql`
     }
   }
 `;
-function catattribute({ selectedCategoryData, onSelectChange,editedProduct }: any) {
+function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: any) {
   console.log(selectedCategoryData);
   // const catId = selectedCategoryData?._id;
   const catId = selectedCategoryData;
-console.log(editedProduct);
+  console.log(editedProduct);
 
   const { loading, error, data } = useQuery(GET_ATTRIBUTE, {
     variables: { input: { categoryId: catId } },
@@ -70,17 +70,17 @@ console.log(editedProduct);
   }, [data]);
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
-  
+
   const [attributeselectedValues, setattributeSelectedValues] = useState<
     string[]
-  >([] );
-// useEffect(()=>{
+  >([]);
+  // useEffect(()=>{
 
-//   const existValue=editedProduct?.attributes.map((value:any)=>value.attributeValue)
-// console.log(existValue);
+  //   const existValue=editedProduct?.attributes.map((value:any)=>value.attributeValue)
+  // console.log(existValue);
 
-//   setAttributeData(existValue || [])
-// },[editedProduct])
+  //   setAttributeData(existValue || [])
+  // },[editedProduct])
   const handleSelectChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
     attriIndex: number
@@ -90,11 +90,11 @@ console.log(editedProduct);
 
     console.log(newValue)
 
-    
+
     const newSelectedValues = [...attributeselectedValues];
     newSelectedValues[attriIndex] = newValue;
 
-    
+
     setattributeSelectedValues(newSelectedValues);
     onSelectChange(newSelectedValues);
   };
@@ -102,20 +102,21 @@ console.log(editedProduct);
 
   return (
     <div>
-      {attributeData && 
+      {attributeData &&
         attributeData?.map((attri: any, index: any) => {
           console.log(attri, "attri");
 
           return (
             attri?.attributeValues?.length > 0 && (
-             
+
               <div key={index} className="mt-3">
                 <Label>{attri?.description}</Label>
                 <Input
+                  style={{ borderRadius: "0px", backgroundColor:"white" }}
                   type="select"
-                                   onChange={(e: any) => handleSelectChange(e, index)}
+                  onChange={(e: any) => handleSelectChange(e, index)}
                   defaultValue={editedProduct?.attributes[index]?.attributeValueId || "Select"}
-                  >
+                >
                   <option value="">Select</option>
                   {attri?.attributeValues.map(
                     (attributes: any, index: number) => (

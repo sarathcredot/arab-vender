@@ -17,20 +17,34 @@ import { ToastContainer, toast } from "react-toastify";
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
+// const KYC_STATUS = gql`
+//   query GetKycStatus($input: VendorRecordKycStatusInput!) {
+//     getKycStatus(input: $input) {
+//       record {
+//         _id
+//         isBlocked
+//         isKycCompleted
+//         outletStatus
+//         companyStatus
+//       }
+//       message
+//     }
+//   }
+// `;
+
 const KYC_STATUS = gql`
-  query GetKycStatus($input: VendorRecordKycStatusInput!) {
-    getKycStatus(input: $input) {
-      record {
-        _id
-        isBlocked
-        isKycCompleted
-        outletStatus
-        companyStatus
-      }
-      message
+query Record {
+  getKycStatus {
+    record {
+      _id
+      companyStatus
+      isBlocked
+      isKycCompleted
+      outletStatus
     }
+    message
   }
-`;
+}`
 
 const PRODUCT_LIST = gql`
 query GetVariantsTableByVendor($input: ProductVariantsByVendorFilter!) {
@@ -71,8 +85,8 @@ interface Product {
     fileURL: string;
   }[];
   isBlocked: boolean;
-  stock:string;
-  status:string;
+  stock: string;
+  status: string;
 }
 
 const ProductListing = () => {
@@ -80,13 +94,13 @@ const ProductListing = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const productId:any = params.get('_code');
-  const productcode=parseInt(productId)
+  const productId: any = params.get('_code');
+  const productcode = parseInt(productId)
   console.log(productcode);
-  const pId=params.get('_id')
+  const pId = params.get('_id')
   console.log(pId);
-  
-  
+
+
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -100,9 +114,7 @@ const ProductListing = () => {
     loading: kycloading,
     error: kycerror,
     data: kycData,
-  } = useQuery(KYC_STATUS, {
-    variables: { input: { _id: id } },
-  });
+  } = useQuery(KYC_STATUS);
   console.log(kycData);
 
   const {
@@ -113,18 +125,18 @@ const ProductListing = () => {
   } = useQuery(PRODUCT_LIST, {
     variables: {
       input: {
-        productCode: productcode,page:currentPage,size: pageSize
+        productCode: productcode, page: currentPage, size: pageSize
       },
     },
   });
-console.log("pro",productListData);
+  console.log("pro", productListData);
 
-useEffect(()=>{
-  setProducts(productListData?.getVariantsTableByVendor?.records);
+  useEffect(() => {
+    setProducts(productListData?.getVariantsTableByVendor?.records);
     setMaxRecords(productListData?.getVariantsTableByVendor?.maxRecords);
-},[productListData])
-const [productListDatas,setProductDatas]=useState([])
-console.log(products);
+  }, [productListData])
+  const [productListDatas, setProductDatas] = useState([])
+  console.log(products);
 
   // useEffect(()=>{
   //   if(productListData){
@@ -166,10 +178,10 @@ console.log(products);
   // useEffect(() => {
   //   const fetchData = async () => {
   //     console.log("ist");
-      
+
   //     try {
   //       console.log("s",currentPage);
-        
+
   //       setLoading(true);
   //       const result = await refetch({
   //         input: {
@@ -179,7 +191,7 @@ console.log(products);
   //         },
   //       });
   //       console.log(result);
-        
+
   //       setProducts(productListData?.getProductsByVendor?.records);
   //       setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
   //     } catch (error: any) {
@@ -198,9 +210,9 @@ console.log(products);
 
     if (kycData?.getKycStatus?.record?.isKycCompleted) {
       navigate(`/add-variant/?id=${pId}`);
-      
+
     } else {
-      toast.error("Complete Your KYC and Add Products");
+      toast.error("Complete Your KYC and Add Varient");
     }
   };
 
@@ -260,7 +272,7 @@ console.log(products);
                       placeholder="Search Product"
                       value={searchTerm}
                       onChange={handleSearch}
-                      style={{ width: "50%" }}
+                      style={{ width: "50%", borderRadius: "0px" }}
                     />
                   </Col>
                 </CardHeader>
@@ -277,7 +289,7 @@ console.log(products);
                       >
                         <Thead>
                           <Tr>
-                           
+
                             <Th data-priority="1">Name</Th>
                             <Th data-priority="1">Stock</Th>
                             {/* <Th data-priority="3">Status</Th> */}
@@ -288,11 +300,11 @@ console.log(products);
                         <Tbody>
                           {products?.map((product: Product, index: number) => (
                             <Tr key={index}>
-                             <Td>{product?.productName}</Td> 
+                              <Td>{product?.productName}</Td>
                               <Td>{product?.stock}</Td>
                               {/* <Td>{product?.status}</Td> */}
-                             
-                             
+
+
                               <Td>
                                 {product.isBlocked ? "Blocked" : "Active"}
                               </Td>
@@ -303,6 +315,7 @@ console.log(products);
                                     backgroundColor: "black",
                                     alignItems: "center",
                                     color: "white",
+                                    borderRadius: "0px"
                                   }}
                                   tag={Link}
                                   to={{
@@ -324,14 +337,14 @@ console.log(products);
                       <div className="d-flex justify-content-end mt-0 ">
                         <ul className="pagination">
                           <li
-                            className={`page-item ${
-                              currentPage === 0 ? "disabled" : ""
-                            }`}
+                            className={`page-item ${currentPage === 0 ? "disabled" : ""
+                              }`}
                           >
                             <button
                               className="page-link"
                               onClick={() => setCurrentPage(currentPage - 1)}
                               disabled={currentPage === 0}
+                              style={{ borderRadius: "0px" }}
                             >
                               Previous
                             </button>
@@ -340,29 +353,30 @@ console.log(products);
                           {Array.from({ length: totalPages }, (_, index) => (
                             <li
                               key={index}
-                              className={`page-item ${
-                                currentPage === index ? "active" : ""
-                              }`}
+                              className={`page-item ${currentPage === index ? "active" : ""
+                                }`}
                             >
                               <button
+                                style={{ borderRadius: "0px" }}
                                 className="page-link"
                                 onClick={() => setCurrentPage(index)}
                               >
-                                {index+1}
+                                {index + 1}
                               </button>
                             </li>
                           ))}
 
                           {currentPage < totalPages - 1 && (
                             <li
-                              className={`page-item ${
-                                currentPage === totalPages - 1 ? "disabled" : ""
-                              }`}
+                              className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
+                                }`}
                             >
                               <button
                                 className="page-link"
                                 onClick={() => setCurrentPage(currentPage + 1)}
                                 disabled={currentPage === totalPages - 1}
+                                style={{ borderRadius: "0px" }}
+
                               >
                                 Next
                               </button>

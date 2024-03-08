@@ -40,6 +40,8 @@ interface AdminData {
   email: string;
   fullName: string;
   profilePic: profilePic;
+  mobileNumber: string;
+  countryCode: string
 }
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -89,6 +91,7 @@ const UserProfile = () => {
       mobileNumber
       email
       fullName
+      countryCode
     }
   }
 }`
@@ -110,7 +113,7 @@ const UserProfile = () => {
     data: vendorData,
     refetch: vendorRefetch,
   } = useQuery(GET_VENDOR);
-  console.log("vendorData", vendorData);
+  // console.log("vendorData", vendorData);
 
   // useEffect(() => {
   //   const authUser: any = localStorage.getItem("authUser");
@@ -150,12 +153,10 @@ const UserProfile = () => {
 
     }),
     onSubmit: async (values) => {
-      console.log(values);
 
       try {
         let variables: any = {
           input: {
-            _id: localStorage.getItem("vendorid"),
             email: values?.email,
             fullName: values?.fullName,
           },
@@ -168,10 +169,11 @@ const UserProfile = () => {
           };
         }
 
+
+
         const response = await updateProfile({
           variables,
         });
-        console.log(response);
 
         if (response) {
           vendorRefetch();
@@ -197,6 +199,7 @@ const UserProfile = () => {
   }, [vendorData, vendorRefetch]);
 
   document.title = "Profile | Arab-deals";
+  console.log("data-----------", data);
 
   return (
     <React.Fragment>
@@ -204,7 +207,7 @@ const UserProfile = () => {
       <div className="page-content">
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumb title="" breadcrumbItem="Profile" />
+          <Breadcrumb title="Dashboard" breadcrumbItem="Profile" />
 
           <Row>
             <Col lg="12">
@@ -225,7 +228,7 @@ const UserProfile = () => {
                       <div className="text-muted">
                         <h5>{data?.fullName}</h5>
                         <p className="mb-1">Email : {data?.email} </p>
-                        <p className="mb-0">Name: {data?.fullName}</p>
+                        <p className="mb-0">Mobile Number : {data?.countryCode} {data?.mobileNumber}</p>
                       </div>
                     </div>
                   </div>
@@ -253,6 +256,7 @@ const UserProfile = () => {
                   >
                     <Label className="form-label">Email</Label>
                     <Input
+                      style={{ backgroundColor: "white" }}
                       name="email"
                       className="form-control"
                       placeholder="Enter new email"
@@ -260,14 +264,16 @@ const UserProfile = () => {
                       value={formik.values?.email}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
+                    // required
                     />
 
                     {formik.touched.email && formik.errors.email && (
                       <div className="text-danger">{formik.errors.email}</div>
                     )}
 
-                    <Label className="form-label pt-2">FullName</Label>
+                    <Label className="form-label pt-4">Full Name</Label>
                     <Input
+                      style={{ backgroundColor: "white" }}
                       name="fullName"
                       className="form-control"
                       placeholder="Enter name"
@@ -275,6 +281,7 @@ const UserProfile = () => {
                       value={formik.values?.fullName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
+                    // required
                     />
 
                     {formik.touched.fullName && formik.errors.fullName && (
@@ -282,10 +289,12 @@ const UserProfile = () => {
                         {formik.errors.fullName}
                       </div>
                     )}
-                    <Label for="profileImage " className="pt-2">
-                      Pofile Pic
+                    <Label for="profileImage " className="pt-4">
+                      Profile Pic
                     </Label>
                     <Input
+                      style={{ backgroundColor: "white" }}
+
                       type="file"
                       id="profileImage"
                       accept="image/*"
@@ -303,7 +312,7 @@ const UserProfile = () => {
                   <div className="text-center mt-4">
                     <Button
                       type="submit"
-                      style={{ backgroundColor: "rgba(0, 0, 0, 1)" }}
+                      style={{ backgroundColor: "rgba(0, 0, 0, 1)", borderRadius: "0px", border: "none" }}
                     >
                       Update Profile
                     </Button>

@@ -138,7 +138,7 @@ useEffect(() => {
             {/* <Widgets options={options} /> */}
             {(WidgetsData || []).map((widget, key) => (
               <Col xl={3} md={6} key={key}>
-              <Card className="card-h-100" style={{ height: "400px", width:"400px",borderRadius: "7px", borderColor: "1px solid #F9F9F9", boxShadow: "1px solid #F9F9F9" }}>
+              <Card className="card-h-100" style={{ height: "400px", width:"400px",borderRadius: "0px", borderColor: "1px solid #F9F9F9",  boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)" }}>
                 <CardBody style={{ display: "flex", flexDirection: "column" ,marginTop:"90px"}}>
                   <ReactApexChart
                     // options={options}

@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
-import { Link, useNavigate, useLocation  } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
 
 // Formik validation
@@ -186,6 +186,9 @@ const Login = (props: any) => {
     // setSelectedImage(event.target.files[0].name )
   };
 
+  console.log("selectedImage", selectedImage);
+
+
   useEffect(() => {
     setValue('fullName', localStorage?.getItem("fullName") || '')
     setValue('mobileNumber', localStorage?.getItem('mobile') || "")
@@ -193,6 +196,7 @@ const Login = (props: any) => {
   }, [localStorage?.getItem("fullName")])
   const onSubmit = async (values: any) => {
 
+    console.log("values", values);
 
 
     try {
@@ -205,12 +209,15 @@ const Login = (props: any) => {
           // countryCode: localStorage?.getItem("countrycode")
         },
       };
-      if (values.image) {
+      if (selectedImage) {
         variables = {
           ...variables,
-          image: [selectedImage?.file],
+          image: selectedImage?.file,
         };
       }
+
+
+
       const response = await signupvendor({
         variables,
       });
@@ -369,7 +376,7 @@ const Login = (props: any) => {
     <div>
       <Header />
       <ToastContainer />
-      <div className={styles.headercontainer}>
+      <div className={styles.headercontainer} style={{ paddingLeft: "0px", paddingRight: "0px" }}>
         <div className={styles.outerWrapper} style={{ display: "flex", alignItems: "center" }}>
           <div className={styles.leftcontainer}>
             {showOtpInput == "register" ? (
@@ -513,8 +520,7 @@ const Login = (props: any) => {
                   Register to your account
                 </div>
                 <p className={styles.subtitle}>
-                  Lorem ipsum dolor sit amet consectetur. Sapien ut libero sed
-                  lacinia egestas placerat.
+                  Ready to join? Complete the registration process to become a part of the Arab Deals vendor community. Start selling your products and reaching customers worldwide
                 </p>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                   <div className="mb-3">
@@ -523,6 +529,7 @@ const Login = (props: any) => {
                       name="fullName"
                       render={({ field: { onChange, value } }) => (
                         <Input
+                          style={{ borderRadius: "0px" }}
                           type="text"
                           value={value}
                           onChange={onChange}
@@ -539,6 +546,7 @@ const Login = (props: any) => {
                       name="email"
                       render={({ field: { onChange, value } }) => (
                         <Input
+                          style={{ borderRadius: "0px" }}
                           name="email"
                           value={value}
                           onChange={onChange}
@@ -555,6 +563,7 @@ const Login = (props: any) => {
                       name="mobileNumber"
                       render={({ field: { onChange, value } }) => (
                         <Input
+                          style={{ borderRadius: "0px" }}
                           name="mobileNumber"
                           value={value}
                           onChange={onChange}
@@ -612,6 +621,7 @@ const Login = (props: any) => {
                       backgroundColor: "black",
                       color: "white",
                       marginTop: "20px",
+                      border: "none"
                     }}
                   >
                     {" "}

@@ -4,7 +4,7 @@ import { Row, Col, Card, CardBody, Container, CardHeader } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useSearchParams, useNavigate,useLocation } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 
 import Cleave from "cleave.js/react";
 import "cleave.js/dist/addons/cleave-phone.in";
@@ -30,13 +30,13 @@ interface ProductData {
   rating: number;
   sellingPrice: number;
   price: number;
-  skuId:number;
+  skuId: number;
   tags: string;
   stock: string;
   categoryNamePath: string;
   categoryId: string;
-  isBlocked:boolean;
-  status:string;
+  isBlocked: boolean;
+  status: string;
 }
 interface IVariant {
   _id: string;
@@ -124,7 +124,7 @@ const ProductDetails = () => {
       }
     }
   `;
-const PREVIEW=gql`mutation Mutation($input: ProductPreviewInput!) {
+  const PREVIEW = gql`mutation Mutation($input: ProductPreviewInput!) {
   submitProductForPreviewByVendor(input: $input) {
     _id
     message
@@ -134,7 +134,7 @@ const PREVIEW=gql`mutation Mutation($input: ProductPreviewInput!) {
     variables: { input: { _id: productId } },
   });
 
-const [preview]=useMutation(PREVIEW)
+  const [preview] = useMutation(PREVIEW)
   useEffect(() => {
     if (data && data.getProductByVendor && data.getProductByVendor.product) {
       let product: ProductData = data.getProductByVendor.product;
@@ -143,40 +143,44 @@ const [preview]=useMutation(PREVIEW)
       setSelectedVColor(product.color);
       setSelectedImage(product.images[0]?.fileURL || "");
     }
-    
-    
-    
+
+
+
   }, [data]);
 
   const handleaddVariant = () => {
 
     // if (kycData?.getKycStatus?.record?.isKycCompleted) {
-      navigate(`/add-variant/?id=${productId}`);
-      
-    // } else {
-      // toast.error("Complete Your KYC and Add Products");
-    // }
-  }; 
- 
- const handlePreview=async(e:any)=>{
-  console.log("click");
-  e.preventDefault(); 
-  try{
+    navigate(`/add-variant/?id=${productId}`);
 
-    const response=await preview({variables:{input:{
-      _id:data?.getProductByVendor?.product?._id
-    }}}).then((data:any)=>{
-      console.log("data",data);
-      toast.success(data?.data?.submitProductForPreviewByVendor?.message)
-    })
-    // console.log(response);
+    // } else {
+    // toast.error("Complete Your KYC and Add Products");
+    // }
+  };
+
+  const handlePreview = async (e: any) => {
+    console.log("click");
+    e.preventDefault();
+    try {
+
+      const response = await preview({
+        variables: {
+          input: {
+            _id: data?.getProductByVendor?.product?._id
+          }
+        }
+      }).then((data: any) => {
+        console.log("data", data);
+        toast.success(data?.data?.submitProductForPreviewByVendor?.message)
+      })
+      // console.log(response);
+    }
+    catch (error) {
+      toast.error((error as Error).message);
+      console.log(error)
+    }
+
   }
-  catch(error){
-    toast.error((error as Error).message);
-console.log(error)
-  }
- 
- }
 
   const getProductVariant = (size: string): string => {
     for (let product of productVariants) {
@@ -293,8 +297,8 @@ console.log(error)
                           ? "#2B2B2A "
                           : "#E3E5E4"
                         : isActive
-                        ? "#2B2B2A "
-                        : "white",
+                          ? "#2B2B2A "
+                          : "white",
                       minWidth: "70px",
                       height: "50px",
                       color: isActive ? "white" : "#2B2B2A",
@@ -323,29 +327,31 @@ console.log(error)
         <AddProduct Edit={true} editedProduct={editedProduct} />
       ) : (
         <div className="page-content">
-           <ToastContainer />
+          <ToastContainer />
           <Container fluid={true}>
-            <Breadcrumbs title="Product" breadcrumbItem="Product Details"  link="/product"/>
-            <div className="d-flex justify-content-end mb-3" style={{gap:"20px"}}>
+            <Breadcrumbs title="Product" breadcrumbItem="Product Details" link="/product" />
+            <div className="d-flex justify-content-end mb-3" style={{ gap: "20px" }}>
               {/* <Link
                 to={`/add-variant?productCode=${product?.productCode}&productId=${product?._id}&category=${product?.categoryId}`}
                 style={{ textDecoration: "none" }}
               > */}
-                <button
-                  onClick={handleaddVariant}
+              {/* <button
+                onClick={handleaddVariant}
 
-                  style={{
-                    backgroundColor: "black",
-                    color: "white",
-                    width: "100px",
-                    height: "40px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  Add Variant
-                </button>
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  width: "100px",
+                  height: "40px",
+                  borderRadius: "0px",
+                  border: "none"
+
+                }}
+              >
+                Add Varient
+              </button> */}
               {/* </Link> */}
-              
+
               <button
                 onClick={handleEditProduct}
                 style={{
@@ -353,8 +359,9 @@ console.log(error)
                   color: "white",
                   width: "100px",
                   height: "40px",
-                  borderRadius: "10px",
-                 
+                  borderRadius: "0px",
+                  border: "none"
+
                 }}
               >
                 Edit Product
@@ -376,8 +383,8 @@ console.log(error)
             </div> */}
             <Row>
               <Col lg={12}>
-                <Card>
-                  <CardHeader style={{display:"none"}}>
+                <Card style={{ borderRadius: "0px" }}>
+                  <CardHeader style={{ display: "none" }}>
                     <Row>
                       <Col xl={6}>
                         <div
@@ -420,212 +427,214 @@ console.log(error)
 
                   <CardBody>
                     {/* <form > */}
-                      <div>
-                        <Row>
-                          <Col xl={6}>
-                            <div
-                              className="mb-3"
-                              style={{ display: "flex", gap: "4px" }}
+                    <div>
+                      <Row>
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-date"
+                              className="form-label"
                             >
-                              <label
-                                htmlFor="cleave-date"
-                                className="form-label"
-                              >
-                                Name:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.productName}
-                              </p>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
+                              Name:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.productName}
+                            </p>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
 
-                      <div className="border mt-3 border-dashed"></div>
+                    <div className="border mt-3 border-dashed"></div>
 
-                      <div className="mt-4">
-                        <Row>
-                          <Col xl={6}>
-                            <div className="mb-3">
-                              <label
-                                htmlFor="cleave-time-format"
-                                className="form-label"
-                              >
-                                Description:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.description}
-                              </p>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-
-                      <div className="border mt-3 border-dashed"></div>
-                      <div className="mt-4">
-                        <Row>
-                          <Col xl={6}>
-                            <div className="mb-3">
-                              <label
-                                htmlFor="cleave-time-format"
-                                className="form-label"
-                              >
-                                {" "}
-                                Short Description:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.shortDescription}
-                              </p>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                      <div className="border mt-3 border-dashed"></div>
-
-                      <div className="mt-4">
-                        <Row>
-                          <Col xl={6}>
-                            <div className="mb-3">
-                              <label
-                                htmlFor="cleave-time-format"
-                                className="form-label"
-                              >
-                                Images:
-                              </label>
-
-                              <div style={{ display: "flex" }}>
-                                {product?.images.map((item, index) => (
-                                  <div
-                                    key={index}
-                                    className="relative"
-                                    style={{ marginRight: "10px" }}
-                                  >
-                                    <img
-                                      src={item?.fileURL}
-                                      className="w-full rounded-2xl object-cover products-image"
-                                      // onClick={() =>
-                                      //   handleImageClick(item?.fileURL)
-                                      // }
-                                      alt={`product detail ${index + 1}`}
-                                      style={{
-                                        width: "100px",
-                                        height: "100px",
-                                        objectFit: "cover",
-                                        borderRadius: "8px",
-                                      }}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                      <div className="border mt-3 border-dashed"></div>
-
-                      <div className="mt-4">
-                        <Row>
-                          <Col xl={6}>
-                            <div
-                              className="mb-3"
-                              style={{ display: "flex", gap: "4px" }}
+                    <div className="mt-4">
+                      <Row>
+                        <Col xl={6}>
+                          <div className="mb-3">
+                            <label
+                              htmlFor="cleave-time-format"
+                              className="form-label"
                             >
-                              <label
-                                htmlFor="cleave-phone"
-                                className="form-label"
-                              >
-                                Price:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.price}
-                              </p>
-                            </div>
-                          </Col>
+                              Description:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.description}
+                            </p>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
 
-                          <Col xl={6}>
-                            <div
-                              className="mb-3"
-                              style={{ display: "flex", gap: "4px" }}
+                    <div className="border mt-3 border-dashed"></div>
+                    <div className="mt-4">
+                      <Row>
+                        <Col xl={6}>
+                          <div className="mb-3">
+                            <label
+                              htmlFor="cleave-time-format"
+                              className="form-label"
                             >
-                              <label
-                                htmlFor="cleave-numeral"
-                                className="form-label"
-                              >
-                                Selling Price:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.sellingPrice}
-                              </p>
-                            </div>
-                          </Col>
-                          <Col xl={6}>
-                            <div
-                              className="mb-3"
-                              style={{ display: "flex", gap: "4px" }}
+                              {" "}
+                              Short Description:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.shortDescription}
+                            </p>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                    <div className="border mt-3 border-dashed"></div>
+
+                    <div className="mt-4">
+                      <Row>
+                        <Col xl={6}>
+                          <div className="mb-3">
+                            <label
+                              htmlFor="cleave-time-format"
+                              className="form-label"
                             >
-                              <label
-                                htmlFor="cleave-numeral"
-                                className="form-label"
-                              >
-                                {" "}
-                                mrp:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.mrp}
-                              </p>
+                              Images:
+                            </label>
+
+                            <div style={{ display: "flex" }}>
+                              {product?.images.map((item, index) => (
+                                <div
+                                  key={index}
+                                  className="relative"
+                                  style={{ marginRight: "10px" }}
+                                >
+                                  <img
+                                    src={item?.fileURL}
+                                    className="w-full rounded-2xl object-cover products-image"
+                                    // onClick={() =>
+                                    //   handleImageClick(item?.fileURL)
+                                    // }
+                                    alt={`product detail ${index + 1}`}
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                      borderRadius: "8px",
+                                    }}
+                                  />
+                                </div>
+                              ))}
                             </div>
-                          </Col>
-                          <Col xl={6}>
-                            <div
-                              className="mb-3"
-                              style={{ display: "flex", gap: "4px" }}
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                    <div className="border mt-3 border-dashed"></div>
+
+                    <div className="mt-4">
+
+                      <Row>
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-numeral"
+                              className="form-label"
                             >
-                              <label
-                                htmlFor="cleave-numeral"
-                                className="form-label"
-                              >
-                                {" "}
-                                Stock:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.stock}
-                              </p>
-                            </div>
-                          </Col>
-                          <Col xl={6}>
-                            <div
-                              className="mb-3"
-                              style={{ display: "flex", gap: "4px" }}
+                              {" "}
+                              MRP:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.mrp}
+                            </p>
+                          </div>
+                        </Col>
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-phone"
+                              className="form-label"
                             >
-                              <label
-                                htmlFor="cleave-numeral"
-                                className="form-label"
-                              >
-                                {" "}
-                                tags:
-                              </label>
-                              <p className="form-control-static">
-                                {product?.tags}
-                              </p>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                      {product?.status=='PENDING'&&<>
+                              Price:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.price}
+                            </p>
+                          </div>
+                        </Col>
+
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-numeral"
+                              className="form-label"
+                            >
+                              Selling Price:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.sellingPrice}
+                            </p>
+                          </div>
+                        </Col>
+
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-numeral"
+                              className="form-label"
+                            >
+                              {" "}
+                              Stock:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.stock}
+                            </p>
+                          </div>
+                        </Col>
+                        <Col xl={6}>
+                          <div
+                            className="mb-3"
+                            style={{ display: "flex", gap: "4px" }}
+                          >
+                            <label
+                              htmlFor="cleave-numeral"
+                              className="form-label"
+                            >
+                              {" "}
+                              Tags:
+                            </label>
+                            <p className="form-control-static">
+                              {product?.tags}
+                            </p>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                    {product?.status == 'PENDING' && <>
                       <div className="border mt-3 border-dashed"></div>
                       <button
-                
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  // width: "100px",
-                  height: "40px",
-                 marginTop:"20px",border:"none",padding:"0 10px"
-                 
-                }} onClick={handlePreview}
-              >
-                Send For Review
-              </button></>}
+
+                        style={{
+                          backgroundColor: "black",
+                          color: "white",
+                          // width: "100px",
+                          height: "40px",
+                          marginTop: "20px", border: "none", padding: "0 10px"
+
+                        }} onClick={handlePreview}
+                      >
+                        Send For Review
+                      </button></>}
                     {/* </form> */}
                   </CardBody>
                 </Card>

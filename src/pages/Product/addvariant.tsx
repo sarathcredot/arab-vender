@@ -31,7 +31,7 @@ import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import FileUpload from "react-drag-n-drop-image";
 import Catattributes from "./catattribute";
-import { Link, useNavigate,useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Icon } from "@ailibs/feather-react-ts";
 import styles from "../Kyc/kyc.module.css";
 
@@ -59,8 +59,8 @@ interface ProductForm {
   productCode: number;
   productInfo: string[];
   productShortInfo: string;
-  brandName:string;
-  categoryNamePath:string;
+  brandName: string;
+  categoryNamePath: string;
 }
 interface ProductData {
   _id: string;
@@ -174,41 +174,41 @@ const GET_BRAND = gql`
   }
 `;
 
-const AddVariant = ({}) => {
+const AddVariant = ({ }) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const Productid = params.get('id');
   console.log(Productid);
-  
+
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
     variables: { input: { _id: Productid } },
   });
   console.log(data);
   const [remarks, setRemarks] = useState<any>([""]);
   const navigate = useNavigate();
-  
-
-  useEffect(()=>{
-setValue("productName",data?.getProductByVendor?.product?.productName)
-setValue("description",data?.getProductByVendor?.product?.description)
-setValue("sellingPrice",data?.getProductByVendor?.product?.sellingPrice)
-setValue("price",data?.getProductByVendor?.product?.price)
-setValue("rating",data?.getProductByVendor?.product?.rating)
-setValue("offerPrice",data?.getProductByVendor?.product?.offerPrice)
-setValue("productCode",data?.getProductByVendor?.product?.productCode)
-setValue("mrp",data?.getProductByVendor?.product?.mrp)
-setValue("productShortInfo",data?.getProductByVendor?.product?.productShortInfo)
-setValue("shortDescription",data?.getProductByVendor?.product?.shortDescription)
-setValue("skuId",data?.getProductByVendor?.product?.skuId)
-setValue("stock",data?.getProductByVendor?.product?.stock)
-setValue("tags",data?.getProductByVendor?.product?.tags)
-setValue("brandName",data?.getProductByVendor?.product?.brandName)
-setValue("categoryNamePath",data?.getProductByVendor?.product?.categoryNamePath)
-
-setRemarks(data?.getProductByVendor?.product?.productInfo)
 
 
-  },[data])
+  useEffect(() => {
+    setValue("productName", data?.getProductByVendor?.product?.productName)
+    setValue("description", data?.getProductByVendor?.product?.description)
+    setValue("sellingPrice", data?.getProductByVendor?.product?.sellingPrice)
+    setValue("price", data?.getProductByVendor?.product?.price)
+    setValue("rating", data?.getProductByVendor?.product?.rating)
+    setValue("offerPrice", data?.getProductByVendor?.product?.offerPrice)
+    setValue("productCode", data?.getProductByVendor?.product?.productCode)
+    setValue("mrp", data?.getProductByVendor?.product?.mrp)
+    setValue("productShortInfo", data?.getProductByVendor?.product?.productShortInfo)
+    setValue("shortDescription", data?.getProductByVendor?.product?.shortDescription)
+    setValue("skuId", data?.getProductByVendor?.product?.skuId)
+    setValue("stock", data?.getProductByVendor?.product?.stock)
+    setValue("tags", data?.getProductByVendor?.product?.tags)
+    setValue("brandName", data?.getProductByVendor?.product?.brandName)
+    setValue("categoryNamePath", data?.getProductByVendor?.product?.categoryNamePath)
+
+    setRemarks(data?.getProductByVendor?.product?.productInfo)
+
+
+  }, [data])
   const {
     control,
     handleSubmit,
@@ -230,7 +230,7 @@ setRemarks(data?.getProductByVendor?.product?.productInfo)
   const [brandData, setBrandData] = useState<any>([]);
   const [attributeid, setattributeid] = useState<IAttribute[] | []>([]);
   const [selectedbrand, setselectedbrand] = useState<any>({});
- 
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -264,11 +264,11 @@ setRemarks(data?.getProductByVendor?.product?.productInfo)
   };
 
   const handleAddRemark = () => {
-   
-   
 
-      setRemarks([...remarks, ""]);
-    
+
+
+    setRemarks([...remarks, ""]);
+
   };
 
   const handleRemoveRemark = (index: any) => {
@@ -316,11 +316,11 @@ setRemarks(data?.getProductByVendor?.product?.productInfo)
 
   const getSelectedCategoryData = () => {
     // Find the selected category in categoryData based on _id
-    if(data){
-      const selectedCategoryData =data?.getProductByVendor?.product?.categoryId
+    if (data) {
+      const selectedCategoryData = data?.getProductByVendor?.product?.categoryId
       return selectedCategoryData;
     }
-    else{
+    else {
 
       const selectedCategoryData = categoryData.find(
         (category: any) => category._id === selectedCategory
@@ -334,10 +334,10 @@ setRemarks(data?.getProductByVendor?.product?.productInfo)
 
   const onSubmit: SubmitHandler<ProductForm> = async (data1: any) => {
     console.log("click");
-    
+
     const urlSearchParams = new URLSearchParams(location.search);
     const productCodeParam = urlSearchParams.get("productCode");
-console.log(data1);
+    console.log(data1);
 
 
     // if (!productCodeParam) {
@@ -373,15 +373,14 @@ console.log(data1);
     console.log(acceptedFiles);
 
     try {
-      if(data1?.images && data1?.images.length > 0){
-      const response=await createvarient({variables:{ input:{...formdatas}, images:data?.image}})
-      console.log(response);
-      if(response)
-      {
-        toast.success(response?.data?.createVariant?.message)
-        navigate("/product")
-      }
-     
+      if (data1?.images && data1?.images.length > 0) {
+        const response = await createvarient({ variables: { input: { ...formdatas }, images: data?.image } })
+        console.log(response);
+        if (response) {
+          toast.success(response?.data?.createVariant?.message)
+          navigate("/product")
+        }
+
       }
     } catch (error: any) {
       // Handle error, e.g., show an error toast
@@ -400,7 +399,7 @@ console.log(data1);
         <Container fluid={true}>
           <Breadcrumbs
             title="product"
-            breadcrumbItem={"Add variant"}
+            breadcrumbItem={"Add Varient"}
             link="/product"
           />
 
@@ -410,7 +409,7 @@ console.log(data1);
                 <CardBody>
                   <Form onSubmit={handleSubmit(onSubmit)}>
                     <FormGroup>
-                      <Label for="name">Name:</Label>
+                      <Label for="name">Name</Label>
                       <Controller
                         control={control}
                         name="productName"
@@ -433,27 +432,27 @@ console.log(data1);
                       />
                     </FormGroup>
                     <FormGroup>
-                      <label>Category:</label>
+                      <label>Category</label>
                       <Controller
-                            control={control}
-                            name="categoryNamePath"
-                            rules={{ required: "Price is required" }}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  type="text"
-                                  id="categoryNamePath" 
-                                  {...field}
-                                  className={styles.inputfield} disabled
-                                />
-                                {errors.price && (
-                                  <p className="text-danger">
-                                    {errors.price.message}
-                                  </p>
-                                )}
-                              </>
+                        control={control}
+                        name="categoryNamePath"
+                        rules={{ required: "Price is required" }}
+                        render={({ field }) => (
+                          <>
+                            <Input
+                              type="text"
+                              id="categoryNamePath"
+                              {...field}
+                              className={styles.inputfield} disabled
+                            />
+                            {errors.price && (
+                              <p className="text-danger">
+                                {errors.price.message}
+                              </p>
                             )}
-                          />
+                          </>
+                        )}
+                      />
                       {/* <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                         <DropdownToggle caret disabled={dropdownDisabled}>
                           {selectedCategory
@@ -482,27 +481,27 @@ console.log(data1);
                     />
 
                     <FormGroup>
-                      <Label for="name">Brand:</Label>
+                      <Label for="name">Brand</Label>
                       <Controller
-                            control={control}
-                            name="brandName"
-                            rules={{ required: "Price is required" }}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  type="text"
-                                  id="brandName"
-                                  {...field}
-                                  className={styles.inputfield} disabled
-                                />
-                                {errors.price && (
-                                  <p className="text-danger">
-                                    {errors.price.message}
-                                  </p>
-                                )}
-                              </>
+                        control={control}
+                        name="brandName"
+                        rules={{ required: "Price is required" }}
+                        render={({ field }) => (
+                          <>
+                            <Input
+                              type="text"
+                              id="brandName"
+                              {...field}
+                              className={styles.inputfield} disabled
+                            />
+                            {errors.price && (
+                              <p className="text-danger">
+                                {errors.price.message}
+                              </p>
                             )}
-                          />
+                          </>
+                        )}
+                      />
                       {/* <Input
                         type="select"
                         onChange={(event: any) => {
@@ -531,7 +530,7 @@ console.log(data1);
                       </Input> */}
                     </FormGroup>
                     <FormGroup>
-                      <Label for="description">Description:</Label>
+                      <Label for="description">Description</Label>
                       <Controller
                         control={control}
                         name="description"
@@ -557,7 +556,7 @@ console.log(data1);
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Product ShortInfo:</Label>
+                          <Label for="price">Product ShortInfo</Label>
                           <Controller
                             control={control}
                             name="productShortInfo"
@@ -582,7 +581,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Product Short Description:</Label>
+                          <Label for="price">Product Short Description</Label>
                           <Controller
                             control={control}
                             name="shortDescription"
@@ -607,7 +606,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Product Code:</Label>
+                          <Label for="price">Product Code</Label>
                           <Controller
                             control={control}
                             name="productCode"
@@ -632,7 +631,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Price:</Label>
+                          <Label for="price">Price</Label>
                           <Controller
                             control={control}
                             name="price"
@@ -657,7 +656,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Selling Price:</Label>
+                          <Label for="price">Selling Price</Label>
                           <Controller
                             control={control}
                             name="sellingPrice"
@@ -685,7 +684,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">mrp:</Label>
+                          <Label for="price">mrp</Label>
                           <Controller
                             control={control}
                             name="mrp"
@@ -710,7 +709,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="price">Offer Price:</Label>
+                          <Label for="price">Offer Price</Label>
                           <Controller
                             control={control}
                             name="offerPrice"
@@ -760,7 +759,7 @@ console.log(data1);
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="stock">Stock:</Label>
+                          <Label for="stock">Stock</Label>
                           <Controller
                             control={control}
                             name="stock"
@@ -785,7 +784,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="tags">Tags:</Label>
+                          <Label for="tags">Tags</Label>
                           <Controller
                             control={control}
                             name="tags"
@@ -809,7 +808,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="rating">Rating:</Label>
+                          <Label for="rating">Rating</Label>
                           <Controller
                             control={control}
                             name="rating"
@@ -833,7 +832,7 @@ console.log(data1);
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="skuid">SKU ID:</Label>
+                          <Label for="skuid">SKU ID</Label>
                           <Controller
                             control={control}
                             name="skuId"
@@ -856,7 +855,7 @@ console.log(data1);
                         </FormGroup>
                       </Col>
                       <FormGroup>
-                        <Label for="productInfo">Product Info:</Label>
+                        <Label for="productInfo">Product Info</Label>
                         {/* {productInfo?.map((info:any, index:number) => (
                         <div key={index} className="d-flex mb-2">
                           <Input
@@ -895,12 +894,13 @@ console.log(data1);
                                   setRemarks(updatedRemarks);
                                 }}
                                 required
-                                style={{ marginRight: "10px" }}
+                                style={{ marginRight: "10px", backgroundColor: "white" }}
                               />
                               {index === remarks.length - 1 && (
                                 <Button
                                   color="primary"
                                   onClick={handleAddRemark}
+                                  style={{ borderRadius: "0px" }}
                                 >
                                   + {/* Plus icon */}
                                 </Button>
@@ -910,6 +910,7 @@ console.log(data1);
                                   style={{
                                     marginLeft: "5px",
                                     marginRight: "5px",
+                                    borderRadius: "0px"
                                   }}
                                   color="danger"
                                   onClick={() => handleRemoveRemark(index)}
@@ -923,7 +924,7 @@ console.log(data1);
                       </FormGroup>
                     </Row>
                     <FormGroup>
-                      <Label for="material">Material:</Label>
+                      <Label for="material">Material</Label>
                       <Controller
                         control={control}
                         name="material"
@@ -1004,7 +1005,8 @@ console.log(data1);
                         color: "white",
                         width: "120px",
                         height: "40px",
-                        borderRadius: "10px",
+                        borderRadius: "0px",
+                        border: "none"
                       }}
                     >
                       Add varient

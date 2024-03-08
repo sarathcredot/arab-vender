@@ -35,39 +35,50 @@ import { MdEdit } from "react-icons/md";
 import { FaFileImage } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { Link } from "react-router-dom";
+
+// const UPDATE_VENTOR_COMPANY = gql`
+//   mutation UpdateVendorCompany(
+//     $input: UpdateVendorCompanyInput!
+//     $images: [Upload]
+//     $fileMap: JSONObject
+//   ) {
+//     updateVendorCompany(input: $input, images: $images, fileMap: $fileMap) {
+//       record {
+//         _id
+//         vendorId
+//         companyName
+//         companyType
+//         crNumber
+//         status
+//         crLicense {
+//           fileURL
+//         }
+//         cooCertificate {
+//           fileURL
+//         }
+//         remarks
+//       }
+//       message
+//     }
+//   }
+// `;
+
+
 const ADD_VENTOR_COMPANY = gql`
-  mutation UpdateVendorCompany(
-    $input: UpdateVendorCompanyInput!
-    $images: [Upload]
-    $fileMap: JSONObject
-  ) {
-    updateVendorCompany(input: $input, images: $images, fileMap: $fileMap) {
-      record {
-        _id
-        vendorId
-        companyName
-        companyType
-        crNumber
-        status
-        crLicense {
-          fileURL
-        }
-        cooCertificate {
-          fileURL
-        }
-        remarks
-      }
-      message
-    }
-  }
-`;
-const ADD_VENTOR_OUTLET = gql`
-mutation Mutation($input: UpdateVendorOutletInput!, $images: [Upload], $fileMap: JSONObject) {
-  updateVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
+mutation AddVendorCompany($input: AddVendorCompanyInput!, $images: [Upload], $fileMap: JSONObject) {
+  addVendorCompany(input: $input, images: $images, fileMap: $fileMap) {
+    _id
     message
   }
-}
-`;
+}`
+
+// const ADD_VENTOR_OUTLET = gql`
+// mutation Mutation($input: UpdateVendorOutletInput!, $images: [Upload], $fileMap: JSONObject) {
+//   updateVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
+//     message
+//   }
+// }
+// `;
 // const VENDOR_DETAILS=gql`query GetVendorAllKycRecordByVendor($input: VendorAllKycRecordByVendorInput!) {
 //   getVendorAllKycRecordByVendor(input: $input) {
 //     record {
@@ -86,11 +97,90 @@ mutation Mutation($input: UpdateVendorOutletInput!, $images: [Upload], $fileMap:
 //     }
 //   }
 // }`
+
+// const VENDOR_DETAILS = gql`
+//   query Query($input: VendorAllKycRecordByVendorInput!) {
+//     getVendorAllKycRecordByVendor {
+//       record {
+//         _id
+//         outletId
+//         outletName
+//         outletStatus
+//         companyId
+//         companyName
+//         companyStatus
+//         isKycCompleted
+//         outletCountry
+//         outletDistrict
+//         outletVillage
+//         outletAddress
+//         outletLicense {
+//           fileType
+//           fileURL
+//           originalName
+//         }
+//         outletInteriorImage {
+//           fileType
+//           fileURL
+//           originalName
+//         }
+//         outletExteriorImage {
+//           fileType
+//           fileURL
+//           originalName
+//         }
+//         outletContactPersonName
+//         outletContactPersonNumber
+//         outletContactPersonDesignation
+//         outletRemarks
+//         companyType
+//         companyCrNumber
+//         companyCrLicense {
+//           fileType
+//           fileURL
+//           originalName
+//         }
+//         companyCooCertificate {
+//           fileURL
+//           fileType
+//           originalName
+//         }
+//         companyRemarks
+//       }
+//     }
+//   }
+// `;
+
+
+const ADD_VENTOR_OUTLET = gql`
+mutation AddVendorOutlet($input: AddVendorOutletInput!, $images: [Upload], $fileMap: JSONObject) {
+  addVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
+    _id
+    message
+  }
+}`
+
+const UPDATE_VENTOR_COMPANY = gql`
+mutation UpdateVendorCompany($input: UpdateVendorCompanyInput!, $images: [Upload], $fileMap: JSONObject) {
+  updateVendorCompany(input: $input, images: $images, fileMap: $fileMap) {
+    message
+  }
+}
+`
+
+const UPDATE_VENDOR_OUTLET = gql`
+mutation UpdateVendorOutlet($input: UpdateVendorOutletInput!, $images: [Upload], $fileMap: JSONObject) {
+  updateVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
+    message
+  }
+}
+`
+
 const VENDOR_DETAILS = gql`
-  query Query($input: VendorAllKycRecordByVendorInput!) {
-    getVendorAllKycRecordByVendor(input: $input) {
-      record {
-        _id
+query GetVendorAllKycRecordByVendor {
+  getVendorAllKycRecordByVendor {
+    record {
+     _id
         outletId
         outletName
         outletStatus
@@ -134,10 +224,11 @@ const VENDOR_DETAILS = gql`
           originalName
         }
         companyRemarks
-      }
     }
   }
-`;
+}`
+
+
 interface addCompany {
   // companyName:string;
   // companyType:string;
@@ -152,11 +243,11 @@ const CategoryList: React.FC<addCompany> = () => {
     red: {
       color: 'red',
     },
-    orange:{
-      color:"orange"
+    orange: {
+      color: "orange"
     },
-    blue:{
-      color:"blue"
+    blue: {
+      color: "blue"
     }
   };
   const {
@@ -202,40 +293,40 @@ const CategoryList: React.FC<addCompany> = () => {
   // },[kycStatus])
 
   const [CreateVendor] = useMutation(ADD_VENTOR_COMPANY);
+  const [UpdateVendor] = useMutation(UPDATE_VENTOR_COMPANY);
+  const [UpdateVendorOutlet] = useMutation(UPDATE_VENDOR_OUTLET);
   const [addOutlet] = useMutation(ADD_VENTOR_OUTLET);
   const [files, setFiles] = useState<any[]>(["", ""]);
-  const [ofiles, setOfiles] = useState<any[]>(["", "",""]);
+  const [ofiles, setOfiles] = useState<any[]>(["", "", ""]);
   const [isEdit, setIsedit] = useState(false);
   const [company, setCompany] = useState(false);
   const [companydetail, setcompanyDetail] = useState<any>(null);
-  const [outletstatus,setOutletstatus]=useState<any>(null)
-  const [outletform,setOutletform]=useState(false)
+  const [outletstatus, setOutletstatus] = useState<any>(null)
+  const [outletform, setOutletform] = useState(false)
   const id = localStorage.getItem("vendorid");
-  const { loading, error, data ,refetch} = useQuery(VENDOR_DETAILS, {
-    variables: { input: { _id: id } },
-  });
+  const { loading, error, data, refetch } = useQuery(VENDOR_DETAILS);
   console.log(data);
-  console.log(data?.getVendorRecordByVendor);
+  console.log("data?.getVendorRecordByVendor", data?.getVendorRecordByVendor);
 
   useEffect(() => {
     setcompanyDetail(
       data?.getVendorAllKycRecordByVendor?.record?.companyStatus
     );
     setOutletstatus(data?.getVendorAllKycRecordByVendor?.record?.outletStatus)
-setValue1("outletName",data?.getVendorAllKycRecordByVendor?.record?.outletName || '')
-setValue1("country",data?.getVendorAllKycRecordByVendor?.record?.outletCountry || '')
-setValue1("district",data?.getVendorAllKycRecordByVendor?.record?.outletDistrict || '')
-setValue1("village",data?.getVendorAllKycRecordByVendor?.record?.outletVillage || '')
-setValue1("address",data?.getVendorAllKycRecordByVendor?.record?.outletAddress || '')
-setValue1("contactPersonName",data?.getVendorAllKycRecordByVendor?.record?.outletContactPersonName || '')
-setValue1("contactPersonNumber",data?.getVendorAllKycRecordByVendor?.record?.outletAddress || '')
-setValue1("contactPersonDesignation",data?.getVendorAllKycRecordByVendor?.record?.outletContactPersonDesignation || '')
-setValue("companyName",data?.getVendorAllKycRecordByVendor?.record?.companyName)
-setValue("companyType",data?.getVendorAllKycRecordByVendor?.record?.companyType)
-setValue("crNumber",data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber)
+    setValue1("outletName", data?.getVendorAllKycRecordByVendor?.record?.outletName || '')
+    setValue1("country", data?.getVendorAllKycRecordByVendor?.record?.outletCountry || '')
+    setValue1("district", data?.getVendorAllKycRecordByVendor?.record?.outletDistrict || '')
+    setValue1("village", data?.getVendorAllKycRecordByVendor?.record?.outletVillage || '')
+    setValue1("address", data?.getVendorAllKycRecordByVendor?.record?.outletAddress || '')
+    setValue1("contactPersonName", data?.getVendorAllKycRecordByVendor?.record?.outletContactPersonName || '')
+    setValue1("contactPersonNumber", data?.getVendorAllKycRecordByVendor?.record?.outletAddress || '')
+    setValue1("contactPersonDesignation", data?.getVendorAllKycRecordByVendor?.record?.outletContactPersonDesignation || '')
+    setValue("companyName", data?.getVendorAllKycRecordByVendor?.record?.companyName)
+    setValue("companyType", data?.getVendorAllKycRecordByVendor?.record?.companyType)
+    setValue("crNumber", data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber)
 
-  }, [data,refetch]);
-  console.log(outletstatus);
+  }, [data, refetch]);
+  // console.log(outletstatus);
   const handleFileChangeCompany = (index: number, file: File | null) => {
     setFiles((prevFiles) => {
       const newFiles = [...prevFiles];
@@ -250,45 +341,114 @@ setValue("crNumber",data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber
     console.log(files.length);
 
     const id = localStorage.getItem("vendorid");
-    const fileMap = {
-      crLicense: 0,
-      cooCertificate: 1,
-    };
-    try {
-      console.log(id);
-      // const isFilesEmpty = files.every((file) => file === "");
-      const isFilesEmpty = files.every((file) => !file);
 
-      const response = await CreateVendor({
-        variables: {
-          input: { ...values, vendorId: id },
-          images: isFilesEmpty ? [] : files.filter((e)=>typeof e!=='string'),
-          fileMap,
-        },
-      });
-      console.log(response);
-      if (response) {
-        const data1 = response?.data?.updateVendorCompany?.record;
-        // setcompanyDetail(data1);
-        toast.success("Company Data Updated Successfully ");
-        reset();
-        console.log(response?.data?.updateVendorCompany?.record);
-        refetch()
-        // const { loading, error, data } = useQuery(VENDOR_DETAILS, {
-        //   variables: { input: { _id: id } },
-        // });
-        setcompanyDetail(
-          data?.getVendorAllKycRecordByVendor?.record?.companyStatus
-        );
-        setCompany(false);
-      }
-    } catch (e: any) {
-      console.log("fdd");
+    console.log("files", files);
+    let index = 0
+    let fileMap: any = {
 
-      console.error("Error:", e.message);
     }
+
+    for (const [key, value] of Object.entries(files)) {
+      const i = parseInt(key);
+      if (files[i]) {
+        switch (i) {
+          case 0: fileMap["crLicense"] = index
+            index++
+            break
+
+          case 1: fileMap["cooCertificate"] = index
+            index++
+            break
+        }
+      }
+    }
+
+
+    // const fileMap = {
+    //   crLicense: 0,
+    //   cooCertificate: 1,
+    // };
+    if (companydetail == "PENDING") {
+      try {
+        console.log(id);
+        // const isFilesEmpty = files.every((file) => file === "");
+        const isFilesEmpty = files.every((file) => !file);
+
+
+        const response = await CreateVendor({
+          variables: {
+            input: { ...values },
+            images: isFilesEmpty ? [] : files.filter((e) => typeof e !== 'string'),
+            fileMap,
+          },
+        });
+        console.log(response);
+        if (response) {
+          // const data1 = response?.data?.updateVendorCompany?.record;
+          const msg = response?.data?.addVendorCompany?.message;
+          // console.log("msg", msg);
+
+          // setcompanyDetail(data1);
+          toast.success("Company Data Added Successfully ");
+          reset();
+          // console.log(response?.data?.updateVendorCompany?.record);
+          refetch()
+          // const { loading, error, data } = useQuery(VENDOR_DETAILS, {
+          //   variables: { input: { _id: id } },
+          // });
+          setcompanyDetail(
+            data?.getVendorAllKycRecordByVendor?.record?.companyStatus
+          );
+          setCompany(false);
+        }
+      } catch (e: any) {
+        toast.error(e.message);
+        console.error("Error:", e.message);
+      }
+    }
+    if (companydetail == "REJECTED") {
+      try {
+        console.log("REJECTED----");
+        // const isFilesEmpty = files.every((file) => file === "");
+        const isFilesEmpty = files.every((file) => !file);
+        console.log("files", files);
+
+
+        const response = await UpdateVendor({
+          variables: {
+            input: { ...values },
+            images: isFilesEmpty ? [] : files.filter((e) => typeof e !== 'string'),
+            fileMap,
+          },
+        });
+        console.log(response);
+        if (response) {
+          // const data1 = response?.data?.updateVendorCompany?.record;
+          const msg = response?.data?.updateVendorCompany?.message;
+          console.log("msg", msg);
+
+          // setcompanyDetail(data1);
+          toast.success("Company Data Updated Successfully ");
+          reset();
+          // console.log(response?.data?.updateVendorCompany?.record);
+          refetch()
+          // const { loading, error, data } = useQuery(VENDOR_DETAILS, {
+          //   variables: { input: { _id: id } },
+          // });
+          setcompanyDetail(
+            data?.getVendorAllKycRecordByVendor?.record?.companyStatus
+          );
+          setCompany(false);
+        }
+      } catch (e: any) {
+        toast.error(e.message);
+        console.error("Error:", e.message);
+      }
+    }
+
+
   };
-  console.log(companydetail);
+  // console.log(companydetail);
   const handleFileChange = (index: number, file: File | null) => {
     setOfiles((prevFiles) => {
       const newFiles = [...prevFiles];
@@ -299,58 +459,111 @@ setValue("crNumber",data?.getVendorAllKycRecordByVendor?.record?.companyCrNumber
 
 
   const onSubmitOutlet = async (values: any) => {
-    console.log("click",ofiles);
+    console.log("click", ofiles);
     const id = localStorage.getItem("vendorid");
     console.log(values);
-    
-    const fileMap = {
-      interiorImage: 0,
-      outletLicense: 1,
-      exteriorImage: 2,
-    };
-    try {
-      const isFilesEmpty = ofiles.every((file) => !file);
-console.log(isFilesEmpty);
 
-      const response = await addOutlet({
-        variables: {
-          input: { ...values, vendorId: id },
-          images: isFilesEmpty ? [] : ofiles.filter((e)=>typeof e!=='string') ,
-          fileMap,
-        },
-      });
-      console.log(response);
-      if (response) {
-        toast.success(response?.data?.updateVendorOutlet?.message);
-        reset1();
-        setOutletform(false)
-        refetch()
-      }
-    } catch (e: any) {
-      console.log("fdd");
-console.log(e);
+    console.log("ofiles", ofiles);
+    let index = 0
+    let fileMap: any = {
 
-      console.error("Error:", e.message);
     }
+
+    for (const [key, value] of Object.entries(ofiles)) {
+      const i = parseInt(key);
+      if (ofiles[i]) {
+        switch (i) {
+          case 0: fileMap["outletLicense"] = index
+            index++
+            break
+
+          case 1: fileMap["interiorImage"] = index
+            index++
+            break
+          case 2: fileMap["exteriorImage"] = index
+            index++
+            break
+        }
+      }
+    }
+
+    // const fileMap = {
+    //   interiorImage: 0,
+    //   outletLicense: 1,
+    //   exteriorImage: 2,
+    // };
+
+    if (outletstatus == 'PENDING') {
+      try {
+        const isFilesEmpty = ofiles.every((file) => !file);
+        console.log(isFilesEmpty);
+
+        const response = await addOutlet({
+          variables: {
+            input: { ...values },
+            images: isFilesEmpty ? [] : ofiles.filter((e) => typeof e !== 'string'),
+            fileMap,
+          },
+        });
+        console.log(response);
+        if (response) {
+          toast.success(response?.data?.addVendorOutlet?.message);
+          // toast.success(response?.data?.updateVendorOutlet?.message);
+          reset1();
+          setOutletform(false)
+          refetch()
+        }
+      } catch (e: any) {
+        toast.error(e.message);
+        console.error("Error:", e.message);
+      }
+    }
+    if (outletstatus == 'REJECTED') {
+      try {
+        const isFilesEmpty = ofiles.every((file) => !file);
+
+        const response = await UpdateVendorOutlet({
+          variables: {
+            input: { ...values },
+            images: isFilesEmpty ? [] : ofiles.filter((e) => typeof e !== 'string'),
+            fileMap,
+          },
+        });
+        console.log(response);
+        if (response) {
+          toast.success(response?.data?.updateVendorOutlet?.message);
+          // toast.success(response?.data?.updateVendorOutlet?.message);
+          reset1();
+          setOutletform(false)
+          refetch()
+        }
+      } catch (e: any) {
+        toast.error(e.message);
+        console.error("Error:", e.message);
+      }
+    }
+
+
   };
   return (
     <>
       <div className="page-content">
         <Container fluid={true} >
           <Breadcrumb title="Dashboard" breadcrumbItem="KYC" link="/dashboard" />
-          <div style={{marginBottom:"20px"}}><span style={{marginRight:"20px",fontWeight:"500"}}>KYC Status </span>            <span
-  className={styles.status}
-  style={
-    data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === true
-      ? styless.green:styless.red
-      // : data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === 'REJECTED'
-     
-  }
->
-  {data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted ==true ? "COMPLETED":"NOT COMPLETE"}
-</span></div>
+          <div style={{ marginBottom: "20px" }}><span style={{ marginRight: "20px", fontWeight: "500" }}>KYC Status </span>
+            <span
+              className={styles.status}
+              style={
+                data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === true
+                  ? styless.green : styless.red
+                // : data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === 'REJECTED'
+
+              }
+            >
+              {data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted == true ? "COMPLETED" : "NOT COMPLETE"}
+            </span></div>
           <ToastContainer />
-          <Card style={{ padding: "20px",boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)",borderRadius:"7px" }}>
+          <Card style={{ padding: "20px", borderRadius: "0px" }}>
             {companydetail == "PENDING" || company ? (
               <Row>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -364,7 +577,7 @@ console.log(e);
                       }}
                     >
                       <div style={{ width: "50%" }}>
-                        <Label style={{ color: "#737373" }}>Company Name</Label>
+                        <Label style={{ color: "black" }}>Company Name</Label>
                         <Controller
                           control={control}
                           name="companyName"
@@ -374,12 +587,13 @@ console.log(e);
                               type="text"
                               value={value}
                               onChange={onChange}
+                              required
                             />
                           )}
                         />
                       </div>
                       <div style={{ width: "50%" }}>
-                        <Label style={{ color: "#737373" }}>Company Type</Label>
+                        <Label style={{ color: "black" }}>Company Type</Label>
                         <Controller
                           control={control}
                           name="companyType"
@@ -390,6 +604,7 @@ console.log(e);
                               name="companyType"
                               value={value}
                               onChange={onChange}
+                              required
                             />
                           )}
                         />
@@ -404,7 +619,7 @@ console.log(e);
                       }}
                     >
                       <div style={{ width: "50%" }}>
-                        <Label style={{ color: "#737373" }}>Cr Number</Label>
+                        <Label style={{ color: "black" }}>Cr Number</Label>
                         <Controller
                           control={control}
                           name="crNumber"
@@ -414,26 +629,28 @@ console.log(e);
                               className={styles.inputfield}
                               onChange={onChange}
                               value={value}
+                              required
                             />
                           )}
                         />
                       </div>
                       <div style={{ width: "50%" }}>
-                        <Label style={{ color: "#737373" }}>Cr License</Label>
+                        <Label style={{ color: "black" }}>Cr License</Label>
                         <Input
                           name="crLicense"
                           type="file"
                           className={styles.inputfield}
-                        onChange={(event:any) => handleFileChangeCompany(0, event?.target.files?.[0])}
-// value={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.originalName}
-                          // onChange={(event) => {
-                          //   setFiles((e) => {
-                          //     const e1 = (e[0] = event?.target.files?.[0]);
-                          //     const e2 = e[1];
+                          onChange={(event: any) => handleFileChangeCompany(0, event?.target.files?.[0])}
+                        // required
+                        // value={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.originalName}
+                        // onChange={(event) => {
+                        //   setFiles((e) => {
+                        //     const e1 = (e[0] = event?.target.files?.[0]);
+                        //     const e2 = e[1];
 
-                          //     return [e1, e2];
-                          //   });
-                          // }}
+                        //     return [e1, e2];
+                        //   });
+                        // }}
                         />
                       </div>
                     </div>
@@ -445,52 +662,52 @@ console.log(e);
                       }}
                     >
                       <div style={{ width: "49%" }}>
-                        <Label style={{ color: "#737373" }}>
+                        <Label style={{ color: "black" }}>
                           Coo Certificate
                         </Label>
                         <Input
                           name="cooCertificate"
                           type="file"
                           className={styles.inputfield}
-                        onChange={(event:any) => handleFileChangeCompany(1, event?.target.files?.[0])}
-
-                          // onChange={(event) => {
-                          //   setFiles((e) => {
-                          //     const e1 = e[0];
-                          //     const e2 = (e[1] = event?.target.files?.[0]);
-                          //     return [e1, e2];
-                          //   });
-                          // }}
+                          onChange={(event: any) => handleFileChangeCompany(1, event?.target.files?.[0])}
+                        // required
+                        // onChange={(event) => {
+                        //   setFiles((e) => {
+                        //     const e1 = e[0];
+                        //     const e2 = (e[1] = event?.target.files?.[0]);
+                        //     return [e1, e2];
+                        //   });
+                        // }}
                         />
                       </div>
                     </div>
-                    <div style={{display:"flex",gap:"15px"}}>
-                    <button
-                      style={{
-                        background: "black",
-                        color: "white",
-                        padding: "10px",
-                        border: "none",
-                        width: "176px",
-                        height: "52px",
-                      }}
-                      type="submit"
-                    >
-                      Submit
-                    </button>
-                    {companydetail !== "PENDING" && <button
-                      style={{
-                        background: "#E30613",
-                        color: "white",
-                        padding: "10px",
-                        border: "none",
-                        width: "176px",
-                        height: "52px",
-                      }}
-                      onClick={()=>{setCompany(false)}}
-                    >
-                      Cancel
-                    </button>}
+                    <div style={{ display: "flex", gap: "15px" }}>
+                      <button
+                        style={{
+                          background: "black",
+                          color: "white",
+                          padding: "10px",
+                          border: "none",
+                          width: "176px",
+                          height: "52px",
+                        }}
+                        type="submit"
+                      >
+                        Submit
+                      </button>
+                      {companydetail !== "PENDING" && <button
+                        style={{
+                          background: "#E30613",
+                          color: "white",
+                          padding: "10px",
+                          border: "none",
+                          width: "176px",
+                          height: "52px",
+                        }}
+                        onClick={() => { setCompany(false) }}
+                      >
+                        Cancel
+                      </button>}
                     </div>
                   </Col>
                 </Form>
@@ -503,67 +720,70 @@ console.log(e);
                     <div
                       className={styles.circle}
                       onClick={() => setCompany(!company)}
+                      style={{ cursor: 'pointer' }}
                     >
-                      <MdEdit />
+                      <MdEdit size={25} />
                     </div>
                   ) : (
                     ""
                   )}
                 </div>
                 <h4 className="mb-3">Company Details</h4>
+
                 <div className="mb-3 d-flex align-items-center">
-                <div className={styles.labeldiv}> Status </div> 
-                <span
-  className={styles.status}
-  style={
-    companydetail === 'COMPLETED'
-      ? styless.green
-      : companydetail === 'REJECTED'
-      ? styless.red
-    : companydetail === 'UNDER_VERIFICATION' ? styless.blue:styless.orange
-  }
->
-  {companydetail}
-</span>                </div>
+                  <div className={styles.labeldiv}> Status </div>
+                  <span
+                    className={styles.status}
+                    style={
+                      companydetail === 'COMPLETED'
+                        ? styless.green
+                        : companydetail === 'REJECTED'
+                          ? styless.red
+                          : companydetail === 'UNDER_VERIFICATION' ? styless.blue : styless.orange
+                    }
+                  >
+                    {companydetail == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : companydetail}
+                  </span>
+                </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Company Name </div>
-                  {data?.getVendorAllKycRecordByVendor?.record?.companyName?<span>
-                    { data?.getVendorAllKycRecordByVendor?.record?.companyName}
-                  </span>:""}
+                  {data?.getVendorAllKycRecordByVendor?.record?.companyName ? <span>
+                    {data?.getVendorAllKycRecordByVendor?.record?.companyName}
+                  </span> : ""}
                 </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Company Type </div>
-                 { data?.getVendorAllKycRecordByVendor?.record?.companyType ?<span>
+                  {data?.getVendorAllKycRecordByVendor?.record?.companyType ? <span>
                     {data?.getVendorAllKycRecordByVendor?.record?.companyType}
-                  </span>:""}
+                  </span> : ""}
                 </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Cr Number </div>
                   {data?.getVendorAllKycRecordByVendor?.record
-                        ?.companyCrNumber ? <span>
+                    ?.companyCrNumber ? <span>
                     {
                       data?.getVendorAllKycRecordByVendor?.record
                         ?.companyCrNumber
                     }
-                  </span>:""}
+                  </span> : ""}
                 </div>
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Attachments </div>
-                 <div> 
-                 {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL? <Link to={ data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Cr License</div></Link>:""}
-                 {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Coo Certificate</div></Link>:""}
-                 </div>
-                 
+                  <div>
+                    {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div></Link> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate</div></Link> : ""}
+                  </div>
+
                 </div>
               </Row>
             )}
           </Card>
           {/* outlet */}
-          <Card style={{ padding: "20px" ,boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)",borderRadius:"7px"}}>
-            {outletstatus=='PENDING'  || outletform ?(<Row>
+          <Card style={{ padding: "20px", boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)", borderRadius: "0px" }}>
+            {outletstatus == 'PENDING' || outletform ? (<Row>
               <Form onSubmit={handleSubmit1(onSubmitOutlet)}>
                 <Col lg={12}>
-                  <h4 className="mb-3 mt-4">Outlet detail</h4>
+                  <h4 className="mb-3">Outlet detail</h4>
                   <div
                     style={{
                       display: "flex",
@@ -572,7 +792,7 @@ console.log(e);
                     }}
                   >
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>Outlet Name</Label>
+                      <Label style={{ color: "black" }}>Outlet Name</Label>
                       <Controller
                         control={control1}
                         name="outletName"
@@ -582,12 +802,13 @@ console.log(e);
                             value={value}
                             className={styles.inputfield}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
                     </div>
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>Village</Label>
+                      <Label style={{ color: "black" }}>Village</Label>
                       <Controller
                         control={control1}
                         name="village"
@@ -597,6 +818,7 @@ console.log(e);
                             value={value}
                             className={styles.inputfield}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
@@ -611,7 +833,7 @@ console.log(e);
                     }}
                   >
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>District</Label>
+                      <Label style={{ color: "black" }}>District</Label>
                       <Controller
                         control={control1}
                         name="district"
@@ -621,12 +843,13 @@ console.log(e);
                             className={styles.inputfield}
                             onChange={onChange}
                             value={value}
+                            required
                           />
                         )}
                       />
                     </div>
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>Country</Label>
+                      <Label style={{ color: "black" }}>Country</Label>
                       <Controller
                         control={control1}
                         name="country"
@@ -636,6 +859,7 @@ console.log(e);
                             type="text"
                             value={value}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
@@ -649,7 +873,7 @@ console.log(e);
                     }}
                   >
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>
+                      <Label style={{ color: "black" }}>
                         Contact Person Name
                       </Label>
 
@@ -662,12 +886,13 @@ console.log(e);
                             className={styles.inputfield}
                             value={value}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
                     </div>
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>
+                      <Label style={{ color: "black" }}>
                         Contact Person Number
                       </Label>
                       <Controller
@@ -680,6 +905,7 @@ console.log(e);
                             name="contactPersonNumber"
                             value={value}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
@@ -693,7 +919,7 @@ console.log(e);
                     }}
                   >
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>
+                      <Label style={{ color: "black" }}>
                         Contact Person Designation
                       </Label>
                       <Controller
@@ -706,12 +932,13 @@ console.log(e);
                             name="contactPersonDesignation"
                             value={value}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
                     </div>
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>Address</Label>
+                      <Label style={{ color: "black" }}>Address</Label>
                       <Controller
                         control={control1}
                         name="address"
@@ -722,6 +949,7 @@ console.log(e);
                             name="address"
                             value={value}
                             onChange={onChange}
+                            required
                           />
                         )}
                       />
@@ -735,7 +963,7 @@ console.log(e);
                     }}
                   >
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>
+                      <Label style={{ color: "black" }}>
                         {" "}
                         Outlet Licence
                       </Label>
@@ -744,18 +972,18 @@ console.log(e);
                         name="outletLicense"
                         className={styles.inputfield}
                         type="file"
-                        onChange={(event:any) => handleFileChange(0, event?.target.files?.[0])}
-                        
+                        onChange={(event: any) => handleFileChange(0, event?.target.files?.[0])}
+                      // required
                       />
                     </div>
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>Interior Image</Label>
+                      <Label style={{ color: "black" }}>Interior Image</Label>
                       <Input
                         name="interiorImage"
                         type="file"
                         className={styles.inputfield}
-                        onChange={(event:any) => handleFileChange(1, event?.target.files?.[0])}
-                       
+                        onChange={(event: any) => handleFileChange(1, event?.target.files?.[0])}
+                      // required
                       />
                     </div>
                   </div>
@@ -767,31 +995,31 @@ console.log(e);
                     }}
                   >
                     <div style={{ width: "50%" }}>
-                      <Label style={{ color: "#737373" }}>Exterior Image</Label>
+                      <Label style={{ color: "black" }}>Exterior Image</Label>
                       <Input
                         name="exteriorImage"
                         className={styles.inputfield}
                         type="file"
-                        onChange={(event:any) => handleFileChange(2, event?.target.files?.[0])}
-                       
+                        onChange={(event: any) => handleFileChange(2, event?.target.files?.[0])}
+                      // required
                       />
                     </div>
                   </div>
-                  <div style={{display:"flex",gap:"15px"}}>
-                  <button
-                    type="submit"
-                    style={{
-                      background: "black",
-                      color: "white",
-                      padding: "10px",
-                      border: "none",
-                      width: "176px",
-                      height: "52px",
-                    }}
-                  >
-                    Submit
-                  </button>
-                  {outletstatus !== "PENDING" && <button
+                  <div style={{ display: "flex", gap: "15px" }}>
+                    <button
+                      type="submit"
+                      style={{
+                        background: "black",
+                        color: "white",
+                        padding: "10px",
+                        border: "none",
+                        width: "176px",
+                        height: "52px",
+                      }}
+                    >
+                      Submit
+                    </button>
+                    {outletstatus !== "PENDING" && <button
                       style={{
                         background: "#E30613",
                         color: "white",
@@ -800,24 +1028,25 @@ console.log(e);
                         width: "176px",
                         height: "52px",
                       }}
-                      onClick={()=>{setOutletform(false)}}
+                      onClick={() => { setOutletform(false) }}
                     >
                       Cancel
                     </button>}
                   </div>
                 </Col>
               </Form>
-            </Row>):
-            
-               <Row>
+            </Row>) :
+
+              <Row>
                 <div className={styles.edit}>
                   {" "}
                   {outletstatus == "REJECTED" ? (
                     <div
                       className={styles.circle}
                       onClick={() => setOutletform(!outletform)}
+                      style={{ cursor: 'pointer' }}
                     >
-                      <MdEdit />
+                      <MdEdit size={25} />
                     </div>
                   ) : (
                     ""
@@ -825,33 +1054,33 @@ console.log(e);
                 </div>
                 <h4 className="mb-3">Outlet Details</h4>
                 <div className="mb-3 d-flex align-items-center">
-                <div className={styles.labeldiv}> Status </div> 
-                <span
-  className={styles.status}
-  style={
-    outletstatus == 'COMPLETED'
-      ? styless.green
-      : outletstatus == 'REJECTED'
-      ? styless.red
-    : outletstatus == 'UNDER_VERIFICATION' ? styless.blue:styless.orange
-  }
->
-  {outletstatus}
-</span>                </div>
-               { data?.getVendorAllKycRecordByVendor?.record?.outletName ?<div className="mb-3 d-flex">
+                  <div className={styles.labeldiv}> Status </div>
+                  <span
+                    className={styles.status}
+                    style={
+                      outletstatus == 'COMPLETED'
+                        ? styless.green
+                        : outletstatus == 'REJECTED'
+                          ? styless.red
+                          : outletstatus == 'UNDER_VERIFICATION' ? styless.blue : styless.orange
+                    }
+                  >
+                    {outletstatus == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : outletstatus}
+                  </span>                </div>
+                {data?.getVendorAllKycRecordByVendor?.record?.outletName ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Outlet Name </div>
                   <span>
                     {data?.getVendorAllKycRecordByVendor?.record?.outletName}
                   </span>
-                </div>:""}
-                {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ?<div className="mb-3 d-flex">
+                </div> : ""}
+                {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Village </div>
                   <span>
                     {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
                   </span>
-                </div>:""}
+                </div> : ""}
                 {data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletDistrict ? <div className="mb-3 d-flex">
+                  ?.outletDistrict ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> District </div>
                   <span>
                     {
@@ -859,9 +1088,9 @@ console.log(e);
                         ?.outletDistrict
                     }
                   </span>
-                </div>:""}
-                { data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletCountry ? <div className="mb-3 d-flex">
+                </div> : ""}
+                {data?.getVendorAllKycRecordByVendor?.record
+                  ?.outletCountry ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Country </div>
                   <span>
                     {
@@ -869,9 +1098,9 @@ console.log(e);
                         ?.outletCountry
                     }
                   </span>
-                </div>:""}
-               {data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletContactPersonName ? <div className="mb-3 d-flex">
+                </div> : ""}
+                {data?.getVendorAllKycRecordByVendor?.record
+                  ?.outletContactPersonName ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Contact Person Name </div>
                   <span>
                     {
@@ -879,9 +1108,9 @@ console.log(e);
                         ?.outletContactPersonName
                     }
                   </span>
-                </div>:""}
-               {data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
+                </div> : ""}
+                {data?.getVendorAllKycRecordByVendor?.record
+                  ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Contact Person Number </div>
                   <span>
                     {
@@ -889,9 +1118,9 @@ console.log(e);
                         ?.outletContactPersonNumber
                     }
                   </span>
-                </div>:""}
-               { data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
+                </div> : ""}
+                {data?.getVendorAllKycRecordByVendor?.record
+                  ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Contact Person Designation </div>
                   <span>
                     {
@@ -899,9 +1128,9 @@ console.log(e);
                         ?.outletContactPersonDesignation
                     }
                   </span>
-                </div>:""}
-               { data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletAddress?<div className="mb-3 d-flex">
+                </div> : ""}
+                {data?.getVendorAllKycRecordByVendor?.record
+                  ?.outletAddress ? <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Address </div>
                   <span>
                     {
@@ -909,18 +1138,18 @@ console.log(e);
                         ?.outletAddress
                     }
                   </span>
-                </div>:""}
+                </div> : ""}
                 <div className="mb-3 d-flex">
                   <div className={styles.labeldiv}> Attachments </div>
-                 <div> 
-                  {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ?<Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{fontSize:"25px", marginRight:"15px",color:"red"}} />Outlet Licence</div></Link>:""}
-                  {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL?<Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Interior Image</div></Link>:""}
-                 {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{fontSize:"25px",marginRight:"15px",color:"red"}}/>Exterior Image</div></Link>:""}
-                 </div>
-                 
+                  <div>
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div></Link> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></Link> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></Link> : ""}
+                  </div>
+
                 </div>
               </Row>
-              }
+            }
           </Card>
         </Container>
       </div>

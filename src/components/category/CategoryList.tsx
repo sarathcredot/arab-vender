@@ -42,11 +42,11 @@ interface Category {
   isLeaf: boolean;
   sizeChart: sizeChart;
   isBlocked: boolean;
-  fullCategoryName:string
+  fullCategoryName: string
 
 }
 
-interface Props {}
+interface Props { }
 
 const CategoryList: React.FC<Props> = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -70,17 +70,17 @@ const CategoryList: React.FC<Props> = () => {
   } | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const GET_CATEGORY = gql`
-  query GetAllCategoriesOfVendor($input: vendorIdInput!) {
-    getAllCategoriesOfVendor(input: $input) {
-      records {
-        _id
-        categoryName
-        fullCategoryName
-        isBlocked
-        isLeaf
-      }
+  query GetAllCategoriesOfVendor {
+  getAllCategoriesOfVendor {
+    records {
+      categoryName
+      _id
+      isBlocked
+      fullCategoryName
+      isLeaf
     }
   }
+}
   `;
 
   const GET_CHAILEDCATGORY = gql`
@@ -103,19 +103,13 @@ const CategoryList: React.FC<Props> = () => {
       }
     }
   `;
-  const id=localStorage?.getItem("vendorid")
+  const id = localStorage?.getItem("vendorid")
   const {
     loading: categoryLoading,
     error: categoryError,
     data: categoryDataResponse,
     refetch: categoryRefetch,
-  } = useQuery(GET_CATEGORY, {
-    variables: {
-      input: {
-        vendorId: id,
-      },
-    },
-  });
+  } = useQuery(GET_CATEGORY);
   console.log(categoryDataResponse)
   // const {
   //   loading: childCategoryLoading,
@@ -140,11 +134,11 @@ const CategoryList: React.FC<Props> = () => {
 
   useEffect(() => {
     // if (showSubCategories) {
-      // setCategoryData(childCategoryData?.getAllChildCategories?.records || []);
+    // setCategoryData(childCategoryData?.getAllChildCategories?.records || []);
     // } else {
-      setCategoryData(
-        categoryDataResponse?.getAllCategoriesOfVendor?.records || []
-      );
+    setCategoryData(
+      categoryDataResponse?.getAllCategoriesOfVendor?.records || []
+    );
     // }
   }, [
     categoryLoading,
@@ -214,7 +208,7 @@ const CategoryList: React.FC<Props> = () => {
     setSearchTerm(event.target.value);
     console.log(event.target.value);
   };
-console.log(categoryData);
+  console.log(categoryData);
 
   useEffect(() => {
     if (selectedStatus) {
@@ -228,7 +222,7 @@ console.log(categoryData);
           return (
             isNameMatch &&
             size?.isBlocked ===
-              (selectedStatus.value === "blocked" ? true : false)
+            (selectedStatus.value === "blocked" ? true : false)
           );
         }
       });
@@ -274,28 +268,28 @@ console.log(categoryData);
             </span>
           ))}
         </div>
-        <Container fluid={true} style={{ marginTop: "40px" }}>
+        <Container fluid={true} style={{ marginTop: "0px" }}>
           <Breadcrumb title="Dashboard" breadcrumbItem="Category" link="/dashboard" />
           <Row>
             <Col lg={12}>
-              <Card>
+              <Card style={{ borderRadius: "0px" }}>
                 <CardHeader>
                   <Row>
-                    <Col xs={5} style={{display:"flex", gap:"20px",}}>
+                    <Col xs={5} style={{ display: "flex", gap: "20px" }}>
                       <Input
                         type="text"
                         placeholder="Search by name"
                         value={searchTerm}
                         onChange={handleSearch}
-                        style={{ width: "50%",borderRadius:"0" }}
-                        
+                        style={{ width: "50%", borderRadius: "0" }}
+
                       />
-                       <Dropdown
+                      <Dropdown
                         isOpen={statusDropdownOpen}
                         toggle={toggleStatusDropdown}
-                       
+
                       >
-                        <DropdownToggle caret style={{background:"black",borderRadius:"0",boxShadow:"none"}}>
+                        <DropdownToggle caret style={{ background: "black", borderRadius: "0", boxShadow: "none", border: "none" }}>
                           {selectedStatus
                             ? selectedStatus?.label
                             : "Select Status"}{" "}
@@ -314,12 +308,12 @@ console.log(categoryData);
                       </Dropdown>
                     </Col>
 
-                    
-                    
+
+
                   </Row>
                 </CardHeader>
                 <CardBody>
-                 
+
                   <Table
                     responsive
                     className="table table-bordered table-centered mb-0"
@@ -340,12 +334,12 @@ console.log(categoryData);
                           <td>{index + 1}</td>
                           <td>{category?.categoryName}</td>
                           <td>{category?.fullCategoryName}</td>
-                         
+
                           <td>
                             {category?.isBlocked == false ? "Active" : "Block"}
                           </td>
 
-                      
+
                         </tr>
                       ))}
                     </tbody>
@@ -362,7 +356,7 @@ console.log(categoryData);
                     />
                   </Modal>
 
-                 
+
                 </CardBody>
               </Card>
             </Col>
@@ -398,7 +392,7 @@ console.log(categoryData);
     return [currentItems, totalPages];
   }
 
- 
+
 };
 
 export default CategoryList;
