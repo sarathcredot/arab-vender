@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, CardBody, CardHeader, Button, Input } from "reactstrap";
+import { Row, Col, Card, CardBody, CardHeader, Button, Input, Container } from "reactstrap";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -8,6 +8,9 @@ import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
+import CustomButton from "src/components/Common/CustomButton";
+import Breadcrumb from "../../components/Common/Breadcrumb";
 
 // const KYC_STATUS = gql`
 //   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -98,7 +101,7 @@ interface Product {
 }
 
 const ProductListing = () => {
-  document.title = "Product | Arab Deals ";
+  // document.title = "Product | Arab Deals ";
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -115,10 +118,8 @@ const ProductListing = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [maxRecords, setMaxRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const id = localStorage.getItem("vendorid");
+
   const { loading: kycloading, error: kycerror, data: kycData } = useQuery(KYC_STATUS);
-  console.log(kycData);
 
   const {
     loading: productListLoading,
@@ -132,80 +133,12 @@ const ProductListing = () => {
       },
     },
   });
-  console.log("pro", productListData);
 
   useEffect(() => {
     setProducts(productListData?.getVariantsTableByVendor?.records);
     setMaxRecords(productListData?.getVariantsTableByVendor?.maxRecords);
   }, [productListData]);
-  const [productListDatas, setProductDatas] = useState([]);
-  console.log(products);
 
-  // useEffect(()=>{
-  //   if(productListData){
-  //     setProductDatas(productListData.getProductsByVendor.record||[])
-  //   }
-  // })
-
-  // console.log(productListDatas,"ewasrtdfyughijk")
-  // console.log("",productListData);
-
-  // const {loading:productloading, data:productdata,refetch } = useQuery(GET_PRODUCTS, {
-  //   variables: {
-  //     input: {
-  //       vendorId:"659d62c675adf8360cc0eb90",
-  //       page: 1,
-  //       size:10
-  // size: pageSize,
-  //  page: currentPage,
-  // size: pageSize,
-  // query: searchTerm,
-  // parentCategory: searchTerm,
-  // categories:[searchTerm],
-  // color: [searchTerm],
-  // productSize:[searchTerm]
-  //     },
-  //   },
-  // });
-
-  // console.log(productdata);
-
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error.message}</p>;
-
-  // const products = data.getProductsByAdmin.records;
-  // const maxRecords = data.getProductsByAdmin.maxRecords;
-
-  // console.log(products)
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     console.log("ist");
-
-  //     try {
-  //       console.log("s",currentPage);
-
-  //       setLoading(true);
-  //       const result = await refetch({
-  //         input: {
-  //           page: currentPage,
-  //           size: pageSize,
-  //           // query: searchTerm,
-  //         },
-  //       });
-  //       console.log(result);
-
-  //       setProducts(productListData?.getProductsByVendor?.records);
-  //       setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
-  //     } catch (error: any) {
-  //       setError(error.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [searchTerm, currentPage, refetch]);
 
   const totalPages = Math.ceil(maxRecords / pageSize);
 
@@ -219,155 +152,133 @@ const ProductListing = () => {
     }
   };
 
-  const handleNextPage = () => {
-    if (currentPage + 1 <= totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
   const handleSearch = (event: any) => {
     setSearchTerm(event.target.value);
-    console.log(event.target.value);
   };
+
+
+  const items = [
+    { text: "Dashboard", link: `/` },
+    { text: "Products", link: `/product` },
+  ];
+
+
   return (
     <React.Fragment>
+      <ToastContainer />
       <div className="page-content">
-        <div className="container-fluid">
-          <ToastContainer />
-          <Breadcrumbs title="Dashboard" breadcrumbItem="Product" link="/dashboard" />
-          <Row>
-            <Col lg={12}>
-              <div className="d-flex justify-content-end mb-3">
-                {/* <Link to="/add-product"> */}
-                <button
-                  style={{
-                    backgroundColor: "black",
-                    color: "white",
-                    width: "100px",
-                    height: "40px",
-                    borderRadius: "0px",
-                    cursor: "pointer",
-                    boxShadow: "none",
-                    border: "none",
-                  }}
+        <Container fluid={true}>
+          <Breadcrumb items={items} currentPage="Variants" />
+          <div>
+            <Card>
+              <CardHeader style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <Input
+                  type="text"
+                  placeholder="Search Product"
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  style={{ width: "450px", borderRadius: "0px" }}
+                />
+
+                <CustomButton
+                  name="Add Variant"
+                  icon="ic:twotone-add"
                   onClick={handleaddVariant}
-                >
-                  Add Variant
-                </button>
-                {/* </Link> */}
-              </div>
-            </Col>
-          </Row>
+                />
+              </CardHeader>
 
-          <Row>
-            <Col>
-              <Card>
-                <CardHeader>
-                  <h4 className="card-title">Products</h4>
-
-                  <Col xs={5} style={{ marginTop: "20px" }}>
-                    <Input
-                      type="text"
-                      placeholder="Search Product"
-                      value={searchTerm}
-                      onChange={handleSearch}
-                      style={{ width: "50%", borderRadius: "0px" }}
-                    />
-                  </Col>
-                </CardHeader>
-
-                <CardBody>
-                  <div className="mt-4">
-                    <Row>
-                      <Col xl={6}>
-                        <div className="mb-3">
-                          <label htmlFor="cleave-time-format" className="form-label">
-                            Brand
-                          </label>
-                          <div style={{ display: "flex" }}>
-                            {products && products.length > 0 && products[0]?.brandName}
-                          </div>
-                        </div>
-                      </Col>
-                      <Col xl={6}>
-                        <div className="mb-3">
-                          <label htmlFor="cleave-time-format" className="form-label">
-                            Category
-                          </label>
-                          <div style={{ display: "flex" }}>
-                            {products && products.length > 0 && products[0]?.categoryNamePath}
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                  <div className="table-rep-plugin">
-                    <div className="table-responsive mb-0" data-pattern="priority-columns">
-                      <Table id="tech-companies-1" className="table table-striped table-bordered">
-                        <Thead>
-                          <Tr>
-                            <Th data-priority="1">Name</Th>
-                            <Th data-priority="1">Image</Th>
-                            <Th data-priority="1">SKU ID</Th>
-                            <Th data-priority="1">Attributes</Th>
-                            <Th data-priority="1">Stock</Th>
-
-                            {/* <Th data-priority="3">Status</Th> */}
-                            <Th data-priority="3">Status</Th>
-                            <Th data-priority="3">Action</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {products?.map((product: Product, index: number) => (
-                            <Tr key={index}>
-                              <Td>{product?.productName}</Td>
-                              {/* <Td>{product?.status}</Td> */}
-                              <Td>
-                                <img
-                                  src={product.images[0]?.fileURL}
-                                  alt={product?.productName}
-                                  width={80}
-                                  height={80}
-                                />
-                              </Td>
-                              <Td>{product?.skuId}</Td>
-                              <Td>
-                                {product.attributes.map((attribute, index) => (
-                                  <div key={index}>
-                                    <p>
-                                      {attribute.attributeName}: {attribute.attributeValue}
-                                    </p>
-                                  </div>
-                                ))}
-                              </Td>
-                              <Td>{product?.stock}</Td>
-
-                              <Td>{product.isBlocked ? "Blocked" : "Active"}</Td>
-                              <Td>
-                                <Button
-                                  color="white"
-                                  style={{
-                                    backgroundColor: "black",
-                                    alignItems: "center",
-                                    color: "white",
-                                    borderRadius: "0px",
-                                  }}
-                                  tag={Link}
-                                  to={{
-                                    pathname: "/product/details/",
-                                    search: `?_id=${product._id}`,
-                                  }}
-                                >
-                                  View
-                                </Button>
-                              </Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
+              <CardHeader>
+                <Row>
+                  <Col xl={6}>
+                    <div className="">
+                      <label htmlFor="cleave-time-format" className="form-label">
+                        Brand
+                      </label>
+                      <div style={{ display: "flex" }}>
+                        {products && products.length > 0 && products[0]?.brandName}
+                      </div>
                     </div>
+                  </Col>
+                  <Col xl={6}>
+                    <div className="">
+                      <label htmlFor="cleave-time-format" className="form-label">
+                        Category
+                      </label>
+                      <div style={{ display: "flex" }}>
+                        {products && products.length > 0 && products[0]?.categoryNamePath}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </CardHeader>
+              <CardBody>
+
+
+                <div className="table-rep-plugin">
+                  <div className="table-responsive mb-0" data-pattern="priority-columns">
+                    <Table id="tech-companies-1" className="table table-striped table-bordered">
+                      <Thead>
+                        <Tr>
+                          <Th data-priority="1">Name</Th>
+                          <Th data-priority="1">Image</Th>
+                          <Th data-priority="1">SKU ID</Th>
+                          <Th data-priority="1">Attributes</Th>
+                          <Th data-priority="1">Stock</Th>
+
+                          {/* <Th data-priority="3">Status</Th> */}
+                          <Th data-priority="3">Status</Th>
+                          <Th data-priority="3">Action</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {products?.map((product: Product, index: number) => (
+                          <Tr key={index}>
+                            <Td>{product?.productName}</Td>
+                            {/* <Td>{product?.status}</Td> */}
+                            <Td>
+                              <img
+                                src={product.images[0]?.fileURL}
+                                alt={product?.productName}
+                                width={80}
+                                height={80}
+                              />
+                            </Td>
+                            <Td>{product?.skuId}</Td>
+                            <Td>
+                              {product.attributes.map((attribute, index) => (
+                                <div key={index}>
+                                  <p>
+                                    {attribute.attributeName}: {attribute.attributeValue}
+                                  </p>
+                                </div>
+                              ))}
+                            </Td>
+                            <Td>{product?.stock}</Td>
+
+                            <Td>
+                              <StatusIndicator status={product.isBlocked ? "BLOCKED" : "ACTIVE"} />
+                            </Td>
+                            <Td>
+                              <Button
+                                color="primary"
+                                size="sm"
+                                tag={Link}
+                                to={{
+                                  pathname: "/product/details/",
+                                  search: `?_id=${product._id}`,
+                                }}
+                              >
+                                View
+                              </Button>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
                   </div>
-                  {/* <Row>
+                </div>
+                {/* <Row>
                     <Col>
                       <div className="d-flex justify-content-end mt-0 ">
                         <ul className="pagination">
@@ -417,12 +328,11 @@ const ProductListing = () => {
                       </div>
                     </Col>
                   </Row> */}
-                  <div className="border mt-3 border-dashed"></div>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </div>
+                <div className="border mt-3 border-dashed"></div>
+              </CardBody>
+            </Card>
+          </div>
+        </Container>
       </div>
     </React.Fragment>
   );

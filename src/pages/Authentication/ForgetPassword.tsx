@@ -64,7 +64,7 @@ const ForgetPasswordPage = ({ history }: ForgetPasswordProps) => {
     },
   });
 
-  document.title = "Forget Password | Arab-deals";
+  // document.title = "Forget Password | Arab-deals";
 
   return (
     <React.Fragment>

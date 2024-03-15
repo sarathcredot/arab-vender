@@ -18,6 +18,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  BreadcrumbItem,
 } from "reactstrap";
 import CategoryForm from "./CategoryForm";
 import { gql, useMutation, useQuery } from "@apollo/client";
@@ -26,6 +27,9 @@ import { result } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { C } from "@fullcalendar/core/internal-common";
+import { capitalCase } from "change-case";
+import { Link } from "react-router-dom";
+import StatusIndicator from "../statusIndicator/StatusIndicator";
 
 interface sizeChart {
   fileType: string;
@@ -56,6 +60,8 @@ const CategoryList: React.FC<Props> = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
+  const [showSubCategories, setShowSubCategories] = useState<boolean>(false);
+
   // const [showSubCategories, setShowSubCategories] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
@@ -169,25 +175,7 @@ const CategoryList: React.FC<Props> = () => {
     toggleAddModal();
   };
 
-  // const handleNext = (category: Category) => {
-  //   setSelectedCategory(category);
-  //   setShowSubCategories(true);
-  //   setBreadcrumb([...breadcrumb, category]);
-  // };
 
-  const handleBreadcrumbClick = (index: number) => {
-    if (index === -1) {
-      // Clicked on base category (top level)
-      // setShowSubCategories(false);
-      setBreadcrumb([]);
-      setSelectedCategory(null);
-    } else {
-      const newBreadcrumb = breadcrumb.slice(0, index + 1);
-      setBreadcrumb(newBreadcrumb);
-      // setShowSubCategories(index < breadcrumb.length - 1);
-      setSelectedCategory(newBreadcrumb[index]);
-    }
-  };
 
   const statusOptions = [
     { value: "all", label: "All" },
@@ -235,41 +223,18 @@ const CategoryList: React.FC<Props> = () => {
     }
   }, [selectedStatus, categoryData, breadcrumb, searchTerm]);
 
+
+  const items = [
+    { text: "Dashboard", link: `/` },
+  ];
+
+
   return (
     <>
       <ToastContainer />
       <div className="page-content">
-        <div className="mb-0" style={{ display: "flex", gap: "5px" }}>
-          {breadcrumb.length > 0 && (
-            <span
-              style={{ cursor: "pointer", color: "black", fontWeight: "bold" }}
-              onClick={() => handleBreadcrumbClick(-1)}
-            >
-              Home /
-            </span>
-          )}
-          {breadcrumb.map((category, index) => (
-            <span key={category._id} color="gray ">
-              {index > 0 && " / "}
-              {index === breadcrumb.length - 1 ? (
-                category.categoryName
-              ) : (
-                <span
-                  style={{
-                    cursor: "pointer",
-                    color: "black",
-                    fontWeight: "bold",
-                  }}
-                  onClick={() => handleBreadcrumbClick(index)}
-                >
-                  {category.categoryName}
-                </span>
-              )}
-            </span>
-          ))}
-        </div>
         <Container fluid={true} style={{ marginTop: "0px" }}>
-          <Breadcrumb title="Dashboard" breadcrumbItem="Category" link="/dashboard" />
+          <Breadcrumb items={items} currentPage="Categories" />
           <Row>
             <Col lg={12}>
               <Card style={{ borderRadius: "0px" }}>
@@ -336,7 +301,8 @@ const CategoryList: React.FC<Props> = () => {
                           <td>{category?.fullCategoryName}</td>
 
                           <td>
-                            {category?.isBlocked == false ? "Active" : "Block"}
+                            <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
+
                           </td>
 
 

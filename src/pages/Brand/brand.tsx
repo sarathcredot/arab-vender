@@ -17,6 +17,7 @@ import {
 import Breadcrumb from "src/components/Common/Breadcrumb";
 
 import { bR } from "@fullcalendar/core/internal-common";
+import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
 // import BrandForm from "./BrandForm";
 
 
@@ -109,39 +110,18 @@ const BrandList: React.FC = () => {
 
   };
 
+
+  const items = [
+    { text: "Dashboard", link: `/` },
+  ];
+
+
   return (
     <>
       <div className="page-content">
 
         <Container fluid={true}>
-          <Breadcrumb title="Dashboard" breadcrumbItem="Brands" link="/dashboard" />
-          {/* <Nav tabs>
-            <NavItem>
-              <NavLink
-                className={activeTab === undefined ? "active" : ""}
-                onClick={() => setActiveTab(undefined)}
-              >
-                All
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink
-                className={activeTab === false? "active" : ""}
-                onClick={() => setActiveTab(false)}
-              >
-                Active
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink
-                className={activeTab === true ? "active" : ""}
-                onClick={() => setActiveTab(true)}
-              >
-                Blocked
-              </NavLink>
-            </NavItem>
-          </Nav> */}
-
+          <Breadcrumb items={items} currentPage="Brands" />
 
           <Row>
             <Col lg={12}>
@@ -196,16 +176,7 @@ const BrandList: React.FC = () => {
                                 />
                               )}
                             </td>
-                            <td style={{
-                              color: brand.isBlocked ? "red" : "#5cb85c",
-                            }}>{brand.isBlocked ? "Blocked" : "Active"}</td>
-                            {/* <td>
-                              <Link to={`/brands/${brand._id}`}>
-                                <Button style={{ marginLeft: "20px"  , backgroundColor: "#000000"}}>
-                                  View
-                                </Button>
-                              </Link>
-                            </td> */}
+                            <td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></td>
                           </tr>
                         ))}
                     </tbody>

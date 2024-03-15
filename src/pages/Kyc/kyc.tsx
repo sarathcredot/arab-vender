@@ -35,6 +35,7 @@ import { MdEdit } from "react-icons/md";
 import { FaFileImage } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
 
 // const UPDATE_VENTOR_COMPANY = gql`
 //   mutation UpdateVendorCompany(
@@ -289,7 +290,6 @@ const CategoryList: React.FC<addCompany> = () => {
   // useEffect(()=>{
 
   const currentKycStatus: any = useRecoilValue(kycStatus);
-  console.log(currentKycStatus);
   // },[kycStatus])
 
   const [CreateVendor] = useMutation(ADD_VENTOR_COMPANY);
@@ -304,9 +304,7 @@ const CategoryList: React.FC<addCompany> = () => {
   const [outletstatus, setOutletstatus] = useState<any>(null)
   const [outletform, setOutletform] = useState(false)
   const id = localStorage.getItem("vendorid");
-  const { loading, error, data, refetch } = useQuery(VENDOR_DETAILS);
-  console.log(data);
-  console.log("data?.getVendorRecordByVendor", data?.getVendorRecordByVendor);
+  const { loading, error, data, refetch } = useQuery(VENDOR_DETAILS, { fetchPolicy: "network-only" });
 
   useEffect(() => {
     setcompanyDetail(
@@ -364,14 +362,9 @@ const CategoryList: React.FC<addCompany> = () => {
     }
 
 
-    // const fileMap = {
-    //   crLicense: 0,
-    //   cooCertificate: 1,
-    // };
     if (companydetail == "PENDING") {
       try {
         console.log(id);
-        // const isFilesEmpty = files.every((file) => file === "");
         const isFilesEmpty = files.every((file) => !file);
 
 
@@ -384,18 +377,11 @@ const CategoryList: React.FC<addCompany> = () => {
         });
         console.log(response);
         if (response) {
-          // const data1 = response?.data?.updateVendorCompany?.record;
           const msg = response?.data?.addVendorCompany?.message;
-          // console.log("msg", msg);
-
-          // setcompanyDetail(data1);
           toast.success("Company Data Added Successfully ");
           reset();
-          // console.log(response?.data?.updateVendorCompany?.record);
           refetch()
-          // const { loading, error, data } = useQuery(VENDOR_DETAILS, {
-          //   variables: { input: { _id: id } },
-          // });
+
           setcompanyDetail(
             data?.getVendorAllKycRecordByVendor?.record?.companyStatus
           );
@@ -408,8 +394,6 @@ const CategoryList: React.FC<addCompany> = () => {
     }
     if (companydetail == "REJECTED") {
       try {
-        console.log("REJECTED----");
-        // const isFilesEmpty = files.every((file) => file === "");
         const isFilesEmpty = files.every((file) => !file);
         console.log("files", files);
 
@@ -545,612 +529,624 @@ const CategoryList: React.FC<addCompany> = () => {
 
 
   };
+
+
+  const items = [
+    { text: "Dashboard", link: `/` },
+  ];
+
+  console.log(companydetail)
+
   return (
     <>
+      <ToastContainer />
       <div className="page-content">
         <Container fluid={true} >
-          <Breadcrumb title="Dashboard" breadcrumbItem="KYC" link="/dashboard" />
-          <div style={{ marginBottom: "20px" }}><span style={{ marginRight: "20px", fontWeight: "500" }}>KYC Status </span>
-            <span
-              className={styles.status}
-              style={
-                data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === true
-                  ? styless.green : styless.red
-                // : data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted === 'REJECTED'
-
-              }
-            >
-              {data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted == true ? "COMPLETED" : "NOT COMPLETE"}
-            </span></div>
-          <ToastContainer />
-          <Card style={{ padding: "20px", borderRadius: "0px" }}>
-            {companydetail == "PENDING" || company ? (
-              <Row>
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Col lg={12}>
-                    <h4 className="mb-3">Company Details</h4>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "30px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <div style={{ width: "50%" }}>
-                        <Label style={{ color: "black" }}>Company Name</Label>
-                        <Controller
-                          control={control}
-                          name="companyName"
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              className={styles.inputfield}
-                              type="text"
-                              value={value}
-                              onChange={onChange}
-                              required
+          <Breadcrumb items={items} currentPage="Kyc Details" />
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+            <span style={{ marginRight: "20px", fontWeight: "500" }}>KYC Status :</span>
+            <StatusIndicator status={data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted == true ? "COMPLETED" : "PENDING"} variant="chip" />
+          </div>
+          <Row style={{ height: "100% !important" }}>
+            <Col xs={6} style={{}}>
+              <Card style={{ padding: "20px", borderRadius: "0px", height: "100% !important" }} className="h-100">
+                {companydetail == "PENDING" || company ? (
+                  <Row>
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+                      <Col lg={12}>
+                        <h4 className="mb-3">Company Details</h4>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "30px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          <div style={{ width: "50%" }}>
+                            <Label style={{ color: "black" }}>Company Name</Label>
+                            <Controller
+                              control={control}
+                              name="companyName"
+                              render={({ field: { onChange, value } }) => (
+                                <Input
+                                  className={styles.inputfield}
+                                  type="text"
+                                  value={value}
+                                  onChange={onChange}
+                                  required
+                                />
+                              )}
                             />
-                          )}
-                        />
-                      </div>
-                      <div style={{ width: "50%" }}>
-                        <Label style={{ color: "black" }}>Company Type</Label>
-                        <Controller
-                          control={control}
-                          name="companyType"
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              type="text"
-                              className={styles.inputfield}
+                          </div>
+                          <div style={{ width: "50%" }}>
+                            <Label style={{ color: "black" }}>Company Type</Label>
+                            <Controller
+                              control={control}
                               name="companyType"
-                              value={value}
-                              onChange={onChange}
-                              required
+                              render={({ field: { onChange, value } }) => (
+                                <Input
+                                  type="text"
+                                  className={styles.inputfield}
+                                  name="companyType"
+                                  value={value}
+                                  onChange={onChange}
+                                  required
+                                />
+                              )}
                             />
-                          )}
-                        />
-                      </div>
-                    </div>
+                          </div>
+                        </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "30px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <div style={{ width: "50%" }}>
-                        <Label style={{ color: "black" }}>Cr Number</Label>
-                        <Controller
-                          control={control}
-                          name="crNumber"
-                          render={({ field: { onChange, value } }) => (
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "30px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          <div style={{ width: "50%" }}>
+                            <Label style={{ color: "black" }}>Cr Number</Label>
+                            <Controller
+                              control={control}
+                              name="crNumber"
+                              render={({ field: { onChange, value } }) => (
+                                <Input
+                                  type="text"
+                                  className={styles.inputfield}
+                                  onChange={onChange}
+                                  value={value}
+                                  required
+                                />
+                              )}
+                            />
+                          </div>
+                          <div style={{ width: "50%" }}>
+                            <Label style={{ color: "black" }}>Cr License</Label>
                             <Input
-                              type="text"
+                              name="crLicense"
+                              type="file"
                               className={styles.inputfield}
-                              onChange={onChange}
-                              value={value}
-                              required
+                              onChange={(event: any) => handleFileChangeCompany(0, event?.target.files?.[0])}
+                            // required
+                            // value={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.originalName}
+                            // onChange={(event) => {
+                            //   setFiles((e) => {
+                            //     const e1 = (e[0] = event?.target.files?.[0]);
+                            //     const e2 = e[1];
+
+                            //     return [e1, e2];
+                            //   });
+                            // }}
                             />
-                          )}
-                        />
-                      </div>
-                      <div style={{ width: "50%" }}>
-                        <Label style={{ color: "black" }}>Cr License</Label>
-                        <Input
-                          name="crLicense"
-                          type="file"
-                          className={styles.inputfield}
-                          onChange={(event: any) => handleFileChangeCompany(0, event?.target.files?.[0])}
-                        // required
-                        // value={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.originalName}
-                        // onChange={(event) => {
-                        //   setFiles((e) => {
-                        //     const e1 = (e[0] = event?.target.files?.[0]);
-                        //     const e2 = e[1];
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "30px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          <div style={{ width: "49%" }}>
+                            <Label style={{ color: "black" }}>
+                              Coo Certificate
+                            </Label>
+                            <Input
+                              name="cooCertificate"
+                              type="file"
+                              className={styles.inputfield}
+                              onChange={(event: any) => handleFileChangeCompany(1, event?.target.files?.[0])}
+                            // required
+                            // onChange={(event) => {
+                            //   setFiles((e) => {
+                            //     const e1 = e[0];
+                            //     const e2 = (e[1] = event?.target.files?.[0]);
+                            //     return [e1, e2];
+                            //   });
+                            // }}
+                            />
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: "15px" }}>
+                          <button
+                            style={{
+                              background: "black",
+                              color: "white",
+                              padding: "10px",
+                              border: "none",
+                              width: "176px",
+                              height: "52px",
+                            }}
+                            type="submit"
+                          >
+                            Submit
+                          </button>
+                          {companydetail !== "PENDING" && <button
+                            style={{
+                              background: "#E30613",
+                              color: "white",
+                              padding: "10px",
+                              border: "none",
+                              width: "176px",
+                              height: "52px",
+                            }}
+                            onClick={() => { setCompany(false) }}
+                          >
+                            Cancel
+                          </button>}
+                        </div>
+                      </Col>
+                    </Form>
+                  </Row>
+                ) : (
+                  <Row>
+                    <div className={styles.edit}>
+                      {" "}
+                      {companydetail == "REJECTED" ? (
+                        <div
+                          className={styles.circle}
+                          onClick={() => setCompany(!company)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <MdEdit size={25} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                    <h4 className="mb-3">Company Details</h4>
 
-                        //     return [e1, e2];
-                        //   });
-                        // }}
-                        />
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "30px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <div style={{ width: "49%" }}>
-                        <Label style={{ color: "black" }}>
-                          Coo Certificate
-                        </Label>
-                        <Input
-                          name="cooCertificate"
-                          type="file"
-                          className={styles.inputfield}
-                          onChange={(event: any) => handleFileChangeCompany(1, event?.target.files?.[0])}
-                        // required
-                        // onChange={(event) => {
-                        //   setFiles((e) => {
-                        //     const e1 = e[0];
-                        //     const e2 = (e[1] = event?.target.files?.[0]);
-                        //     return [e1, e2];
-                        //   });
-                        // }}
-                        />
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", gap: "15px" }}>
-                      <button
-                        style={{
-                          background: "black",
-                          color: "white",
-                          padding: "10px",
-                          border: "none",
-                          width: "176px",
-                          height: "52px",
-                        }}
-                        type="submit"
+                    <div className="mb-3 d-flex align-items-center">
+                      <div className={styles.labeldiv}> Status </div>
+                      <StatusIndicator status={companydetail == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : companydetail} variant="chip" />
+                      {/* <span
+                        className={styles.status}
+                        style={
+                          companydetail === 'COMPLETED'
+                            ? styless.green
+                            : companydetail === 'REJECTED'
+                              ? styless.red
+                              : companydetail === 'UNDER_VERIFICATION' ? styless.blue : styless.orange
+                        }
                       >
-                        Submit
-                      </button>
-                      {companydetail !== "PENDING" && <button
+                        {companydetail == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : companydetail}
+                      </span> */}
+                    </div>
+                    <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Company Name </div>
+                      {data?.getVendorAllKycRecordByVendor?.record?.companyName ? <span>
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyName}
+                      </span> : ""}
+                    </div>
+                    <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Company Type </div>
+                      {data?.getVendorAllKycRecordByVendor?.record?.companyType ? <span>
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyType}
+                      </span> : ""}
+                    </div>
+                    <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Cr Number </div>
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.companyCrNumber ? <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.companyCrNumber
+                        }
+                      </span> : ""}
+                    </div>
+                    <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Attachments </div>
+                      <div>
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div></Link> : ""}
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate</div></Link> : ""}
+                      </div>
+
+                    </div>
+                  </Row>
+                )}
+              </Card>
+            </Col>
+            <Col xs={6}>
+              <Card style={{ padding: "20px", borderRadius: "0px", height: "100% !important" }} className="h-100">
+                {outletstatus == 'PENDING' || outletform ? (<Row>
+                  <Form onSubmit={handleSubmit1(onSubmitOutlet)}>
+                    <Col lg={12}>
+                      <h4 className="mb-3">Outlet detail</h4>
+                      <div
                         style={{
-                          background: "#E30613",
-                          color: "white",
-                          padding: "10px",
-                          border: "none",
-                          width: "176px",
-                          height: "52px",
+                          display: "flex",
+                          gap: "30px",
+                          marginBottom: "20px",
                         }}
-                        onClick={() => { setCompany(false) }}
                       >
-                        Cancel
-                      </button>}
-                    </div>
-                  </Col>
-                </Form>
-              </Row>
-            ) : (
-              <Row>
-                <div className={styles.edit}>
-                  {" "}
-                  {companydetail == "REJECTED" ? (
-                    <div
-                      className={styles.circle}
-                      onClick={() => setCompany(!company)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <MdEdit size={25} />
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <h4 className="mb-3">Company Details</h4>
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>Outlet Name</Label>
+                          <Controller
+                            control={control1}
+                            name="outletName"
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                value={value}
+                                className={styles.inputfield}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
+                          />
+                        </div>
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>Village</Label>
+                          <Controller
+                            control={control1}
+                            name="village"
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                value={value}
+                                className={styles.inputfield}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
 
-                <div className="mb-3 d-flex align-items-center">
-                  <div className={styles.labeldiv}> Status </div>
-                  <span
-                    className={styles.status}
-                    style={
-                      companydetail === 'COMPLETED'
-                        ? styless.green
-                        : companydetail === 'REJECTED'
-                          ? styless.red
-                          : companydetail === 'UNDER_VERIFICATION' ? styless.blue : styless.orange
-                    }
-                  >
-                    {companydetail == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : companydetail}
-                  </span>
-                </div>
-                <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Company Name </div>
-                  {data?.getVendorAllKycRecordByVendor?.record?.companyName ? <span>
-                    {data?.getVendorAllKycRecordByVendor?.record?.companyName}
-                  </span> : ""}
-                </div>
-                <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Company Type </div>
-                  {data?.getVendorAllKycRecordByVendor?.record?.companyType ? <span>
-                    {data?.getVendorAllKycRecordByVendor?.record?.companyType}
-                  </span> : ""}
-                </div>
-                <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Cr Number </div>
-                  {data?.getVendorAllKycRecordByVendor?.record
-                    ?.companyCrNumber ? <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.companyCrNumber
-                    }
-                  </span> : ""}
-                </div>
-                <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Attachments </div>
-                  <div>
-                    {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div></Link> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate</div></Link> : ""}
-                  </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "30px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>District</Label>
+                          <Controller
+                            control={control1}
+                            name="district"
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                className={styles.inputfield}
+                                onChange={onChange}
+                                value={value}
+                                required
+                              />
+                            )}
+                          />
+                        </div>
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>Country</Label>
+                          <Controller
+                            control={control1}
+                            name="country"
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                className={styles.inputfield}
+                                type="text"
+                                value={value}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "30px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>
+                            Contact Person Name
+                          </Label>
 
-                </div>
-              </Row>
-            )}
-          </Card>
-          {/* outlet */}
-          <Card style={{ padding: "20px", boxShadow: "0px 4px 16px 0px rgb(0 0 0 / 7%)", borderRadius: "0px" }}>
-            {outletstatus == 'PENDING' || outletform ? (<Row>
-              <Form onSubmit={handleSubmit1(onSubmitOutlet)}>
-                <Col lg={12}>
-                  <h4 className="mb-3">Outlet detail</h4>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "30px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>Outlet Name</Label>
-                      <Controller
-                        control={control1}
-                        name="outletName"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            value={value}
-                            className={styles.inputfield}
-                            onChange={onChange}
-                            required
+                          <Controller
+                            control={control1}
+                            name="contactPersonName"
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                className={styles.inputfield}
+                                value={value}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </div>
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>Village</Label>
-                      <Controller
-                        control={control1}
-                        name="village"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            value={value}
-                            className={styles.inputfield}
-                            onChange={onChange}
-                            required
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "30px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>District</Label>
-                      <Controller
-                        control={control1}
-                        name="district"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            className={styles.inputfield}
-                            onChange={onChange}
-                            value={value}
-                            required
-                          />
-                        )}
-                      />
-                    </div>
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>Country</Label>
-                      <Controller
-                        control={control1}
-                        name="country"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            className={styles.inputfield}
-                            type="text"
-                            value={value}
-                            onChange={onChange}
-                            required
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "30px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>
-                        Contact Person Name
-                      </Label>
-
-                      <Controller
-                        control={control1}
-                        name="contactPersonName"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            className={styles.inputfield}
-                            value={value}
-                            onChange={onChange}
-                            required
-                          />
-                        )}
-                      />
-                    </div>
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>
-                        Contact Person Number
-                      </Label>
-                      <Controller
-                        control={control1}
-                        name="contactPersonNumber"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            className={styles.inputfield}
+                        </div>
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>
+                            Contact Person Number
+                          </Label>
+                          <Controller
+                            control={control1}
                             name="contactPersonNumber"
-                            value={value}
-                            onChange={onChange}
-                            required
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                className={styles.inputfield}
+                                name="contactPersonNumber"
+                                value={value}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "30px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>
-                        Contact Person Designation
-                      </Label>
-                      <Controller
-                        control={control1}
-                        name="contactPersonDesignation"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            className={styles.inputfield}
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "30px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>
+                            Contact Person Designation
+                          </Label>
+                          <Controller
+                            control={control1}
                             name="contactPersonDesignation"
-                            value={value}
-                            onChange={onChange}
-                            required
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                className={styles.inputfield}
+                                name="contactPersonDesignation"
+                                value={value}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </div>
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>Address</Label>
-                      <Controller
-                        control={control1}
-                        name="address"
-                        render={({ field: { onChange, value } }) => (
-                          <Input
-                            type="text"
-                            className={styles.inputfield}
+                        </div>
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>Address</Label>
+                          <Controller
+                            control={control1}
                             name="address"
-                            value={value}
-                            onChange={onChange}
-                            required
+                            render={({ field: { onChange, value } }) => (
+                              <Input
+                                type="text"
+                                className={styles.inputfield}
+                                name="address"
+                                value={value}
+                                onChange={onChange}
+                                required
+                              />
+                            )}
                           />
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "30px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>
-                        {" "}
-                        Outlet Licence
-                      </Label>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "30px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>
+                            {" "}
+                            Outlet Licence
+                          </Label>
 
-                      <Input
-                        name="outletLicense"
-                        className={styles.inputfield}
-                        type="file"
-                        onChange={(event: any) => handleFileChange(0, event?.target.files?.[0])}
-                      // required
-                      />
-                    </div>
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>Interior Image</Label>
-                      <Input
-                        name="interiorImage"
-                        type="file"
-                        className={styles.inputfield}
-                        onChange={(event: any) => handleFileChange(1, event?.target.files?.[0])}
-                      // required
-                      />
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "30px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Label style={{ color: "black" }}>Exterior Image</Label>
-                      <Input
-                        name="exteriorImage"
-                        className={styles.inputfield}
-                        type="file"
-                        onChange={(event: any) => handleFileChange(2, event?.target.files?.[0])}
-                      // required
-                      />
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: "15px" }}>
-                    <button
-                      type="submit"
-                      style={{
-                        background: "black",
-                        color: "white",
-                        padding: "10px",
-                        border: "none",
-                        width: "176px",
-                        height: "52px",
-                      }}
-                    >
-                      Submit
-                    </button>
-                    {outletstatus !== "PENDING" && <button
-                      style={{
-                        background: "#E30613",
-                        color: "white",
-                        padding: "10px",
-                        border: "none",
-                        width: "176px",
-                        height: "52px",
-                      }}
-                      onClick={() => { setOutletform(false) }}
-                    >
-                      Cancel
-                    </button>}
-                  </div>
-                </Col>
-              </Form>
-            </Row>) :
+                          <Input
+                            name="outletLicense"
+                            className={styles.inputfield}
+                            type="file"
+                            onChange={(event: any) => handleFileChange(0, event?.target.files?.[0])}
+                          // required
+                          />
+                        </div>
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>Interior Image</Label>
+                          <Input
+                            name="interiorImage"
+                            type="file"
+                            className={styles.inputfield}
+                            onChange={(event: any) => handleFileChange(1, event?.target.files?.[0])}
+                          // required
+                          />
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "30px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <div style={{ width: "50%" }}>
+                          <Label style={{ color: "black" }}>Exterior Image</Label>
+                          <Input
+                            name="exteriorImage"
+                            className={styles.inputfield}
+                            type="file"
+                            onChange={(event: any) => handleFileChange(2, event?.target.files?.[0])}
+                          // required
+                          />
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: "15px" }}>
+                        <button
+                          type="submit"
+                          style={{
+                            background: "black",
+                            color: "white",
+                            padding: "10px",
+                            border: "none",
+                            width: "176px",
+                            height: "52px",
+                          }}
+                        >
+                          Submit
+                        </button>
+                        {outletstatus !== "PENDING" && <button
+                          style={{
+                            background: "#E30613",
+                            color: "white",
+                            padding: "10px",
+                            border: "none",
+                            width: "176px",
+                            height: "52px",
+                          }}
+                          onClick={() => { setOutletform(false) }}
+                        >
+                          Cancel
+                        </button>}
+                      </div>
+                    </Col>
+                  </Form>
+                </Row>) :
 
-              <Row>
-                <div className={styles.edit}>
-                  {" "}
-                  {outletstatus == "REJECTED" ? (
-                    <div
-                      className={styles.circle}
-                      onClick={() => setOutletform(!outletform)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <MdEdit size={25} />
+                  <Row>
+                    <div className={styles.edit}>
+                      {" "}
+                      {outletstatus == "REJECTED" ? (
+                        <div
+                          className={styles.circle}
+                          onClick={() => setOutletform(!outletform)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <MdEdit size={25} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <h4 className="mb-3">Outlet Details</h4>
-                <div className="mb-3 d-flex align-items-center">
-                  <div className={styles.labeldiv}> Status </div>
-                  <span
-                    className={styles.status}
-                    style={
-                      outletstatus == 'COMPLETED'
-                        ? styless.green
-                        : outletstatus == 'REJECTED'
-                          ? styless.red
-                          : outletstatus == 'UNDER_VERIFICATION' ? styless.blue : styless.orange
-                    }
-                  >
-                    {outletstatus == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : outletstatus}
-                  </span>                </div>
-                {data?.getVendorAllKycRecordByVendor?.record?.outletName ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Outlet Name </div>
-                  <span>
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletName}
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Village </div>
-                  <span>
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record
-                  ?.outletDistrict ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> District </div>
-                  <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletDistrict
-                    }
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record
-                  ?.outletCountry ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Country </div>
-                  <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletCountry
-                    }
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record
-                  ?.outletContactPersonName ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Contact Person Name </div>
-                  <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletContactPersonName
-                    }
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record
-                  ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Contact Person Number </div>
-                  <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletContactPersonNumber
-                    }
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record
-                  ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Contact Person Designation </div>
-                  <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletContactPersonDesignation
-                    }
-                  </span>
-                </div> : ""}
-                {data?.getVendorAllKycRecordByVendor?.record
-                  ?.outletAddress ? <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Address </div>
-                  <span>
-                    {
-                      data?.getVendorAllKycRecordByVendor?.record
-                        ?.outletAddress
-                    }
-                  </span>
-                </div> : ""}
-                <div className="mb-3 d-flex">
-                  <div className={styles.labeldiv}> Attachments </div>
-                  <div>
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div></Link> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></Link> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></Link> : ""}
-                  </div>
+                    <h4 className="mb-3">Outlet Details</h4>
+                    <div className="mb-3 d-flex align-items-center">
+                      <div className={styles.labeldiv}> Status </div>
 
-                </div>
-              </Row>
-            }
-          </Card>
+                      <StatusIndicator status={outletstatus == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : outletstatus} variant="chip" />
+                      {/* <span
+                        className={styles.status}
+                        style={
+                          outletstatus == 'COMPLETED'
+                            ? styless.green
+                            : outletstatus == 'REJECTED'
+                              ? styless.red
+                              : outletstatus == 'UNDER_VERIFICATION' ? styless.blue : styless.orange
+                        }
+                      >
+                        {outletstatus == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : outletstatus}
+                      </span>      */}
+                    </div>
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletName ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Outlet Name </div>
+                      <span>
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletName}
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Village </div>
+                      <span>
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record
+                      ?.outletDistrict ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> District </div>
+                      <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.outletDistrict
+                        }
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record
+                      ?.outletCountry ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Country </div>
+                      <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.outletCountry
+                        }
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record
+                      ?.outletContactPersonName ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Contact Person Name </div>
+                      <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.outletContactPersonName
+                        }
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record
+                      ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Contact Person Number </div>
+                      <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.outletContactPersonNumber
+                        }
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record
+                      ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Contact Person Designation </div>
+                      <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.outletContactPersonDesignation
+                        }
+                      </span>
+                    </div> : ""}
+                    {data?.getVendorAllKycRecordByVendor?.record
+                      ?.outletAddress ? <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Address </div>
+                      <span>
+                        {
+                          data?.getVendorAllKycRecordByVendor?.record
+                            ?.outletAddress
+                        }
+                      </span>
+                    </div> : ""}
+                    <div className="mb-3 d-flex">
+                      <div className={styles.labeldiv}> Attachments </div>
+                      <div>
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div></Link> : ""}
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></Link> : ""}
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></Link> : ""}
+                      </div>
+
+                    </div>
+                  </Row>
+                }
+              </Card>
+            </Col>
+          </Row>
+
+          {/* outlet */}
+
         </Container>
       </div>
     </>

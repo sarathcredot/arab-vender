@@ -90,7 +90,7 @@ const Login = (props: any) => {
   // Inside your component
   const { error } = useSelector(errorData);
   const navigate = useNavigate();
-  document.title = "Login | Arabdeal";
+  // document.title = "Login | Arabdeal";
   const {
     register,
     handleSubmit,

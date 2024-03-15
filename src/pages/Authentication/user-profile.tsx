@@ -198,7 +198,7 @@ const UserProfile = () => {
     }
   }, [vendorData, vendorRefetch]);
 
-  document.title = "Profile | Arab-deals";
+  // document.title = "Profile | Arab-deals";
   console.log("data-----------", data);
 
   return (
@@ -207,7 +207,7 @@ const UserProfile = () => {
       <div className="page-content">
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumb title="Dashboard" breadcrumbItem="Profile" />
+          {/* <Breadcrumb title="Dashboard" breadcrumbItem="Profile" /> */}
 
           <Row>
             <Col lg="12">

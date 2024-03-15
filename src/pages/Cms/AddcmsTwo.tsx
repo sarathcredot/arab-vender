@@ -151,7 +151,7 @@ const AddCmsTwoSection: React.FC<AddCmsTwoSectionProps> = ({
         _id: item._id
       }));
 
-      console.log(items,"sdsfghjklhgfjk")
+      console.log(items, "sdsfghjklhgfjk")
 
       setButtons(items);
       editedcmstwo.items.forEach((item, index) => {
@@ -165,15 +165,15 @@ const AddCmsTwoSection: React.FC<AddCmsTwoSectionProps> = ({
 
 
 
- 
-const navigate=useNavigate()
+
+  const navigate = useNavigate()
   const onSubmit: SubmitHandler<CmsSectionForm> = async (data) => {
     try {
       if (edit && editedcmstwo) {
         const images = buttons.map((button) => {
           return button.image ? button.image[0] : null;
         });
-       
+
         await updateCmsSection({
           variables: {
             input: {
@@ -212,7 +212,7 @@ const navigate=useNavigate()
               pageName: data.pageName,
               subTitle: data.subTitle,
               title: data.title,
-            },  
+            },
             images: buttons.map((button) => button.image?.[0]),
 
           },
@@ -230,17 +230,17 @@ const navigate=useNavigate()
     }
   };
 
- 
+
   // const [fileMap, setFileMap] = useState<any>({});
-  
+
   const hndleFileMap = (index: any, itemId: any) => {
     setIndexState((prevIndexState: any) => [...prevIndexState, index]);
     if (itemId) {
       setFileMap((prevFileMap: any) => {
         const updatedIndexState = [...indexState, index];
-        console.log(updatedIndexState,"updatedIndexState")
+        console.log(updatedIndexState, "updatedIndexState")
         const lastIndex = updatedIndexState.length - 1;
-        console.log(lastIndex,"lastIndex  ")
+        console.log(lastIndex, "lastIndex  ")
         return {
           ...prevFileMap,
           [itemId]: lastIndex,
@@ -248,19 +248,19 @@ const navigate=useNavigate()
       });
     }
   };
-  
-  
 
-   
+
+
+
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumbs
+          {/* <Breadcrumbs
             title="CMS Section"
             breadcrumbItem={edit ? "Edit Cms section" : "Add CMS Section"}
-          />
+          /> */}
           <Row>
             <Col lg={12}>
               <Card>
@@ -359,7 +359,7 @@ const navigate=useNavigate()
                                     return newButtons;
                                   })
                                 }
-                              
+
                               />
                             </Col>
                             <div

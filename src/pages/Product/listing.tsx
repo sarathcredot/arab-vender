@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, CardBody, CardHeader, Button, Input } from "reactstrap";
+import { Row, Col, Card, CardBody, CardHeader, Button, Input, Nav, NavItem, NavLink, Container } from "reactstrap";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -7,6 +7,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
 import "./listing.css";
+import CustomButton from "src/components/Common/CustomButton";
+import Breadcrumb from "../../components/Common/Breadcrumb";
+
 
 // const KYC_STATUS = gql`
 //   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -77,7 +80,7 @@ interface Product {
 }
 
 const ProductListing = () => {
-  document.title = "Product | Arab Deals ";
+  // document.title = "Product | Arab Deals ";
   const navigate = useNavigate();
   const pageSize = 10; // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
@@ -88,10 +91,11 @@ const ProductListing = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFilter, setselectedFilter] = useState("");
+  const [activeTab, setActiveTab] = useState("");
+
+
   const id = localStorage.getItem("vendorid");
   const { loading: kycloading, error: kycerror, data: kycData } = useQuery(KYC_STATUS);
-  console.log(kycData);
-  console.log(currentPage, pageSize, selectedFilter);
 
   const {
     loading: productListLoading,
@@ -104,7 +108,7 @@ const ProductListing = () => {
         page: currentPage,
         size: pageSize,
         query: searchTerm,
-        status: selectedFilter,
+        status: activeTab,
       },
     },
   });
@@ -112,7 +116,7 @@ const ProductListing = () => {
   const handleclick = (value: any) => {
     setselectedFilter(value);
   };
-  console.log("pro", productListData);
+
   useEffect(() => {
     refetch();
   }, []);
@@ -121,38 +125,32 @@ const ProductListing = () => {
     setMaxRecords(productListData?.getProductsByVendor?.maxRecords);
   }, [productListData]);
   const [productListDatas, setProductDatas] = useState([]);
-  console.log(products);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("ist");
+
 
       try {
-        console.log("s", currentPage);
 
-        setLoading(true);
         const result = await refetch({
           input: {
             // vendorId: id,
             page: currentPage,
             size: pageSize,
             query: searchTerm,
-            status: selectedFilter,
+            status: activeTab,
           },
         });
-        console.log(result);
-
         setProducts(result?.data?.getProductsByVendor?.records);
         setMaxRecords(result?.data?.getProductsByVendor?.maxRecords);
       } catch (error: any) {
         setError(error.message);
       } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
-  }, [searchTerm, currentPage, refetch]);
+  }, [searchTerm, currentPage, refetch, activeTab]);
 
   const totalPages = Math.ceil(maxRecords / pageSize);
 
@@ -174,98 +172,85 @@ const ProductListing = () => {
     setSearchTerm(event.target.value);
     console.log(event.target.value);
   };
+
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+  };
+  const items = [
+    { text: "Dashboard", link: `/` },
+  ];
+
+
   return (
     <React.Fragment>
+      <ToastContainer />
       <div className="page-content">
-        <div className="container-fluid">
-          <ToastContainer />
-          <Breadcrumbs title="Dashboard" breadcrumbItem="Products" link="/dashboard" />
+        <Container fluid={true}>
+          <Breadcrumb items={items} currentPage="Products" />
+          <Nav tabs style={{ marginTop: "20px" }}>
+            <NavItem>
+              <NavLink
+                className={activeTab === "" ? "tab-button active" : "tab-button"}
+                onClick={() => handleTabChange("")}
+              >
+                All
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={activeTab === "APPROVED" ? "tab-button active" : "tab-button"}
+                onClick={() => handleTabChange("APPROVED")}
+              >
+                Approved
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={activeTab === "UNDER_VERIFICATION" ? "tab-button active" : "tab-button"}
+                onClick={() => handleTabChange("UNDER_VERIFICATION")}
+              >
+                Under Review
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={activeTab === "REJECTED" ? "tab-button active" : "tab-button"}
+                onClick={() => handleTabChange("REJECTED")}
+              >
+                Rejected
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={activeTab === "PENDING" ? "tab-button active" : "tab-button"}
+                onClick={() => handleTabChange("PENDING")}
+              >
+                Pending
+              </NavLink>
+            </NavItem>
+          </Nav>
 
-          <Row>
-            <Col lg={12}>
-              <div className="d-flex justify-content-end mb-3">
-                <button
-                  style={{
-                    backgroundColor: "black",
-                    color: "white",
-                    width: "100px",
-                    height: "40px",
-                    borderRadius: "0px",
-                    cursor: "pointer",
-                    boxShadow: "none",
-                    border: "none",
-                  }}
-                  onClick={handlekycstatus}
-                >
-                  Add Product
-                </button>
-              </div>
-            </Col>
-          </Row>
-
-          <Row style={{ display: "flex", paddingLeft: "12px", paddingRight: "12px" }}>
-            <Col
-              className={selectedFilter === "" ? "filter selected" : "filter"}
-              onClick={() => {
-                handleclick("");
-              }}
-            >
-              All
-            </Col>
-            <Col
-              className={selectedFilter === "APPROVED" ? "filter selected" : "filter"}
-              onClick={() => {
-                handleclick("APPROVED");
-              }}
-            >
-              Approved
-            </Col>
-            <Col
-              className={selectedFilter === "UNDER_VERIFICATION" ? "filter selected" : "filter"}
-              onClick={() => {
-                handleclick("UNDER_VERIFICATION");
-              }}
-            >
-              Under Review
-            </Col>
-            <Col
-              className={selectedFilter === "REJECTED" ? "filter selected" : "filter"}
-              onClick={() => {
-                handleclick("REJECTED");
-              }}
-            >
-              Rejected
-            </Col>
-            <Col
-              className={selectedFilter === "PENDING" ? "filter selected" : "filter"}
-              onClick={() => {
-                handleclick("PENDING");
-              }}
-            >
-              Pending
-            </Col>
-          </Row>
-
-          <Row>
+          <Row style={{ marginTop: "20px" }}>
             <Col>
               {products && products?.length > 0 ? (
                 <Card style={{ borderRadius: "0px" }}>
                   <CardHeader>
-                    {/* <h4 className="card-title">Products</h4> */}
-
-                    <Col
-                      xs={5}
-                      lg={12}
-                      style={{ marginTop: "3px", display: "flex", justifyContent: "space-between" }}
-                    >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <Input
                         type="text"
                         placeholder="Search Product"
                         value={searchTerm}
                         onChange={handleSearch}
-                        style={{ width: "50%", borderRadius: "0px" }}
+                        style={{ width: "450px", borderRadius: "0px" }}
                       />
-                    </Col>
+                      <CustomButton
+                        name="Add Product"
+                        icon="ic:twotone-add"
+                        onClick={handlekycstatus}
+                      />
+                    </div>
+
                   </CardHeader>
 
                   <CardBody>
@@ -287,7 +272,7 @@ const ProductListing = () => {
                           <Tbody>
                             {products?.map((product: Product, index: number) => (
                               <Tr key={index}>
-                                <Td>{index + 1}</Td>
+                                <Td>{currentPage * pageSize + index + 1}</Td>
                                 <Td>{product.productName}</Td>
                                 <Td>{product.productCode}</Td>
 
@@ -304,20 +289,15 @@ const ProductListing = () => {
                                 <Td>
                                   <div style={{ display: "flex", gap: "10px" }}>
                                     <Button
-                                      color="white"
-                                      style={{
-                                        backgroundColor: "black",
-                                        alignItems: "center",
-                                        color: "white",
-                                        borderRadius: "0px",
-                                      }}
+                                      color="primary"
+                                      size="sm"
                                       tag={Link}
                                       to={{
-                                        pathname: "/list-variant",
+                                        pathname: "/product/variant",
                                         search: `?_code=${product?.productCode}`,
                                       }}
                                     >
-                                      View variants
+                                      View
                                     </Button>
                                     {/* <Button
                                   color="white"
@@ -374,9 +354,8 @@ const ProductListing = () => {
 
                             {currentPage < totalPages - 1 && (
                               <li
-                                className={`page-item ${
-                                  currentPage === totalPages - 1 ? "disabled" : ""
-                                }`}
+                                className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
+                                  }`}
                               >
                                 <button
                                   style={{ borderRadius: "0px" }}
@@ -410,7 +389,7 @@ const ProductListing = () => {
               )}
             </Col>
           </Row>
-        </div>
+        </Container>
       </div>
     </React.Fragment>
   );

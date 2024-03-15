@@ -14,32 +14,56 @@ import AddProduct from "./addproduct";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import Breadcrumb from "../../components/Common/Breadcrumb";
+import CustomButton from "src/components/Common/CustomButton";
+import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
+import { formatCurrency } from "src/utils/formatCurrency";
 interface ProductData {
   _id: string;
-  color: string;
-  size: string;
-  description: string;
-  shortDescription: string;
-  images: {
-    fileURL: string;
-  }[];
-  mrp: number;
-  productCode: string;
+  vendorId: string;
+  brandId: string;
+  brandName: string;
   productName: string;
+  shortDescription: string;
+  skuId: number;
+  description: string;
+  productInfo: string;
+  productShortInfo: string;
+  images: {
+    fileType: string;
+    fileURL: string;
+    mimeType: string;
+    originalName: string;
+  }[];
   rating: number;
   sellingPrice: number;
   price: number;
-  skuId: number;
+  mrp: number;
   tags: string;
-  stock: string;
-  productDetailImages: {
-    fileURL: string;
-  }[];
-  categoryNamePath: string;
+  productCode: string;
   categoryId: string;
+  categoryNamePath: string;
+  categoryIdPath: string;
   isBlocked: boolean;
+  stock: string;
   status: string;
+  offerPrice?: number; // optional field
+  attributes?: {
+    attributeId: string;
+    attributeName: string;
+    attributeValueId: string;
+    attributeValue: string;
+    attributeDescription: string;
+  }[];
+  productDetailImages: {
+    fileType: string;
+    fileURL: string;
+    mimeType: string;
+    originalName: string;
+  }[];
+  warehouseSkuId?: string;
 }
+
 interface IVariant {
   _id: string;
   color: string;
@@ -47,6 +71,7 @@ interface IVariant {
   stock: number;
   colorCode: string;
 }
+
 
 const ProductDetails = () => {
   // const [searchParams] = useSearchParams();
@@ -66,52 +91,55 @@ const ProductDetails = () => {
 
   const GET_PRODUCTDETAIL = gql`
     query GetProductByVendor($input: ProductId!) {
-      getProductByVendor(input: $input) {
-        message
-        product {
-          _id
-          attributes {
-            attributeValueId
-            attributeValue
-            attributeName
-            attributeDescription
-            attributeId
-          }
-          brandId
-          brandName
-          categoryId
-          categoryIdPath
-          categoryNamePath
-          description
-          isBlocked
-          mrp
-          offerPrice
-          price
-          productCode
-          productInfo
-          productName
-          productShortInfo
-          rating
-          sellingPrice
-          shortDescription
-          skuId
-          status
-          stock
-          tags
-          vendorId
-          images {
-            originalName
-            fileURL
-            fileType
-          }
-          productDetailImages {
-            originalName
-            fileURL
-            fileType
-          }
-        }
+  getProductByVendor(input: $input) {
+    product {
+      _id
+      vendorId
+      brandId
+      brandName
+      productName
+      shortDescription
+      skuId
+      description
+      productInfo
+      productShortInfo
+      images {
+        fileType
+        fileURL
+        mimeType
+        originalName
       }
+      rating
+      sellingPrice
+      price
+      mrp
+      tags
+      productCode
+      categoryId
+      categoryNamePath
+      categoryIdPath
+      isBlocked
+      stock
+      status
+      offerPrice
+      attributes {
+        attributeId
+        attributeName
+        attributeValueId
+        attributeValue
+        attributeDescription
+      }
+      productDetailImages {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      warehouseSkuId
     }
+    message
+  }
+}
   `;
   const GET_VARIANTS = gql`
     query Variants($input: VariantsInput!) {
@@ -143,8 +171,8 @@ const ProductDetails = () => {
     if (data && data.getProductByVendor && data.getProductByVendor.product) {
       let product: ProductData = data.getProductByVendor.product;
       setProduct(product);
-      setSelectedVSize(product.size);
-      setSelectedVColor(product.color);
+      // setSelectedVSize(product.size);
+      // setSelectedVColor(product.color);
       setSelectedImage(product.images[0]?.fileURL || "");
     }
   }, [data]);
@@ -289,8 +317,8 @@ const ProductDetails = () => {
                           ? "#2B2B2A "
                           : "#E3E5E4"
                         : isActive
-                        ? "#2B2B2A "
-                        : "white",
+                          ? "#2B2B2A "
+                          : "white",
                       minWidth: "70px",
                       height: "50px",
                       color: isActive ? "white" : "#2B2B2A",
@@ -308,10 +336,19 @@ const ProductDetails = () => {
   };
 
   const [edit, setEdit] = useState(false);
+
   const handleEditProduct = () => {
     setEditedProduct(product);
     setEdit(true);
   };
+
+
+  const items = [
+    { text: "Dashboard", link: `/` },
+    { text: "Products", link: `/product` },
+    { text: "Variants", link: `/product/variant?_code=${product?.productCode}` },
+  ];
+
 
   return (
     <React.Fragment>
@@ -319,152 +356,43 @@ const ProductDetails = () => {
         <AddProduct Edit={true} editedProduct={editedProduct} />
       ) : (
         <div className="page-content">
-          <ToastContainer />
           <Container fluid={true}>
-            <Breadcrumbs title="Product" breadcrumbItem="Product Details" link="/product" />
-            <div className="d-flex justify-content-end mb-3" style={{ gap: "20px" }}>
-              {/* <Link
-                to={`/add-variant?productCode=${product?.productCode}&productId=${product?._id}&category=${product?.categoryId}`}
-                style={{ textDecoration: "none" }}
-              > */}
-              {/* <button
-                onClick={handleaddVariant}
+            <Breadcrumb items={items} currentPage="View Product" />
 
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  width: "100px",
-                  height: "40px",
-                  borderRadius: "0px",
-                  border: "none"
-
-                }}
-              >
-                Add Varient
-              </button> */}
-              {/* </Link> */}
-
-              <button
+            <div className="d-flex justify-content-between mb-3">
+              <div style={{ width: "auto" }}>
+                <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                  <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Category : </p>
+                  {product?.categoryNamePath}
+                </p>
+                <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                  <p style={{ margin: 0, fontWeight: 500, width: "100px" }}> Sku ID : </p>
+                  {product?.skuId}
+                </p>
+                <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                  <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Status : </p>
+                  {product?.status}
+                </p>
+              </div>
+              <CustomButton
                 onClick={handleEditProduct}
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  width: "100px",
-                  height: "40px",
-                  borderRadius: "0px",
-                  border: "none",
-                }}
-              >
-                Edit Product
-              </button>
+                name="Edit Product"
+                icon="ic:baseline-edit"
+              />
             </div>
-            {/* <div className="d-flex justify-content-end mb-3">
-              <button
-                onClick={handleEditProduct}
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  width: "100px",
-                  height: "40px",
-                  borderRadius: "10px",
-                }}
-              >
-                Edit Product
-              </button>
-            </div> */}
             <Row>
               <Col lg={12}>
-                <Card style={{ borderRadius: "0px" }}>
-                  <CardHeader style={{ display: "none" }}>
-                    <Row>
-                      <Col xl={6}>
-                        <div
-                          className="mb-3"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                          }}
-                        >
-                          <label htmlFor="sizeDropdown" className="form-label"></label>
-                          <div className="btn-group" role="group">
-                            {renderVariants()}
-                          </div>
-                        </div>
-                      </Col>
-                      <Col xl={6}>
-                        <div
-                          className="mb-3"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                          }}
-                        >
-                          <label htmlFor="colorDropdown" className="form-label"></label>
-                          <div className="btn-group" role="group">
-                            {renderSizeList()}
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </CardHeader>
-
+                <Card>
                   <CardBody>
-                    {/* <form > */}
-                    <div>
-                      <Row>
-                        <Col xl={6}>
-                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                            <label htmlFor="cleave-date" className="form-label">
-                              Name:
-                            </label>
-                            <p className="form-control-static">{product?.productName}</p>
-                          </div>
-                        </Col>
-                      </Row>
-                    </div>
-
-                    <div className="border mt-3 border-dashed"></div>
-
-                    <div className="mt-4">
+                    <form action="#">
                       <Row>
                         <Col xl={6}>
                           <div className="mb-3">
                             <label htmlFor="cleave-time-format" className="form-label">
-                              Description:
-                            </label>
-                            <p className="form-control-static">{product?.description}</p>
-                          </div>
-                        </Col>
-                      </Row>
-                    </div>
-
-                    <div className="border mt-3 border-dashed"></div>
-                    <div className="mt-4">
-                      <Row>
-                        <Col xl={6}>
-                          <div className="mb-3">
-                            <label htmlFor="cleave-time-format" className="form-label">
-                              {" "}
-                              Short Description:
-                            </label>
-                            <p className="form-control-static">{product?.shortDescription}</p>
-                          </div>
-                        </Col>
-                      </Row>
-                    </div>
-                    <div className="border mt-3 border-dashed"></div>
-
-                    <div className="mt-4">
-                      <Row>
-                        <Col xl={6}>
-                          <div className="mb-3">
-                            <label htmlFor="cleave-time-format" className="form-label">
-                              Images:
+                              Images :
                             </label>
 
-                            <div style={{ display: "flex" }}>
+                            <div style={{ display: "flex", marginTop: "10px" }}>
                               {product?.images.map((item, index) => (
                                 <div
                                   key={index}
@@ -474,14 +402,12 @@ const ProductDetails = () => {
                                   <img
                                     src={item?.fileURL}
                                     className="w-full rounded-2xl object-cover products-image"
-                                    // onClick={() =>
-                                    //   handleImageClick(item?.fileURL)
-                                    // }
+                                    // onClick={() => handleImageClick(item?.fileURL)}
                                     alt={`product detail ${index + 1}`}
                                     style={{
                                       width: "100px",
                                       height: "100px",
-                                      objectFit: "cover",
+                                      objectFit: "contain",
                                       borderRadius: "8px",
                                     }}
                                   />
@@ -491,18 +417,17 @@ const ProductDetails = () => {
                           </div>
                         </Col>
                       </Row>
-                    </div>
-                    <div className="border mt-3 border-dashed"></div>
 
-                    <div className="mt-4">
-                      <Row>
+                      <div className="border mt-3 border-dashed"></div>
+
+                      <Row style={{ marginTop: "10px" }}>
                         <Col xl={6}>
                           <div className="mb-3">
                             <label htmlFor="cleave-time-format" className="form-label">
-                              Product Detail Images:
+                              Detail Images :
                             </label>
 
-                            <div style={{ display: "flex" }}>
+                            <div style={{ display: "flex", marginTop: "10px" }}>
                               {product?.productDetailImages.map((item, index) => (
                                 <div
                                   key={index}
@@ -512,14 +437,12 @@ const ProductDetails = () => {
                                   <img
                                     src={item?.fileURL}
                                     className="w-full rounded-2xl object-cover products-image"
-                                    // onClick={() =>
-                                    //   handleImageClick(item?.fileURL)
-                                    // }
+                                    // onClick={() => handleImageClick(item?.fileURL)}
                                     alt={`product detail ${index + 1}`}
                                     style={{
                                       width: "100px",
                                       height: "100px",
-                                      objectFit: "cover",
+                                      objectFit: "contain",
                                       borderRadius: "8px",
                                     }}
                                   />
@@ -529,78 +452,143 @@ const ProductDetails = () => {
                           </div>
                         </Col>
                       </Row>
-                    </div>
-                    <div className="border mt-3 border-dashed"></div>
 
-                    <div className="mt-4">
-                      <Row>
-                        <Col xl={6}>
-                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                            <label htmlFor="cleave-numeral" className="form-label">
-                              {" "}
-                              MRP:
-                            </label>
-                            <p className="form-control-static">{product?.mrp}</p>
-                          </div>
-                        </Col>
-                        <Col xl={6}>
-                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                            <label htmlFor="cleave-phone" className="form-label">
-                              Price:
-                            </label>
-                            <p className="form-control-static">{product?.price}</p>
-                          </div>
-                        </Col>
+                      <div className="border mt-3 border-dashed"></div>
 
-                        <Col xl={6}>
-                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                            <label htmlFor="cleave-numeral" className="form-label">
-                              Selling Price:
-                            </label>
-                            <p className="form-control-static">{product?.sellingPrice}</p>
-                          </div>
-                        </Col>
+                      <div className="mt-3">
+                        <Row>
+                          <Col xl={6}>
+                            <div className="" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-date" className="form-label">
+                                Name:
+                              </label>
+                              <p className="form-control-static">{product?.productName}</p>
+                            </div>
+                          </Col>
 
-                        <Col xl={6}>
-                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                            <label htmlFor="cleave-numeral" className="form-label">
-                              {" "}
-                              Stock:
-                            </label>
-                            <p className="form-control-static">{product?.stock}</p>
-                          </div>
-                        </Col>
-                        <Col xl={6}>
-                          <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                            <label htmlFor="cleave-numeral" className="form-label">
-                              {" "}
-                              Tags:
-                            </label>
-                            <p className="form-control-static">{product?.tags}</p>
-                          </div>
-                        </Col>
-                      </Row>
-                    </div>
-                    {product?.status == "PENDING" && (
-                      <>
-                        <div className="border mt-3 border-dashed"></div>
-                        <button
-                          style={{
-                            backgroundColor: "black",
-                            color: "white",
-                            // width: "100px",
-                            height: "40px",
-                            marginTop: "20px",
-                            border: "none",
-                            padding: "0 10px",
-                          }}
-                          onClick={handlePreview}
-                        >
-                          Send For Review
-                        </button>
-                      </>
-                    )}
-                    {/* </form> */}
+                          <Col xl={3}>
+                            <div
+                              className=""
+                              style={{ display: "flex", gap: "4px", alignItems: "center" }}
+                            >
+                              <label htmlFor="cleave-date" className="form-label">
+                                Status :&nbsp;
+                              </label>
+                              <p className="form-control-static">
+                                <StatusIndicator
+                                  status={product?.isBlocked ? "BLOCKED" : "ACTIVE"}
+                                  variant="chip"
+                                />
+                              </p>
+                            </div>
+                          </Col>
+                          <Col xl={3}>
+                            <div className="" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-date" className="form-label">
+                                Stock :
+                              </label>
+                              <p className="form-control-static">{product?.stock}</p>
+                            </div>
+                          </Col>
+                        </Row>
+                      </div>
+
+                      <div className="border mt-3 border-dashed"></div>
+
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={6}>
+                            <div className="mb-3">
+                              <label htmlFor="cleave-time-format" className="form-label">
+                                Description:
+                              </label>
+                              <p className="form-control-static">{product?.description}</p>
+                            </div>
+                          </Col>
+                        </Row>
+                      </div>
+
+                      <div className="border mt-3 border-dashed"></div>
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={6}>
+                            <div className="mb-3">
+                              <label htmlFor="cleave-time-format" className="form-label">
+                                {" "}
+                                Short Description:
+                              </label>
+                              <p className="form-control-static">{product?.shortDescription}</p>
+                            </div>
+                          </Col>
+                        </Row>
+                      </div>
+                      <div className="border mt-3 border-dashed"></div>
+
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={6}>
+                            {product?.attributes?.map((attribute, index) => (
+                              <div key={index}>
+                                <div className="mb-3" key={index}>
+                                  <label htmlFor="cleave-time-format" className="form-label">
+                                    {attribute.attributeDescription}
+                                  </label>
+                                  <p className="form-control-static">{attribute.attributeValue}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </Col>
+                        </Row>
+                      </div>
+                      <div className="border mt-3 border-dashed"></div>
+
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={4}>
+                            <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-numeral" className="form-label">
+                                {" "}
+                                MRP :
+                              </label>
+                              <p className="form-control-static">{formatCurrency(product?.mrp)}</p>
+                            </div>
+                          </Col>
+
+                          <Col xl={4}>
+                            <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-phone" className="form-label">
+                                Price :
+                              </label>
+                              <p className="form-control-static">
+                                {formatCurrency(product?.price)}
+                              </p>
+                            </div>
+                          </Col>
+
+                          <Col xl={4}>
+                            <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-numeral" className="form-label">
+                                Selling Price :
+                              </label>
+                              <p className="form-control-static">
+                                {formatCurrency(product?.sellingPrice)}
+                              </p>
+                            </div>
+                          </Col>
+
+                          <Col xl={6}>
+                            <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-numeral" className="form-label">
+                                tags:
+                              </label>
+                              <p className="form-control-static">{product?.tags}</p>
+                            </div>
+                          </Col>
+
+
+                        </Row>
+                      </div>
+                    </form>
                   </CardBody>
                 </Card>
               </Col>

@@ -17,7 +17,8 @@ import LightDark from "../CommonForBoth/Menus/LightDark";
 import { Dropdown, DropdownToggle, DropdownMenu, Row, Col } from "reactstrap";
 
 //import images
-import logoSvg from "../../assets/images/image 3.svg";
+import logoSvg from "../../assets/images/arabDealLogo.svg";
+import logoSvgSmall from "../../assets/images/arabDealLogoSmall.png";
 import github from "../../assets/images/brands/github.png";
 import bitbucket from "../../assets/images/brands/bitbucket.png";
 import dribbble from "../../assets/images/brands/dribbble.png";
@@ -34,14 +35,14 @@ const Header = (props: any) => {
 
   const nonauthData = createSelector(
 
-    (state : any) => state.Layout,
+    (state: any) => state.Layout,
     (layout) => ({
-        layoutMode: layout.layoutMode,
-        showRightSidebar: layout.showRightSidebar,
+      layoutMode: layout.layoutMode,
+      showRightSidebar: layout.showRightSidebar,
     })
   );
-// Inside your component
-const { layoutMode, showRightSidebar } = useSelector(nonauthData);
+  // Inside your component
+  const { layoutMode, showRightSidebar } = useSelector(nonauthData);
 
   const [search, setsearch] = useState<boolean>(false);
   const [socialDrp, setsocialDrp] = useState<boolean>(false);
@@ -68,26 +69,26 @@ const { layoutMode, showRightSidebar } = useSelector(nonauthData);
             <div className="navbar-brand-box">
               <Link to="/dashboard" className="logo logo-dark">
                 <span className="logo-sm">
-                  <img src="/images/Logo.svg" alt="" height="24" />
+                  <img src={logoSvgSmall} alt="" height="24" />
                 </span>
                 <span className="logo-lg">
-                  <img src="/images/Logo.svg" alt="" height="24" />{" "}
-                  {/* <span className="logo-txt">Collin</span> */}
+                  <img src={logoSvg} alt="" height="24" />{" "}
+                  {/* <span className="logo-txt">Arab Deals</span> */}
                 </span>
               </Link>
 
               <Link to="/dashboard" className="logo logo-light">
-                <span className="logo-sm">
-                  <img src="/images/Logo.svg" alt="" height="24" />
-                </span>
+                {/* <span className="logo-sm">
+                  <img src={logoSvg} alt="" height="24" />
+                </span> */}
                 <span className="logo-lg">
-                  <img src="/images/Logo.svg" alt="" height="24" />{" "}
+                  <img src={logoSvg} alt="" height="24" />{" "}
                   <span className="logo-txt">Arab Deals</span>
                 </span>
               </Link>
             </div>
 
-            {/* <button
+            <button
               onClick={() => {
                 tToggle();
               }}
@@ -96,7 +97,7 @@ const { layoutMode, showRightSidebar } = useSelector(nonauthData);
               id="vertical-menu-btn"
             >
               <i className="fa fa-fw fa-bars"></i>
-            </button> */}
+            </button>
 
             {/* <form className="app-search d-none d-lg-block">
               <div className="position-relative">

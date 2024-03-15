@@ -35,6 +35,7 @@ import { Icon } from "@ailibs/feather-react-ts";
 import Catattributes from "./catattribute";
 import { RiHealthBookFill } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
+import Breadcrumb from "../../components/Common/Breadcrumb";
 
 interface ProductInfoInput {
   [key: string]: string;
@@ -145,7 +146,7 @@ const GET_BRAND = gql`
 `;
 
 const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
-  document.title = "Product | Arab Deals ";
+  // document.title = "Product | Arab Deals ";
   const {
     control,
     handleSubmit,
@@ -410,16 +411,18 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
   const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone();
 
+  const items = [
+    { text: "Dashboard", link: `/` },
+    { text: "Products", link: `/product` },
+    { text: "Variants", link: `/product/variant?_code=${editedProduct?.productCode}` },
+  ];
   return (
     <React.Fragment>
       <ToastContainer />
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumbs
-            title="Product"
-            breadcrumbItem={Edit ? "Edit Product" : "Add Product"}
-            link="/product"
-          />
+          <Breadcrumb items={items} currentPage="Edit Product" />
+
 
           <Row>
             <Col lg={12}>
@@ -510,8 +513,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           {editedProduct && editedProduct?.categoryNamePath}
                           {selectedCategory
                             ? categoryData.find(
-                                (category: any) => category._id === getSelectedCategoryData()
-                              )?.fullCategoryName
+                              (category: any) => category._id === getSelectedCategoryData()
+                            )?.fullCategoryName
                             : "Select Category"}
                           <FontAwesomeIcon icon={faAngleDown} style={{ marginLeft: "5px" }} />
                         </DropdownToggle>
@@ -566,7 +569,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                               value={value}
                               onChange={onChange}
                               className={styles.inputfield}
-                              // {...field}
+                            // {...field}
                             />
                           </>
                         )}

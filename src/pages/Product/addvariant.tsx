@@ -173,7 +173,7 @@ const GET_BRAND = gql`
   }
 `;
 
-const AddVariant = ({}) => {
+const AddVariant = ({ }) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const categoryId = params.get("catId");
@@ -380,7 +380,7 @@ const AddVariant = ({}) => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumbs title="product" breadcrumbItem={"Add Varient"} link="/product" />
+          {/* <Breadcrumbs title="product" breadcrumbItem={"Add Varient"} link="/product" /> */}
 
           <Row>
             <Col lg={12}>

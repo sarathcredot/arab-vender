@@ -67,6 +67,8 @@ const VERIFY_OTP = gql`mutation VerifyVendorLoginOtp($input: VerifyVendorLoginOt
     token
     message
     type
+    mobileNumber
+    countryCode
   }
 }`
 const RESEND_OTP = gql`mutation ReSendloginVendorWithOtp($input: VendorLoginInput!) {
@@ -89,7 +91,7 @@ const Login = (props: any) => {
   // Inside your component
   // const { error } = useSelector(errorData);
   const navigate = useNavigate();
-  document.title = "Login | Arabdeal";
+  // document.title = "Login | Arabdeal";
   const {
     register,
     handleSubmit,
@@ -171,6 +173,7 @@ const Login = (props: any) => {
     //   display: 'flex',
     // }),
   };
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -278,7 +281,7 @@ const Login = (props: any) => {
       // If validation is successful, clear any previous errors
       setError("");
 
-      const response = await getotp({ variables: { input: { mobileNumber: mobileNumber, countryCode: selectedOption } } })
+      const response = await getotp({ variables: { input: { mobileNumber: mobileNumber, countryCode: "+" + selectedOption } } })
       console.log("response", response);
       if (response) {
         setVendorid(response?.data?.loginVendorWithOtp?._id)
