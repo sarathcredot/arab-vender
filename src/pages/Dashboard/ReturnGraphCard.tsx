@@ -10,7 +10,7 @@ import { formatCurrency } from 'src/utils/formatCurrency'; interface OrdersPie {
 }
 
 
-const ReturnGraphCard = ({ vendorId }: any) => {
+const ReturnGraphCard = () => {
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -70,8 +70,8 @@ const ReturnGraphCard = ({ vendorId }: any) => {
 
 
   const GET_ORDERS_PIE = gql` 
-query GetDashboardReturnedOrdersPieChartData($input: GetDashboardReturnedOrdersPieChartDataInput!) {
-  getDashboardReturnedOrdersPieChartData(input: $input) {
+query GetVendorDashboardReturnedOrdersPieChartData($input: GetVendorDashboardReturnedOrdersPieChartDataInput!) {
+  getVendorDashboardReturnedOrdersPieChartData(input: $input) {
     pending
     approved
     rejected
@@ -83,8 +83,7 @@ query GetDashboardReturnedOrdersPieChartData($input: GetDashboardReturnedOrdersP
     variables: {
       input: {
         "startDate": startDate,
-        "endDate": endDate,
-        ...(vendorId && { vendorId })
+        "endDate": endDate
       }
     }
   }
@@ -92,8 +91,8 @@ query GetDashboardReturnedOrdersPieChartData($input: GetDashboardReturnedOrdersP
   );
 
   useEffect(() => {
-    if (ordersPieData && ordersPieData?.getDashboardReturnedOrdersPieChartData) {
-      setOrdersPie(ordersPieData?.getDashboardReturnedOrdersPieChartData)
+    if (ordersPieData && ordersPieData?.getVendorDashboardReturnedOrdersPieChartData) {
+      setOrdersPie(ordersPieData?.getVendorDashboardReturnedOrdersPieChartData)
     }
   }, [ordersPieData, ordersPieRefetch,]);
 

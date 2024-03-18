@@ -24,8 +24,8 @@ const Transactions = ({ vendorId }: any) => {
 
 
   const GET_ORDERS_SUMMARY = gql` 
-query GetDashboardReturnedOrderSummary($input: GetDashboardReturnedOrderSummaryInput!) {
-  getDashboardReturnedOrderSummary(input: $input) {
+query GetVendorDashboardReturnedOrderSummary {
+  getVendorDashboardReturnedOrderSummary {
     pending
     approvedToday
     rejectedToday
@@ -34,17 +34,11 @@ query GetDashboardReturnedOrderSummary($input: GetDashboardReturnedOrderSummaryI
 
       `;
 
-  const { data: orderSummaryData, refetch: orderSummaryRefetch } = useQuery(GET_ORDERS_SUMMARY, {
-    variables: {
-      input: {
-        ...(vendorId && { vendorId })
-      }
-    }
-  });
+  const { data: orderSummaryData, refetch: orderSummaryRefetch } = useQuery(GET_ORDERS_SUMMARY);
 
   useEffect(() => {
-    if (orderSummaryData && orderSummaryData?.getDashboardReturnedOrderSummary) {
-      setOrderSummary(orderSummaryData?.getDashboardReturnedOrderSummary)
+    if (orderSummaryData && orderSummaryData?.getVendorDashboardReturnedOrderSummary) {
+      setOrderSummary(orderSummaryData?.getVendorDashboardReturnedOrderSummary)
     }
   }, [orderSummaryData, orderSummaryRefetch]);
 

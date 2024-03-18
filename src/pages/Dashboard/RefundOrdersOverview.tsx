@@ -9,10 +9,10 @@ function RefundOrdersOverview({ vendorId }: any) {
         <>
             <Row>
                 <Col xs={12} sm={12} xl={6}>
-                    <RefundTransactions vendorId={vendorId} />
+                    <RefundTransactions />
                 </Col>
                 <Col xs={12} sm={12} xl={6}>
-                    <RefundGraphCard vendorId={vendorId} />
+                    <RefundGraphCard />
                 </Col>
 
 

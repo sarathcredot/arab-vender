@@ -11,10 +11,10 @@ function OrdersAmountOverview({ vendorId }: any) {
         <>
             <Row>
                 <Col xs={12} sm={12} xl={6}>
-                    <OrderAmountGraphCard vendorId={vendorId} />
+                    <OrderAmountGraphCard />
                 </Col>
                 <Col xs={12} sm={12} xl={6}>
-                    <ShippingChargeGraphCard vendorId={vendorId} />
+                    <ShippingChargeGraphCard />
                 </Col>
 
 

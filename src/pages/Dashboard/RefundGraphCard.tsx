@@ -9,7 +9,7 @@ import { formatCurrency } from 'src/utils/formatCurrency'; interface OrdersPie {
 }
 
 
-const RefundGraphCard = ({ vendorId }: any) => {
+const RefundGraphCard = () => {
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -67,8 +67,8 @@ const RefundGraphCard = ({ vendorId }: any) => {
   };
 
   const GET_ORDERS_PIE = gql` 
-query GetDashboardRefundOrdersPieChartData($input: GetDashboardRefundOrdersPieChartDataInput!) {
-  getDashboardRefundOrdersPieChartData(input: $input) {
+query GetVendorDashboardRefundOrdersPieChartData($input: GetVendorDashboardRefundOrdersPieChartDataInput!) {
+  getVendorDashboardRefundOrdersPieChartData(input: $input) {
     pending
     paid
   }
@@ -80,7 +80,6 @@ query GetDashboardRefundOrdersPieChartData($input: GetDashboardRefundOrdersPieCh
       input: {
         "startDate": startDate,
         "endDate": endDate,
-        ...(vendorId && { vendorId })
       }
     }
   }
@@ -88,8 +87,8 @@ query GetDashboardRefundOrdersPieChartData($input: GetDashboardRefundOrdersPieCh
   );
 
   useEffect(() => {
-    if (ordersPieData && ordersPieData?.getDashboardRefundOrdersPieChartData) {
-      setOrdersPie(ordersPieData?.getDashboardRefundOrdersPieChartData)
+    if (ordersPieData && ordersPieData?.getVendorDashboardRefundOrdersPieChartData) {
+      setOrdersPie(ordersPieData?.getVendorDashboardRefundOrdersPieChartData)
     }
   }, [ordersPieData, ordersPieRefetch,]);
 

@@ -68,8 +68,8 @@ const ShippingChargeGraphCard = ({ vendorId }: any) => {
 
 
   const GET_ORDERS_PIE = gql` 
-query GetDashboardShippingChargePieChartData($input: GetDashboardShippingChargePieChartDataInput!) {
-  getDashboardShippingChargePieChartData(input: $input) {
+query GetVendorDashboardShippingChargePieChartData($input: GetVendorDashboardShippingChargePieChartDataInput!) {
+  getVendorDashboardShippingChargePieChartData(input: $input) {
     pending
     paid
   }
@@ -81,7 +81,6 @@ query GetDashboardShippingChargePieChartData($input: GetDashboardShippingChargeP
       input: {
         "startDate": startDate,
         "endDate": endDate,
-        ...(vendorId && { vendorId })
       }
     }
   }
@@ -89,8 +88,8 @@ query GetDashboardShippingChargePieChartData($input: GetDashboardShippingChargeP
   );
 
   useEffect(() => {
-    if (ordersPieData && ordersPieData?.getDashboardShippingChargePieChartData) {
-      setOrdersPie(ordersPieData?.getDashboardShippingChargePieChartData)
+    if (ordersPieData && ordersPieData?.getVendorDashboardShippingChargePieChartData) {
+      setOrdersPie(ordersPieData?.getVendorDashboardShippingChargePieChartData)
     }
   }, [ordersPieData, ordersPieRefetch,]);
 

@@ -28,7 +28,7 @@ interface DashboardOrdersGraphResponse {
     x: string[];
 }
 
-function OrdersOverview({ vendorId }: any) {
+function OrdersOverview() {
 
     const [orderCounts, setOrderCounts] = useState<OrderData>({
         pendingOrders: 0,
@@ -198,8 +198,8 @@ function OrdersOverview({ vendorId }: any) {
 
 
     const GET_ORDER_COUNTS = gql` 
- query GetDashboardOrderSummary($input: GetDashboardOrderSummaryInput!) {
-  getDashboardOrderSummary(input: $input) {
+query GetVendorDashboardOrderSummary {
+  getVendorDashboardOrderSummary {
     pendingOrders
     progressOrders
     shippedOrders
@@ -211,23 +211,17 @@ function OrdersOverview({ vendorId }: any) {
     `;
 
 
-    const { data: ordersCountsData, refetch: usersCountRefetch } = useQuery(GET_ORDER_COUNTS, {
-        variables: {
-            input: {
-                ...(vendorId && { vendorId })
-            }
-        }
-    })
+    const { data: ordersCountsData, refetch: usersCountRefetch } = useQuery(GET_ORDER_COUNTS)
 
     useEffect(() => {
-        if (ordersCountsData && ordersCountsData?.getDashboardOrderSummary) {
-            setOrderCounts(ordersCountsData?.getDashboardOrderSummary)
+        if (ordersCountsData && ordersCountsData?.getVendorDashboardOrderSummary) {
+            setOrderCounts(ordersCountsData?.getVendorDashboardOrderSummary)
         }
     }, [usersCountRefetch, ordersCountsData]);
 
     const GET_ORDERS_GRAPH = gql` 
-  query GetDashboardOrdersGraph($input: GetDashboardOrdersGraphInput!) {
-  getDashboardOrdersGraph(input: $input) {
+query GetVendorDashboardOrdersGraph($input: GetVendorDashboardOrdersGraphInput!) {
+  getVendorDashboardOrdersGraph(input: $input) {
     y1
     x
   }
@@ -240,21 +234,20 @@ function OrdersOverview({ vendorId }: any) {
                 "startDate": startDate,
                 "endDate": endDate,
                 "graphType": selectedType,
-                ...(vendorId && { vendorId })
             }
         }
     })
 
     useEffect(() => {
-        if (ordersGraphData && ordersGraphData?.getDashboardOrdersGraph) {
-            setOrdersGraph(ordersGraphData?.getDashboardOrdersGraph)
+        if (ordersGraphData && ordersGraphData?.getVendorDashboardOrdersGraph) {
+            setOrdersGraph(ordersGraphData?.getVendorDashboardOrdersGraph)
         }
     }, [ordersGraphData, ordersGraphRefetch, selectedType, startDate, endDate]);
 
 
     const GET_ORDERS_PIE = gql` 
-query GetDashboardOrdersPieChartData($input: GetDashboardOrdersPieChartDataInput!) {
-  getDashboardOrdersPieChartData(input: $input) {
+query GetVendorDashboardOrdersPieChartData($input: GetVendorDashboardOrdersPieChartDataInput!) {
+  getVendorDashboardOrdersPieChartData(input: $input) {
     deliveredOrders
     cancelledOrders
     returnedOrders
@@ -266,8 +259,7 @@ query GetDashboardOrdersPieChartData($input: GetDashboardOrdersPieChartDataInput
         variables: {
             input: {
                 "startDate": pieStartDate,
-                "endDate": pieEndDate,
-                ...(vendorId && { vendorId })
+                "endDate": pieEndDate
             }
         }
     }
@@ -275,8 +267,8 @@ query GetDashboardOrdersPieChartData($input: GetDashboardOrdersPieChartDataInput
     );
 
     useEffect(() => {
-        if (ordersPieData && ordersPieData?.getDashboardOrdersPieChartData) {
-            setOrdersPie(ordersPieData?.getDashboardOrdersPieChartData)
+        if (ordersPieData && ordersPieData?.getVendorDashboardOrdersPieChartData) {
+            setOrdersPie(ordersPieData?.getVendorDashboardOrdersPieChartData)
         }
     }, [ordersPieData, ordersPieRefetch,]);
 

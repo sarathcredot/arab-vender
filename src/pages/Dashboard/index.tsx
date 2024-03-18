@@ -11,47 +11,43 @@ import RefundOrdersOverview from "./RefundOrdersOverview";
 import ReturnOrdersOverview from "./ReturnOrdersOverview";
 
 
-const id = null;
 
 const Dashboard = () => {
   return (
-    <React.Fragment>
-      <div className="page-content">
+    <div className="page-content">
+      <Container fluid>
+        <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
 
-        <Container fluid={true} >
-          {/* <Breadcrumb items={items} currentPage="Vendor Orders" /> */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-
-            <div>
-              <OrdersOverview vendorId={id} />
-            </div>
-
-            <div style={{ borderTop: '1px solid #ccc', width: '100%' }} />
-            <div>
-              <h4 style={{ margin: "20px 0" }}>Vendor Order Amounts</h4>
-              <OrdersAmountOverview vendorId={id} />
-            </div>
-
-
-            <div style={{ borderTop: '1px solid #ccc', width: '100%' }} />
-
-            <div>
-              <h4 style={{ margin: "10px 0 20px  0" }}>Return</h4>
-              <ReturnOrdersOverview vendorId={id} />
-            </div>
-
-            <div style={{ borderTop: '1px solid #ccc', width: '100%' }} />
-
-            <div>
-              <h4 style={{ margin: "10px 0 20px  0" }}>Refund</h4>
-              <RefundOrdersOverview vendorId={id} />
-            </div>
-
-
+          <div>
+            <h4 style={{ margin: "20px 0" }}>Orders</h4>
+            <OrdersOverview />
           </div>
-        </Container>
-      </div>
-    </React.Fragment>
+          <div style={{ borderTop: '1px solid #ccc', width: '100%' }} />
+
+          <div>
+            <h4 style={{ margin: "20px 0" }}>Order Amounts</h4>
+            <OrdersAmountOverview />
+          </div>
+
+          <div style={{ borderTop: '1px solid #ccc', width: '100%' }} />
+
+          <div>
+            <h4 style={{ margin: "10px 0 20px  0" }}>Return</h4>
+            <ReturnOrdersOverview />
+          </div>
+
+          <div style={{ borderTop: '1px solid #ccc', width: '100%' }} />
+
+          <div>
+            <h4 style={{ margin: "10px 0 20px  0" }}>Refund</h4>
+            <RefundOrdersOverview />
+          </div>
+
+
+        </div>
+
+      </Container>
+    </div>
   );
 };
 

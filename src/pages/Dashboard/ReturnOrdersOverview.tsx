@@ -10,10 +10,10 @@ function ReturnOrdersOverview({ vendorId }: any) {
         <>
             <Row>
                 <Col xs={12} sm={12} xl={6}>
-                    <ReturnGraphCard vendorId={vendorId} />
+                    <ReturnGraphCard />
                 </Col>
                 <Col xs={12} sm={12} xl={6}>
-                    <Transactions vendorId={vendorId} />
+                    <Transactions />
                 </Col>
 
 

@@ -16,7 +16,7 @@ interface OrderSummary {
 }
 
 
-const RefundTransactions = ({ vendorId }: any) => {
+const RefundTransactions = () => {
   const [orderSummary, setOrderSummary] = useState<OrderSummary>({
     pendingAmount: 0,
     paidToday: 0
@@ -24,26 +24,18 @@ const RefundTransactions = ({ vendorId }: any) => {
 
 
   const GET_ORDERS_SUMMARY = gql` 
-query GetDashboardRefundOrdersSummary($input: getDashboardRefundOrdersSummaryInput!) {
-  getDashboardRefundOrdersSummary(input: $input) {
+query GetVendorDashboardRefundOrdersSummary {
+  getVendorDashboardRefundOrdersSummary {
     pendingAmount
     paidToday
   }
-}
+}    `;
 
-      `;
-
-  const { data: orderSummaryData, refetch: orderSummaryRefetch } = useQuery(GET_ORDERS_SUMMARY, {
-    variables: {
-      input: {
-        ...(vendorId && { vendorId })
-      }
-    }
-  });
+  const { data: orderSummaryData, refetch: orderSummaryRefetch } = useQuery(GET_ORDERS_SUMMARY);
 
   useEffect(() => {
-    if (orderSummaryData && orderSummaryData?.getDashboardRefundOrdersSummary) {
-      setOrderSummary(orderSummaryData?.getDashboardRefundOrdersSummary)
+    if (orderSummaryData && orderSummaryData?.getVendorDashboardRefundOrdersSummary) {
+      setOrderSummary(orderSummaryData?.getVendorDashboardRefundOrdersSummary)
     }
   }, [orderSummaryData, orderSummaryRefetch]);
 

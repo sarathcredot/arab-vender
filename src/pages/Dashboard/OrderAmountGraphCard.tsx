@@ -9,7 +9,7 @@ import { formatCurrency } from 'src/utils/formatCurrency'; interface OrdersPie {
 }
 
 
-const OrderAmountGraphCard = ({ vendorId }: any) => {
+const OrderAmountGraphCard = () => {
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -68,8 +68,8 @@ const OrderAmountGraphCard = ({ vendorId }: any) => {
 
 
   const GET_ORDERS_PIE = gql` 
-query GetDashboardOrdersAmountPieChartData($input: GetDashboardOrdersAmountPieChartDataInput!) {
-  getDashboardOrdersAmountPieChartData(input: $input) {
+query GetVendorDashboardOrdersAmountPieChartData($input: GetVendorDashboardOrdersAmountPieChartDataInput!) {
+  getVendorDashboardOrdersAmountPieChartData(input: $input) {
     pending
     paid
   }
@@ -81,7 +81,6 @@ query GetDashboardOrdersAmountPieChartData($input: GetDashboardOrdersAmountPieCh
       input: {
         "startDate": startDate,
         "endDate": endDate,
-        ...(vendorId && { vendorId })
       }
     }
   }
@@ -89,8 +88,8 @@ query GetDashboardOrdersAmountPieChartData($input: GetDashboardOrdersAmountPieCh
   );
 
   useEffect(() => {
-    if (ordersPieData && ordersPieData?.getDashboardOrdersAmountPieChartData) {
-      setOrdersPie(ordersPieData?.getDashboardOrdersAmountPieChartData)
+    if (ordersPieData && ordersPieData?.getVendorDashboardOrdersAmountPieChartData) {
+      setOrdersPie(ordersPieData?.getVendorDashboardOrdersAmountPieChartData)
     }
   }, [ordersPieData, ordersPieRefetch,]);
 
