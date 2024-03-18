@@ -172,22 +172,6 @@ const ProductListing = () => {
           <Breadcrumb items={items} currentPage="Variants" />
           <div>
             <Card>
-              <CardHeader style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Input
-                  type="text"
-                  placeholder="Search Product"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  style={{ width: "450px", borderRadius: "0px" }}
-                />
-
-                <CustomButton
-                  name="Add Variant"
-                  icon="ic:twotone-add"
-                  onClick={handleaddVariant}
-                />
-              </CardHeader>
-
               <CardHeader>
                 <Row>
                   <Col xl={6}>
@@ -212,6 +196,24 @@ const ProductListing = () => {
                   </Col>
                 </Row>
               </CardHeader>
+
+              <CardHeader style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <Input
+                  type="text"
+                  placeholder="Search Product"
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  style={{ width: "450px", borderRadius: "0px" }}
+                />
+
+                <CustomButton
+                  name="Add Variant"
+                  icon="ic:twotone-add"
+                  onClick={handleaddVariant}
+                />
+              </CardHeader>
+
+
               <CardBody>
 
 

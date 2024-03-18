@@ -88,7 +88,7 @@ query GetVendorDashboardRefundOrdersPieChartData($input: GetVendorDashboardRefun
 
   useEffect(() => {
     if (ordersPieData && ordersPieData?.getVendorDashboardRefundOrdersPieChartData) {
-      setOrdersPie(ordersPieData?.getVendorDashboardRefundOrdersPieChartData)
+      setOrdersPie(ordersPieData?.getVendorDashboardRefundOrdersPieChartData);
     }
   }, [ordersPieData, ordersPieRefetch,]);
 

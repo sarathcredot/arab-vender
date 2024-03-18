@@ -284,12 +284,12 @@ const SidebarContent = (props: any) => {
               </a>
               {openMenus.includes("/order-resolution") && (
                 <ul className={`sub-menu ${openMenus.includes("/order-resolution") ? "mm-show" : ""}`}>
-                  {/* <li>
+                  <li>
                     <Link to="/orders">
                       <FeatherIcon icon="chevron-right" />{" "}
                       <span>{props.t("All Orders")}</span>
                     </Link>
-                  </li> */}
+                  </li>
                   <li>
                     <Link to="/shipping-orders">
                       <FeatherIcon icon="chevron-right" />{" "}

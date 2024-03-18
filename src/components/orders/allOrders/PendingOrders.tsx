@@ -112,8 +112,8 @@ const PendingOrders = () => {
     const navigate = useNavigate();
 
     const GET_ORDERS = gql`
-    query GetAdminOrders($input: GetAdminOrdersInput!) {
-  getAdminOrders(input: $input) {
+    query GetVendorOrders($input: GetVendorOrdersInput!) {
+  getVendorOrders(input: $input) {
     maxRecords
     records {
       _id
