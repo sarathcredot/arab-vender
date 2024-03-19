@@ -80,19 +80,30 @@ const UserProfile = () => {
   const GET_VENDOR = gql`
   query GetVendorRecordByVendor {
   getVendorRecordByVendor {
-    message
     record {
+      _id
+      fullName
+      email
+      countryCode
+      mobileNumber
       profilePic {
         fileType
         fileURL
         mimeType
         originalName
       }
-      mobileNumber
-      email
-      fullName
-      countryCode
+      isBlocked
+      isKycCompleted
+      outletId
+      outletName
+      outletStatus
+      companyId
+      companyName
+      companyStatus
+      brands
+      categories
     }
+    message
   }
 }`
 

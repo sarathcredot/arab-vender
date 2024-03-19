@@ -81,22 +81,34 @@ const ProfileMenu = (props: any) => {
   };
 
   const GET_VENDOR = gql`
-    query GetVendorRecordByVendor($input: VendorRecordByVendorInput!) {
-      getVendorRecordByVendor(input: $input) {
-        message
-        record {
-          profilePic {
-            fileType
-            fileURL
-            originalName
-            mimeType
-          }
-          mobileNumber
-          fullName
-          email
-        }
+    query GetVendorRecordByVendor {
+  getVendorRecordByVendor {
+    record {
+      _id
+      fullName
+      email
+      countryCode
+      mobileNumber
+      profilePic {
+        fileType
+        fileURL
+        mimeType
+        originalName
       }
+      isBlocked
+      isKycCompleted
+      outletId
+      outletName
+      outletStatus
+      companyId
+      companyName
+      companyStatus
+      brands
+      categories
     }
+    message
+  }
+}
   `;
 
   const {

@@ -1,15 +1,12 @@
 import React from "react";
 
-//import Breadcrumbs
 import { Container } from "reactstrap";
 
 
-// import common data
 import OrdersAmountOverview from "./OrdersAmountOverview";
 import OrdersOverview from "./OrdersOverview";
 import RefundOrdersOverview from "./RefundOrdersOverview";
 import ReturnOrdersOverview from "./ReturnOrdersOverview";
-
 
 
 const Dashboard = () => {
@@ -42,7 +39,6 @@ const Dashboard = () => {
             <h4 style={{ margin: "10px 0 20px  0" }}>Refund</h4>
             <RefundOrdersOverview />
           </div>
-
 
         </div>
 
