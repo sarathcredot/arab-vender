@@ -35,31 +35,31 @@ const BrandList: React.FC = () => {
   const [brandData, setBrandData] = useState<IBrandRecord[]>([]);
   const [activeTab, setActiveTab] = useState<boolean>();
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 10; // Number of items per page
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const pageSize = 10;
+  const [maxRecords, setMaxRecords] = useState(0);
+
 
   const GET_BRAND = gql`
   query GetAllBrandRecordsWithVendorByVendor($input: getAllBrandRecordsWithVendorByVendorInput!) {
-    getAllBrandRecordsWithVendorByVendor(input: $input) {
-      maxRecords
-      message
-      records {
-        _id
-        brandName
-        isBlocked
-        logo {
-          fileType
-          fileURL
-          originalName
-        }
-        isPopular
-        priority
+  getAllBrandRecordsWithVendorByVendor(input: $input) {
+    maxRecords
+    records {
+      _id
+      brandName
+      isBlocked
+      logo {
+        fileType
+        fileURL
+        mimeType
+        originalName
       }
+      isPopular
+      priority
     }
+    message
   }
+}
   `;
-  const id = localStorage?.getItem("vendorid")
-  console.log(id);
 
   const {
     loading: brandLoading,
@@ -69,34 +69,31 @@ const BrandList: React.FC = () => {
   } = useQuery(GET_BRAND, {
     variables: {
       input: {
-        // vendorId: id,
-        page: null,
-        size: 10,
+        page: currentPage,
+        size: pageSize,
 
       },
     },
   });
 
-  console.log(brandDataResponse);
-
 
   useEffect(() => {
     if (brandDataResponse && brandDataResponse.getAllBrandRecordsWithVendorByVendor) {
       setBrandData(brandDataResponse.getAllBrandRecordsWithVendorByVendor.records);
+      setMaxRecords(brandDataResponse.getAllBrandRecordsWithVendorByVendor.maxRecords);
     }
   }, [brandDataResponse, brandRefetch]);
 
 
   if (brandError) {
     console.error("Error fetching vendor data:", brandError);
-    // Handle error, display an error message, etc.
   }
 
 
 
 
 
-  const totalPages = Math.ceil(brandData.length / pageSize);
+  const totalPages = Math.ceil(maxRecords / pageSize);
 
   const handleNextPage = () => {
     if (currentPage + 1 < totalPages) {
@@ -104,11 +101,6 @@ const BrandList: React.FC = () => {
     }
   };
 
-
-  const toggleAddModal = () => {
-    setShowAddModal(!showAddModal);
-
-  };
 
 
   const items = [
@@ -134,13 +126,6 @@ const BrandList: React.FC = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{ width: "50%", marginBottom: "20px", borderRadius: "0px" }}
                   />
-
-                  {/* <div className="d-flex justify-content-end mb-3">
-            <Button  onClick={() => toggleAddModal()}  style={{backgroundColor: "#000000"}}>Add New Brand</Button>
-          </div> */}
-
-
-                  {/* <BrandForm isOpen={showAddModal} toggle={toggleAddModal} refetch={brandRefetch} /> */}
 
                   <Table
                     responsive
@@ -181,61 +166,59 @@ const BrandList: React.FC = () => {
                         ))}
                     </tbody>
                   </Table>
+                  <Row style={{ marginTop: "20px" }}>
+                    <Col>
+                      <div className="d-flex justify-content-end mt-0 ">
+                        <ul className="pagination">
+                          <li
+                            className={`page-item ${currentPage === 0 ? "disabled" : ""
+                              }`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => setCurrentPage(currentPage - 1)}
+                              disabled={currentPage === 0}
+                            >
+                              Previous
+                            </button>
+                          </li>
+
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <li
+                              key={index}
+                              className={`page-item ${currentPage === index ? "active" : ""
+                                }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => setCurrentPage(index)}
+                              >
+                                {index + 1}
+                              </button>
+                            </li>
+                          ))}
+
+                          {currentPage < totalPages - 1 && (
+                            <li
+                              className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
+                                }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                disabled={currentPage === totalPages - 1}
+                              >
+                                Next
+                              </button>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    </Col>
+                  </Row>
                 </CardBody>
 
-                {/* <Row>
-                  <Col>
-                    <div className="d-flex justify-content-end mt-0 ">
-                      <ul className="pagination">
-                        <li
-                          className={`page-item ${
-                            currentPage === 0 ? "disabled" : ""
-                          }`}
-                        >
-                          <button
-                            className="page-link"
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                            disabled={currentPage === 0}
-                          >
-                            Previous
-                          </button>
-                        </li>
 
-                        {Array.from({ length: totalPages }, (_, index) => (
-                          <li
-                            key={index}
-                            className={`page-item ${
-                              currentPage === index ? "active" : ""
-                            }`}
-                          >
-                            <button
-                              className="page-link"
-                              onClick={() => setCurrentPage(index)}
-                            >
-                              {index + 1}
-                            </button>
-                          </li>
-                        ))}
-
-                        {currentPage < totalPages - 1 && (
-                          <li
-                            className={`page-item ${
-                              currentPage === totalPages - 1 ? "disabled" : ""
-                            }`}
-                          >
-                            <button
-                              className="page-link"
-                              onClick={() => setCurrentPage(currentPage + 1)}
-                              disabled={currentPage === totalPages - 1}
-                            >
-                              Next
-                            </button>
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </Col>
-                </Row> */}
               </Card>
             </Col>
           </Row>

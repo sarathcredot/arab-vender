@@ -46,36 +46,38 @@ const KYC_STATUS = gql`
 
 const PRODUCT_LIST = gql`
   query GetVariantsTableByVendor($input: ProductVariantsByVendorFilter!) {
-    getVariantsTableByVendor(input: $input) {
-      maxRecords
-      message
-      records {
-        _id
-        attributes {
-          attributeId
-          attributeName
-          attributeValueId
-          attributeValue
-          attributeDescription
-        }
-        images {
-          fileType
-          fileURL
-          mimeType
-          originalName
-        }
-        isBlocked
-        productName
-        status
-        stock
-        productCode
-        skuId
-        categoryNamePath
-        categoryId
-        brandName
+  getVariantsTableByVendor(input: $input) {
+    maxRecords
+    records {
+      _id
+      productName
+      images {
+        fileType
+        fileURL
+        mimeType
+        originalName
       }
+      attributes {
+        attributeId
+        attributeName
+        attributeValueId
+        attributeValue
+        attributeDescription
+      }
+      stock
+      status
+      isBlocked
+      productCode
+      categoryNamePath
+      brandId
+      brandName
+      skuId
+      warehouseSkuId
+      categoryId
     }
+    message
   }
+}
 `;
 
 interface Product {
@@ -168,7 +170,7 @@ const ProductListing = () => {
   const handleaddVariant = () => {
     if (kycData?.getKycStatus?.record?.isKycCompleted) {
       navigate(
-        `/add-variant/?id=${products[0]._id}&&catId=${products[0]?.categoryId}&&code=${productCode}`
+        `/add-variant/?id=${products[0]._id}&catId=${products[0]?.categoryId}&code=${productCode}`
       );
     } else {
       toast.error("Complete Your KYC and Add Variant");
@@ -255,8 +257,6 @@ const ProductListing = () => {
     { text: "Dashboard", link: `/` },
     { text: "Products", link: `/product` },
   ];
-
-
 
 
   return (
@@ -351,6 +351,9 @@ const ProductListing = () => {
                 </Row>
               </CardHeader>
 
+              <CardHeader style={{ display: "flex", justifyContent: "flex-end" }}>
+                <CustomButton icon="ic:twotone-add" name="Add Variant" onClick={handleaddVariant} />
+              </CardHeader>
 
               <CardBody>
 
@@ -360,13 +363,14 @@ const ProductListing = () => {
                     <Table id="tech-companies-1" className="table table-striped table-bordered">
                       <Thead>
                         <Tr>
+                          <Th data-priority="1">Sl.No</Th>
                           <Th data-priority="1">Name</Th>
                           <Th data-priority="1">Image</Th>
                           <Th data-priority="1">SKU ID</Th>
                           <Th data-priority="1">Attributes</Th>
                           <Th data-priority="1">Stock</Th>
 
-                          {/* <Th data-priority="3">Status</Th> */}
+                          <Th data-priority="3">Verify Status</Th>
                           <Th data-priority="3">Status</Th>
                           <Th data-priority="3">Action</Th>
                         </Tr>
@@ -374,8 +378,8 @@ const ProductListing = () => {
                       <Tbody>
                         {filteredProducts?.map((product: Product, index: number) => (
                           <Tr key={index}>
+                            <Td>{index + 1}</Td>
                             <Td>{product?.productName}</Td>
-                            {/* <Td>{product?.status}</Td> */}
                             <Td>
                               <img
                                 src={product.images[0]?.fileURL}
@@ -396,6 +400,9 @@ const ProductListing = () => {
                             </Td>
                             <Td>{product?.stock}</Td>
 
+                            <Td>
+                              <StatusIndicator status={product?.status} />
+                            </Td>
                             <Td>
                               <StatusIndicator status={product.isBlocked ? "BLOCKED" : "ACTIVE"} />
                             </Td>

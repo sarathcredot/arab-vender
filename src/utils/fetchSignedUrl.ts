@@ -6,14 +6,14 @@ interface GetSignedFileUrlInput {
 }
 
 interface GetSignedFileUrlData {
-    getAdminSignedFileUrl: {
+    getVendorSignedFileUrl: {
         url: string;
     };
 }
 
 const GET_SIGNED_URL_MUTATION = gql`
 mutation GetAdminSignedFileUrl($input: GetAdminSignedFileUrlInput!) {
-  getAdminSignedFileUrl(input: $input) {
+    getVendorSignedFileUrl(input: $input) {
     url
   }
 }
@@ -41,7 +41,7 @@ export const fetchSignedUrl = async (getSignedUrl: GetSignedUrlMutationFn, url: 
                 }
             }
         });
-        return data?.getAdminSignedFileUrl?.url;
+        return data?.getVendorSignedFileUrl?.url;
     } catch (error) {
         console.error("Error fetching signed URL:", error);
         return undefined;

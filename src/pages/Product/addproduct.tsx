@@ -236,16 +236,12 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   }, [categoryDataResponse, brandDataResponse]);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  // const [selectedCategory, setSelectedCategory] = useState<Category>();
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
   const getSelectedCategoryData = () => {
-    // Find the selected category in categoryData based on _id
+
     if (editedProduct) {
       const selectedCategoryData = editedProduct?.categoryId;
-      // console.log(selectedCategoryData);
-
       return selectedCategoryData;
     } else {
       const selectedCategoryData = categoryData.find(
@@ -306,22 +302,18 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   };
 
   const onSubmit: SubmitHandler<ProductForm> = async (data: any) => {
-    // console.log("clickk");
 
     data.attribute = attributeid;
-    // console.log("data", data);
 
     const formdatas = {
       _id: editedProduct?._id,
-      // isBlocked: editedProduct ? editedProduct?.isBlocked : data?.isBlocked,
       brandId: selectedbrand?.id,
       brandName: selectedbrand?.name,
       categoryId: selectedCategory,
       description: data?.description,
-      // offerPrice: parseInt(data?.offerPrice),
+      offerPrice: parseInt(data?.offerPrice),
       mrp: parseInt(data?.mrp),
       price: parseInt(data?.price),
-      // productCode: parseInt(data?.productCode),
       productInfo: remarks && remarks?.length > 0 ? remarks : [""],
       productName: data?.productName,
       rating: parseInt(data?.rating),
@@ -332,38 +324,25 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       tags: editedProduct ? (editedProduct?.tags).join(" ") : data?.tags,
       attributes: attributeid,
     };
-    // console.log("formdatas", formdatas);
 
     const file = data?.images?.map((image: any) => image.file);
 
     const medias = data?.media?.map((media: any) => media.file);
 
-    console.log(data?.media, "ssssssss");
 
-    // if (data && data?.images?.length < 0) {
-    //   console.log("errorclick");
-
-    //   setFileError("Please select at least one file.");
-    // }
-    //  else {
     try {
       if (Edit) {
         formdatas.tags = (data?.tags).join(" ");
         const response = await updateproduct({
           variables: { input: { ...formdatas }, images: file },
         });
-        console.log("response", response);
         if (response) {
-          console.log(
-            "response?.data?.updateProduct?.message",
-            response?.data?.updateProduct?.message
-          );
+
 
           toast.success(response?.data?.updateProduct?.message);
           navigate("/product");
         }
       } else {
-        console.log(formdatas, "formdatas");
         const variables: any = {
           input: formdatas,
           images: null,
@@ -391,22 +370,25 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       console.log(error);
       toast.error(error.message);
     }
-    // }
   };
 
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone();
 
   const items = [
     { text: "Dashboard", link: `/` },
     { text: "Products", link: `/product` },
-    { text: "Variants", link: `/product/variant?_code=${editedProduct?.productCode}` },
+
   ];
+
+  if (Edit) {
+    items.push({ text: "Variants", link: `/product/variant?_code=${editedProduct?.productCode}` })
+  }
+
   return (
     <React.Fragment>
       <ToastContainer />
       <div className="page-content">
         <Container fluid={true}>
-          <Breadcrumb items={items} currentPage="Edit Product" />
+          <Breadcrumb items={items} currentPage={Edit ? "Edit Product" : "Add Product"} />
 
 
           <Row>

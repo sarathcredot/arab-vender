@@ -36,33 +36,7 @@ import { FaFileImage } from "react-icons/fa";
 import { FaFilePdf } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
-
-// const UPDATE_VENTOR_COMPANY = gql`
-//   mutation UpdateVendorCompany(
-//     $input: UpdateVendorCompanyInput!
-//     $images: [Upload]
-//     $fileMap: JSONObject
-//   ) {
-//     updateVendorCompany(input: $input, images: $images, fileMap: $fileMap) {
-//       record {
-//         _id
-//         vendorId
-//         companyName
-//         companyType
-//         crNumber
-//         status
-//         crLicense {
-//           fileURL
-//         }
-//         cooCertificate {
-//           fileURL
-//         }
-//         remarks
-//       }
-//       message
-//     }
-//   }
-// `;
+import { fetchSignedUrl, useFetchSignedUrl } from "src/utils/fetchSignedUrl";
 
 
 const ADD_VENTOR_COMPANY = gql`
@@ -72,85 +46,6 @@ mutation AddVendorCompany($input: AddVendorCompanyInput!, $images: [Upload], $fi
     message
   }
 }`
-
-// const ADD_VENTOR_OUTLET = gql`
-// mutation Mutation($input: UpdateVendorOutletInput!, $images: [Upload], $fileMap: JSONObject) {
-//   updateVendorOutlet(input: $input, images: $images, fileMap: $fileMap) {
-//     message
-//   }
-// }
-// `;
-// const VENDOR_DETAILS=gql`query GetVendorAllKycRecordByVendor($input: VendorAllKycRecordByVendorInput!) {
-//   getVendorAllKycRecordByVendor(input: $input) {
-//     record {
-//       _id
-//       fullName
-//       email
-//       mobileNumber
-//       isBlocked
-//       isKycCompleted
-//       outletId
-//       outletName
-//       outletStatus
-//       companyId
-//       companyName
-//       companyStatus
-//     }
-//   }
-// }`
-
-// const VENDOR_DETAILS = gql`
-//   query Query($input: VendorAllKycRecordByVendorInput!) {
-//     getVendorAllKycRecordByVendor {
-//       record {
-//         _id
-//         outletId
-//         outletName
-//         outletStatus
-//         companyId
-//         companyName
-//         companyStatus
-//         isKycCompleted
-//         outletCountry
-//         outletDistrict
-//         outletVillage
-//         outletAddress
-//         outletLicense {
-//           fileType
-//           fileURL
-//           originalName
-//         }
-//         outletInteriorImage {
-//           fileType
-//           fileURL
-//           originalName
-//         }
-//         outletExteriorImage {
-//           fileType
-//           fileURL
-//           originalName
-//         }
-//         outletContactPersonName
-//         outletContactPersonNumber
-//         outletContactPersonDesignation
-//         outletRemarks
-//         companyType
-//         companyCrNumber
-//         companyCrLicense {
-//           fileType
-//           fileURL
-//           originalName
-//         }
-//         companyCooCertificate {
-//           fileURL
-//           fileType
-//           originalName
-//         }
-//         companyRemarks
-//       }
-//     }
-//   }
-// `;
 
 
 const ADD_VENTOR_OUTLET = gql`
@@ -197,16 +92,19 @@ query GetVendorAllKycRecordByVendor {
           fileType
           fileURL
           originalName
+          mimeType
         }
         outletInteriorImage {
           fileType
           fileURL
           originalName
+          mimeType
         }
         outletExteriorImage {
           fileType
           fileURL
           originalName
+          mimeType
         }
         outletContactPersonName
         outletContactPersonNumber
@@ -218,11 +116,13 @@ query GetVendorAllKycRecordByVendor {
           fileType
           fileURL
           originalName
+          mimeType
         }
         companyCooCertificate {
           fileURL
           fileType
           originalName
+          mimeType
         }
         companyRemarks
     }
@@ -535,7 +435,21 @@ const CategoryList: React.FC<addCompany> = () => {
     { text: "Dashboard", link: `/` },
   ];
 
-  console.log(companydetail)
+  const getSignedUrlMutation = useFetchSignedUrl();
+
+  const handleImageClick = async (fileURL: string, mimeType: string) => {
+    try {
+      const signedUrl = await fetchSignedUrl(getSignedUrlMutation, fileURL, mimeType);
+      if (signedUrl) {
+        window.open(signedUrl)
+      } else {
+        console.error('Failed to get signed URL.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
 
   return (
     <>
@@ -627,16 +541,7 @@ const CategoryList: React.FC<addCompany> = () => {
                               type="file"
                               className={styles.inputfield}
                               onChange={(event: any) => handleFileChangeCompany(0, event?.target.files?.[0])}
-                            // required
-                            // value={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.originalName}
-                            // onChange={(event) => {
-                            //   setFiles((e) => {
-                            //     const e1 = (e[0] = event?.target.files?.[0]);
-                            //     const e2 = e[1];
 
-                            //     return [e1, e2];
-                            //   });
-                            // }}
                             />
                           </div>
                         </div>
@@ -656,14 +561,7 @@ const CategoryList: React.FC<addCompany> = () => {
                               type="file"
                               className={styles.inputfield}
                               onChange={(event: any) => handleFileChangeCompany(1, event?.target.files?.[0])}
-                            // required
-                            // onChange={(event) => {
-                            //   setFiles((e) => {
-                            //     const e1 = e[0];
-                            //     const e2 = (e[1] = event?.target.files?.[0]);
-                            //     return [e1, e2];
-                            //   });
-                            // }}
+
                             />
                           </div>
                         </div>
@@ -719,18 +617,7 @@ const CategoryList: React.FC<addCompany> = () => {
                     <div className="mb-3 d-flex align-items-center">
                       <div className={styles.labeldiv}> Status </div>
                       <StatusIndicator status={companydetail == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : companydetail} variant="chip" />
-                      {/* <span
-                        className={styles.status}
-                        style={
-                          companydetail === 'COMPLETED'
-                            ? styless.green
-                            : companydetail === 'REJECTED'
-                              ? styless.red
-                              : companydetail === 'UNDER_VERIFICATION' ? styless.blue : styless.orange
-                        }
-                      >
-                        {companydetail == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : companydetail}
-                      </span> */}
+
                     </div>
                     <div className="mb-3 d-flex">
                       <div className={styles.labeldiv}> Company Name </div>
@@ -756,9 +643,19 @@ const CategoryList: React.FC<addCompany> = () => {
                     </div>
                     <div className="mb-3 d-flex">
                       <div className={styles.labeldiv}> Attachments </div>
-                      <div>
-                        {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div></Link> : ""}
-                        {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate</div></Link> : ""}
+                      <div style={{ cursor: "pointer" }}>
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ?
+                          <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.mimeType || "")}>
+                            <div className="mb-2">
+                              <FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div>
+                          </p> : ""}
+
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ?
+                          <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.mimeType || "")}>
+                            <div className="mb-2">
+                              <FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate
+                            </div>
+                          </p> : ""}
                       </div>
 
                     </div>
@@ -1132,10 +1029,15 @@ const CategoryList: React.FC<addCompany> = () => {
                     </div> : ""}
                     <div className="mb-3 d-flex">
                       <div className={styles.labeldiv}> Attachments </div>
-                      <div>
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL} target="_blank"><div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div></Link> : ""}
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></Link> : ""}
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <Link to={data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL} target="_blank"> <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></Link> : ""}
+                      <div style={{ cursor: "pointer" }}>
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ?
+                          <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.mimeType || "")}
+                          >
+                            <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div>
+                          </p> : ""}
+
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.mimeType || "")} > <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></p> : ""}
+                        {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.mimeType || "")} > <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></p> : ""}
                       </div>
 
                     </div>

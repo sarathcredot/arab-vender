@@ -373,6 +373,13 @@ const ProductDetails = () => {
                   <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Status : </p>
                   {product?.status}
                 </p>
+                {
+                  product?.status === "REJECTED" &&
+                  <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                    <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Reject Reason : </p>
+                    {"nill"}
+                  </p>
+                }
               </div>
               <CustomButton
                 onClick={handleEditProduct}

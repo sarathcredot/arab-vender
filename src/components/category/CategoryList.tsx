@@ -89,68 +89,23 @@ const CategoryList: React.FC<Props> = () => {
 }
   `;
 
-  const GET_CHAILEDCATGORY = gql`
-    query Records($input: GetAllChildLevelCategoriesInput!) {
-      getAllChildCategories(input: $input) {
-        records {
-          categoryName
-          _id
-          isBlocked
-          fullCategoryName
-          isLeaf
-          description
-          sizeChart {
-            fileType
-            fileURL
-            mimeType
-            originalName
-          }
-        }
-      }
-    }
-  `;
-  const id = localStorage?.getItem("vendorid")
+
   const {
     loading: categoryLoading,
     error: categoryError,
     data: categoryDataResponse,
     refetch: categoryRefetch,
   } = useQuery(GET_CATEGORY);
-  console.log(categoryDataResponse)
-  // const {
-  //   loading: childCategoryLoading,
-  //   error: childCategoryError,
-  //   data: childCategoryData,
-  //   refetch: childCategoryRefetch,
-  // } = useQuery(GET_CHAILEDCATGORY, {
-  //   variables: {
-  //     input: {
-  //       parent:
-  //         breadcrumb.length === 0
-  //           ? null
-  //           : breadcrumb[breadcrumb.length - 1]._id,
-  //     },
-  //   },
-  // });
 
-  // const handleGoBack = () => {
-  //   const newBreadcrumb = breadcrumb.slice(0, breadcrumb.length - 1);
-  //   setBreadcrumb(newBreadcrumb);
-  // };
 
   useEffect(() => {
-    // if (showSubCategories) {
-    // setCategoryData(childCategoryData?.getAllChildCategories?.records || []);
-    // } else {
+
     setCategoryData(
       categoryDataResponse?.getAllCategoriesOfVendor?.records || []
     );
-    // }
   }, [
     categoryLoading,
-    // showSubCategories,
     categoryDataResponse,
-    // childCategoryData,
     topCategory,
   ]);
 
@@ -196,7 +151,6 @@ const CategoryList: React.FC<Props> = () => {
     setSearchTerm(event.target.value);
     console.log(event.target.value);
   };
-  console.log(categoryData);
 
   useEffect(() => {
     if (selectedStatus) {

@@ -34,6 +34,7 @@ import Catattributes from "./catattribute";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Icon } from "@ailibs/feather-react-ts";
 import styles from "../Kyc/kyc.module.css";
+import Breadcrumb from "../../components/Common/Breadcrumb";
 
 interface ProductInfoInput {
   [key: string]: string;
@@ -303,18 +304,11 @@ const AddVariant = ({ }) => {
   }, [categoryDataResponse, brandDataResponse]);
 
   const onSubmit: SubmitHandler<ProductForm> = async (data1: any) => {
-    console.log("click");
 
     const urlSearchParams = new URLSearchParams(location.search);
     const productCodeParam = urlSearchParams.get("productCode");
     console.log(data1);
 
-    // if (!productCodeParam) {
-    //   toast.error("Product code not found in query parameters.");
-    //   return;
-    // }
-
-    // Construct the input variables for the mutation
     const formdatas = {
       description: data1?.description,
       mrp: parseInt(data1?.mrp),
@@ -331,22 +325,13 @@ const AddVariant = ({ }) => {
       attributes: attributeid,
     };
 
-    console.log("formdatas", formdatas);
-
     const file = data1?.images?.map((image: any) => image.file);
 
     const medias = data1?.media?.map((media: any) => media.file);
 
-    console.log(data1?.media, "ssssssss");
 
-    // if (data && data?.images?.length < 0) {
-    //   console.log("errorclick");
 
-    //   setFileError("Please select at least one file.");
-    // }
-    //  else {
     try {
-      console.log(formdatas, "formdatas");
       const variables: any = {
         input: formdatas,
         images: null,
@@ -367,20 +352,25 @@ const AddVariant = ({ }) => {
 
       if (response) {
         toast.success(response?.data?.createvarient?.message);
-        navigate(`/list-variant?_code=${productCode}`);
+        navigate(`/product/variant?_code=${productCode}`);
       }
     } catch (error: any) {
       console.log(error);
       toast.error(error.message);
     }
   };
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone();
+
+  const items = [
+    { text: "Dashboard", link: `/` },
+    { text: "Products", link: `/product` },
+    { text: "Variants", link: `/product/variant?_code=${productCode}` },
+  ];
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid={true}>
-          {/* <Breadcrumbs title="product" breadcrumbItem={"Add Varient"} link="/product" /> */}
+          <Breadcrumb items={items} currentPage="Add Variant" />
 
           <Row>
             <Col lg={12}>
