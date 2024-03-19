@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, CardBody, CardHeader, Button, Input, Container } from "reactstrap";
+import { Row, Col, Card, CardBody, CardHeader, Button, Input, Container, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Label, FormGroup } from "reactstrap";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -11,6 +11,8 @@ import { useLocation } from "react-router-dom";
 import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
 import CustomButton from "src/components/Common/CustomButton";
 import Breadcrumb from "../../components/Common/Breadcrumb";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
 // const KYC_STATUS = gql`
 //   query GetKycStatus($input: VendorRecordKycStatusInput!) {
@@ -134,9 +136,30 @@ const ProductListing = () => {
     },
   });
 
+
+  const fetchData = async () => {
+    try {
+      const result = await refetch({
+        input: {
+          productCode: Number(productCode),
+        },
+      });
+      setProducts(result.data.getVariantsTableByVendor.records);
+      setCardHeaderData({
+        category: result.data.getVariantsTableByVendor.records[0].categoryNamePath,
+        productCode: result.data.getVariantsTableByVendor.records[0].productCode || "nill",
+        brandName: result.data.getVariantsTableByVendor.records[0].brandName || "",
+      });
+      setMaxRecords(result.data.getVariantsTableByVendor.maxRecords);
+    } catch (error: any) {
+      console.log(error)
+    }
+  };
+
+
+
   useEffect(() => {
-    setProducts(productListData?.getVariantsTableByVendor?.records);
-    setMaxRecords(productListData?.getVariantsTableByVendor?.maxRecords);
+    fetchData();
   }, [productListData]);
 
 
@@ -152,16 +175,88 @@ const ProductListing = () => {
     }
   };
 
+  const [cardHeaderData, setCardHeaderData] = useState({
+    productCode: "",
+    category: "",
+    brandName: "",
+  });
 
-  const handleSearch = (event: any) => {
-    setSearchTerm(event.target.value);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<{
+    value: string;
+    label: string;
+    pass: boolean | null;
+  } | null>(null);
+
+  const [statusDropdownOpen2, setStatusDropdownOpen2] = useState(false);
+  const [selectedStatus2, setSelectedStatus2] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [outOfStockChecked, setOutOfStockChecked] = useState<boolean>(false);
+
+  const statusOptions = [
+    { value: "all", label: "All", pass: null },
+    { value: "blocked", label: "Blocked", pass: true },
+    { value: "nonBlocked", label: "Active", pass: false },
+  ];
+  const statusOptions2 = [
+    { value: "all", label: "All" },
+    { value: "UNDER_VERIFICATION", label: "Pending" },
+    { value: "APPROVED", label: "Approved" },
+    { value: "REJECTED", label: "Rejected" },
+  ];
+
+
+
+
+  const toggleStatusDropdown = () => {
+    setStatusDropdownOpen(!statusDropdownOpen);
   };
 
+  const toggleStatusDropdown2 = () => {
+    setStatusDropdownOpen2(!statusDropdownOpen2);
+  };
+
+
+  useEffect(() => {
+    setFilteredProducts(
+      products.filter(
+        (item: any) =>
+          (selectedStatus === null ||
+            selectedStatus.value === "all" ||
+            selectedStatus.pass === null ||
+            item.isBlocked === selectedStatus.pass) &&
+          (!selectedStatus2 ||
+            selectedStatus2.value === "all" ||
+            item.status === selectedStatus2.value) &&
+          (!outOfStockChecked || item.stock < 10)
+      )
+    );
+  }, [products, selectedStatus, outOfStockChecked, selectedStatus2]);
+
+
+  const handleStatusSelect = (selectedOption: any) => {
+    setSelectedStatus(selectedOption);
+    setStatusDropdownOpen(false);
+  };
+  const handleStatusSelect2 = (selectedOption: any) => {
+    setSelectedStatus2(selectedOption);
+    setStatusDropdownOpen2(false);
+  };
+
+  const handleOutOfStockToggle = () => {
+    setOutOfStockChecked(!outOfStockChecked);
+  };
 
   const items = [
     { text: "Dashboard", link: `/` },
     { text: "Products", link: `/product` },
   ];
+
+
 
 
   return (
@@ -174,43 +269,86 @@ const ProductListing = () => {
             <Card>
               <CardHeader>
                 <Row>
-                  <Col xl={6}>
-                    <div className="">
-                      <label htmlFor="cleave-time-format" className="form-label">
-                        Brand
-                      </label>
-                      <div style={{ display: "flex" }}>
-                        {products && products.length > 0 && products[0]?.brandName}
+                  <Col
+                    xs={12}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
+                      <h5 style={{ margin: "0" }}>Filters : </h5>
+                      <Dropdown isOpen={statusDropdownOpen} toggle={toggleStatusDropdown}>
+                        <DropdownToggle caret>
+                          {selectedStatus ? selectedStatus.label : "Select Status"}
+                          <FontAwesomeIcon icon={faAngleDown} />
+                        </DropdownToggle>
+                        <DropdownMenu>
+                          {statusOptions.map((option) => (
+                            <DropdownItem
+                              key={option.value}
+                              onClick={() => handleStatusSelect(option)}
+                            >
+                              {option.label}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+
+                      <Dropdown isOpen={statusDropdownOpen2} toggle={toggleStatusDropdown2}>
+                        <DropdownToggle caret>
+                          {selectedStatus2 ? selectedStatus2.label : "Verification Status"}
+                          <FontAwesomeIcon icon={faAngleDown} />
+                        </DropdownToggle>
+                        <DropdownMenu>
+                          {statusOptions2.map((option) => (
+                            <DropdownItem
+                              key={option.value}
+                              onClick={() => handleStatusSelect2(option)}
+                            >
+                              {option.label}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </Dropdown>
+
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Label
+                          style={{ marginTop: "3px", marginLeft: "10px", width: "100px" }}
+                          check
+                        >
+                          Low Stock :
+                        </Label>
+                        <FormGroup switch>
+                          <Input
+                            type="checkbox"
+                            style={{ width: "40px", height: "20px" }}
+                            checked={outOfStockChecked}
+                            onChange={handleOutOfStockToggle}
+                          />
+                        </FormGroup>
                       </div>
                     </div>
-                  </Col>
-                  <Col xl={6}>
-                    <div className="">
-                      <label htmlFor="cleave-time-format" className="form-label">
-                        Category
-                      </label>
-                      <div style={{ display: "flex" }}>
-                        {products && products.length > 0 && products[0]?.categoryNamePath}
-                      </div>
+
+                    <div style={{ width: "auto" }}>
+                      <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Category : </p>
+                        {cardHeaderData?.category}
+                      </p>
+                      <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Brand : </p>
+                        {cardHeaderData?.brandName}
+                      </p>
+                      <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>
+                          Product Code :{" "}
+                        </p>
+                        {cardHeaderData?.productCode}
+                      </p>
                     </div>
                   </Col>
                 </Row>
-              </CardHeader>
-
-              <CardHeader style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Input
-                  type="text"
-                  placeholder="Search Product"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  style={{ width: "450px", borderRadius: "0px" }}
-                />
-
-                <CustomButton
-                  name="Add Variant"
-                  icon="ic:twotone-add"
-                  onClick={handleaddVariant}
-                />
               </CardHeader>
 
 
@@ -234,7 +372,7 @@ const ProductListing = () => {
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {products?.map((product: Product, index: number) => (
+                        {filteredProducts?.map((product: Product, index: number) => (
                           <Tr key={index}>
                             <Td>{product?.productName}</Td>
                             {/* <Td>{product?.status}</Td> */}

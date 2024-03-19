@@ -104,13 +104,14 @@ const CREATE_PRODUCT = gql`
   }
 `;
 const UPDATE_PRODUCT = gql`
-  mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload]) {
-    updateProduct(input: $input, images: $images) {
-      _id
-      message
-    }
+  mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload], $productDetailImages: [Upload]) {
+  updateProduct(input: $input, images: $images, productDetailImages: $productDetailImages) {
+    _id
+    message
   }
+}
 `;
+
 const GET_CATEGORY = gql`
   query GetAllCategoriesOfVendor {
     getAllCategoriesOfVendor {
@@ -146,16 +147,14 @@ const GET_BRAND = gql`
 `;
 
 const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
-  // document.title = "Product | Arab Deals ";
   const {
     control,
     handleSubmit,
     setValue,
     watch,
-    reset, // Add this line
+    reset,
     formState: { errors },
   } = useForm<ProductForm>({
-    // Add validation rules
     criteriaMode: "all",
     shouldFocusError: true,
     mode: "onBlur",
@@ -163,9 +162,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   interface IAttribute {
     _id: string;
   }
-  // console.log(Edit);
-  // console.log(editedProduct);
-
   const navigate = useNavigate();
   const [createproduct] = useMutation(CREATE_PRODUCT);
   const [updateproduct] = useMutation(UPDATE_PRODUCT);
@@ -176,13 +172,9 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   const [remarks, setRemarks] = useState<any>([""]);
   const [attributeid, setattributeid] = useState<IAttribute[] | []>([]);
   const [selectedbrand, setselectedbrand] = useState<any>({});
-  const [fileError, setFileError] = useState<string | null>(null);
 
-  // get attributeid values
   const handleAttributesSelectChange = (selectedValues: IAttribute[]) => {
-    // console.log("Selected Values:", selectedValues);
     setattributeid(selectedValues);
-    // You can do further processing with the selected values here
   };
   const handleAddRemark = () => {
     setRemarks([...remarks, ""]);
@@ -193,8 +185,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     updatedRemarks.splice(index, 1); // Remove the remark at the specified index
     setRemarks(updatedRemarks);
   };
-  // console.log(categoryData);
-  // console.log("select", selectedCategory);
+
 
   const id = localStorage?.getItem("vendorid");
   const {
@@ -218,11 +209,9 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   });
 
   useEffect(() => {
-    console.log("editedProduct", editedProduct);
 
     if (editedProduct) {
       setValue("productName", editedProduct?.productName || "");
-
       setValue("description", editedProduct?.description || "");
       setValue("sellingPrice", editedProduct?.sellingPrice);
       setValue("price", editedProduct?.price || "");
@@ -323,11 +312,11 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     // console.log("data", data);
 
     const formdatas = {
-      // _id: editedProduct?._id,
+      _id: editedProduct?._id,
       // isBlocked: editedProduct ? editedProduct?.isBlocked : data?.isBlocked,
       brandId: selectedbrand?.id,
       brandName: selectedbrand?.name,
-      categoryId: Edit ? editedProduct?.categoryId : selectedCategory,
+      categoryId: selectedCategory,
       description: data?.description,
       // offerPrice: parseInt(data?.offerPrice),
       mrp: parseInt(data?.mrp),
@@ -360,10 +349,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     try {
       if (Edit) {
         formdatas.tags = (data?.tags).join(" ");
-        console.log("click");
-        console.log("file", file);
-        // formdatas._id=editedProduct?._id,
-
         const response = await updateproduct({
           variables: { input: { ...formdatas }, images: file },
         });

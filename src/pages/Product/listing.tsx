@@ -43,41 +43,103 @@ const KYC_STATUS = gql`
 
 const PRODUCT_LIST = gql`
   query GetProductsByVendor($input: ProductByVendorFilters) {
-    getProductsByVendor(input: $input) {
-      maxRecords
-      records {
-        _id
-        vendorId
-        brandName
-        productName
-        shortDescription
-        images {
-          fileType
-          fileURL
-          mimeType
-          originalName
-        }
-        productCode
-        categoryId
-        categoryNamePath
-        categoryIdPath
+  getProductsByVendor(input: $input) {
+    maxRecords
+    records {
+      _id
+      vendorId
+      brandId
+      brandName
+      productName
+      shortDescription
+      skuId
+      description
+      productInfo
+      productShortInfo
+      images {
+        fileType
+        fileURL
+        mimeType
+        originalName
       }
+      rating
+      sellingPrice
+      price
+      mrp
+      tags
+      productCode
+      categoryId
+      categoryNamePath
+      categoryIdPath
+      isBlocked
+      stock
+      status
+      offerPrice
+      attributes {
+        attributeId
+        attributeName
+        attributeValueId
+        attributeValue
+        attributeDescription
+      }
+      productDetailImages {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      warehouseSkuId
     }
   }
+}
 `;
 
 interface Product {
   _id: string;
+  vendorId: string;
+  brandId: string;
+  brandName: string;
   productName: string;
-  productCode: string;
   shortDescription: string;
-  categoryNamePath: string;
+  skuId: string;
+  description: string;
+  productInfo: string;
+  productShortInfo: string;
   images: {
+    fileType: string;
     fileURL: string;
+    mimeType: string;
+    originalName: string;
   }[];
+  rating: number;
+  sellingPrice: number;
+  price: number;
+  mrp: number;
+  tags: string[];
+  productCode: string;
+  categoryId: string;
+  categoryNamePath: string;
+  categoryIdPath: string;
   isBlocked: boolean;
+  stock: number;
   status: string;
+  offerPrice: number;
+  attributes: {
+    attributeId: string;
+    attributeName: string;
+    attributeValueId: string;
+    attributeValue: string;
+    attributeDescription: string;
+  }[];
+  productDetailImages: {
+    fileType: string;
+    fileURL: string;
+    mimeType: string;
+    originalName: string;
+  }[];
+  warehouseSkuId: string;
 }
+
 
 const ProductListing = () => {
   // document.title = "Product | Arab Deals ";
@@ -103,6 +165,7 @@ const ProductListing = () => {
     error: productListError,
     refetch,
   } = useQuery(PRODUCT_LIST, {
+    fetchPolicy: "network-only",
     variables: {
       input: {
         page: currentPage,
@@ -145,7 +208,6 @@ const ProductListing = () => {
         setMaxRecords(result?.data?.getProductsByVendor?.maxRecords);
       } catch (error: any) {
         setError(error.message);
-      } finally {
       }
     };
 
@@ -233,25 +295,25 @@ const ProductListing = () => {
 
           <Row style={{ marginTop: "20px" }}>
             <Col>
-              {products && products?.length > 0 ? (
-                <Card style={{ borderRadius: "0px" }}>
-                  <CardHeader>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <Input
-                        type="text"
-                        placeholder="Search Product"
-                        value={searchTerm}
-                        onChange={handleSearch}
-                        style={{ width: "450px", borderRadius: "0px" }}
-                      />
-                      <CustomButton
-                        name="Add Product"
-                        icon="ic:twotone-add"
-                        onClick={handlekycstatus}
-                      />
-                    </div>
+              <Card style={{ borderRadius: "0px" }}>
+                <CardHeader>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Input
+                      type="text"
+                      placeholder="Search Product"
+                      value={searchTerm}
+                      onChange={handleSearch}
+                      style={{ width: "450px", borderRadius: "0px" }}
+                    />
+                    <CustomButton
+                      name="Add Product"
+                      icon="ic:twotone-add"
+                      onClick={handlekycstatus}
+                    />
+                  </div>
 
-                  </CardHeader>
+                </CardHeader>
+                {products && products?.length > 0 ? (
 
                   <CardBody>
                     <div className="table-rep-plugin">
@@ -265,7 +327,6 @@ const ProductListing = () => {
 
                               <Th data-priority="3">Category</Th>
                               <Th data-priority="1">Image</Th>
-                              {/* <Th data-priority="3">Status</Th> */}
                               <Th data-priority="3">Action</Th>
                             </Tr>
                           </Thead>
@@ -285,7 +346,6 @@ const ProductListing = () => {
                                     height={80}
                                   />
                                 </Td>
-                                {/* <Td>{product.status.replace(/_/g, ' ')}</Td> */}
                                 <Td>
                                   <div style={{ display: "flex", gap: "10px" }}>
                                     <Button
@@ -372,21 +432,21 @@ const ProductListing = () => {
                       </Col>
                     </Row>
                   </CardBody>
-                </Card>
-              ) : (
-                <Card
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    borderRadius: "0px",
-                    alignItems: "center",
-                    minHeight: "200px",
-                    fontWeight: 600,
-                  }}
-                >
-                  No Products
-                </Card>
-              )}
+                ) : (
+                  <CardBody
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      borderRadius: "0px",
+                      alignItems: "center",
+                      minHeight: "200px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    No Products
+                  </CardBody>
+                )}
+              </Card>
             </Col>
           </Row>
         </Container>
