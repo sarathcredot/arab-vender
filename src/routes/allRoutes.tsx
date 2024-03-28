@@ -46,6 +46,7 @@ import ReturnOrders from "src/pages/Orders/returnOrders/ReturnOrders";
 import ReturnOrderDetails from "src/pages/Orders/returnOrders/ReturnOrderDetails";
 import RefundOrders from "src/pages/Orders/refundOrders/RefundOrders";
 import RefundOrderDetails from "src/pages/Orders/refundOrders/RefundOrderDetails";
+import PageNotFound from "src/pages/Page404";
 interface RouteProps {
   path: string;
   component: any;
@@ -95,13 +96,18 @@ const adminRoutes: Array<RouteProps> = [
   { path: "/refund-orders/details", component: <RefundOrderDetails /> },
 
   { path: "/", exact: true, component: <Navigate to="/dashboard" /> },
+
+  { path: "*", component: <PageNotFound /> },
+
 ];
 
 const authRoutes: Array<RouteProps> = [
   //Authentication pages
   { path: "/vendor", component: <VendorWelcome /> },
   { path: "/login", component: <Login /> },
-  { path: "/signup", component: <Signup /> }
+  { path: "/signup", component: <Signup /> },
+
+  { path: "*", component: <Navigate to="/login" /> },
 
 ];
 
