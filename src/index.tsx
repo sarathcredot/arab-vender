@@ -12,6 +12,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { createUploadLink } from 'apollo-upload-client';
 import { RecoilRoot, useRecoilValue } from "recoil";
+import { ToastContainer } from "react-toastify";
 
 
 const httpLink = createHttpLink({
@@ -31,7 +32,7 @@ const uploadLink = createUploadLink({
 
 
 const client = new ApolloClient({
-  link: ApolloLink.from([authLink, responseInterceptor,  uploadLink]),
+  link: ApolloLink.from([authLink, responseInterceptor, uploadLink]),
   cache: new InMemoryCache(),
   // link: ApolloLink.from([requestInterceptor, responseInterceptor /* other links if needed */]),
 });
@@ -49,12 +50,13 @@ if (process.env.REACT_APP_NODE_ENV === 'production') {
 
 root.render(
   <RecoilRoot>
-  <Provider store={configureStore({})}>
-    <BrowserRouter>
-      <ApolloProvider client={client}>
-        <App />
-      </ApolloProvider>
-    </BrowserRouter>
-  </Provider>
+    <ToastContainer />
+    <Provider store={configureStore({})}>
+      <BrowserRouter>
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
+      </BrowserRouter>
+    </Provider>
   </RecoilRoot>
 );

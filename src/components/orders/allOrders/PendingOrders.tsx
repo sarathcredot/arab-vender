@@ -230,17 +230,17 @@ const PendingOrders = () => {
     // EXPORT 
 
     const EXPORT_ORDERS = gql`
-     mutation ExportAdminOrders($input: ExportAdminOrdersInput!) {
-        exportAdminOrders(input: $input) {
-          message
-        }
-      }`;
+   mutation ExportVendorOrders($input: ExportAdminOrdersInput!) {
+  exportVendorOrders(input: $input) {
+    message
+  }
+}`;
 
-    const [ExportAdminOrders] = useMutation(EXPORT_ORDERS);
+    const [ExportVendorOrders] = useMutation(EXPORT_ORDERS);
 
     const handleExportClick = async () => {
         try {
-            const result = await ExportAdminOrders({
+            const result = await ExportVendorOrders({
                 variables: {
                     input: {
                         orderId: filterData.orderId || searchTerm,
@@ -254,11 +254,11 @@ const PendingOrders = () => {
                 }
             })
 
-            if (result.data.exportAdminOrders) {
-                toast.success("Export Successfull")
-            }
+
+            toast.success("Export Successfull")
+
         } catch (error: any) {
-            toast.success(error)
+            toast.error(error)
             console.log(error)
         }
     }

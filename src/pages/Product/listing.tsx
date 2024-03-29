@@ -257,7 +257,7 @@ const ProductListing = () => {
                 className={activeTab === "" ? "tab-button active" : "tab-button"}
                 onClick={() => handleTabChange("")}
               >
-                All
+                ALL
               </NavLink>
             </NavItem>
             <NavItem>
@@ -265,7 +265,7 @@ const ProductListing = () => {
                 className={activeTab === "APPROVED" ? "tab-button active" : "tab-button"}
                 onClick={() => handleTabChange("APPROVED")}
               >
-                Approved
+                APPROVED
               </NavLink>
             </NavItem>
             <NavItem>
@@ -273,7 +273,7 @@ const ProductListing = () => {
                 className={activeTab === "UNDER_VERIFICATION" ? "tab-button active" : "tab-button"}
                 onClick={() => handleTabChange("UNDER_VERIFICATION")}
               >
-                Under Review
+                UNDER REVIEW
               </NavLink>
             </NavItem>
             <NavItem>
@@ -281,7 +281,7 @@ const ProductListing = () => {
                 className={activeTab === "REJECTED" ? "tab-button active" : "tab-button"}
                 onClick={() => handleTabChange("REJECTED")}
               >
-                Rejected
+                REJECTED
               </NavLink>
             </NavItem>
             <NavItem>
@@ -289,7 +289,7 @@ const ProductListing = () => {
                 className={activeTab === "PENDING" ? "tab-button active" : "tab-button"}
                 onClick={() => handleTabChange("PENDING")}
               >
-                Pending
+                PENDING
               </NavLink>
             </NavItem>
           </Nav>

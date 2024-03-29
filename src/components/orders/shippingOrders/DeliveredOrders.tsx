@@ -300,10 +300,10 @@ const DeliveredOrders = () => {
     // EXPORT 
 
     const EXPORT_ORDERS = gql`
- mutation ExportAdminShippingProducts($input: ExportAdminShippingProductsInput!) {
-exportAdminShippingProducts(input: $input) {
-message
-}
+mutation ExportVendorShippingProducts($input: ExportAdminShippingProductsInput!) {
+  exportVendorShippingProducts(input: $input) {
+    message
+  }
 }`;
 
     const [ExportAdminOrders] = useMutation(EXPORT_ORDERS);
@@ -331,7 +331,7 @@ message
                 }
             })
 
-            if (result.data.exportAdminShippingProducts) {
+            if (result.data.exportVendorShippingProducts) {
                 toast.success("Export Successfull")
             }
         } catch (error: any) {

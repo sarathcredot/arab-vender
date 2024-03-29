@@ -11,7 +11,7 @@ function OrderShippingAddress({ order }: any) {
     return (
         <div>
             <Row style={{ display: "flex", flexDirection: "column", gap: "40px", }} >
-                <Col xl={12} onClick={() => navigate(`/user/view?userId=${order?.userId}`)} style={{ cursor: "pointer" }}>
+                <Col xl={12}>
                     <div
                         className="mb-3"
                         style={{ display: "flex", gap: "4px" }}

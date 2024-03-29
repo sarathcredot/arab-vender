@@ -112,8 +112,8 @@ const ShippingOrderDetails = () => {
 
 
   const GET_ORDER = gql`
-    query GetAdminOrderDetails($input: GetAdminOrderDetailsInput!) {
-  getAdminOrderDetails(input: $input) {
+    query GetVendorOrderDetails($input: GetAdminOrderDetailsInput!) {
+  getVendorOrderDetails(input: $input) {
     _id
     orderId
     userId
@@ -162,21 +162,19 @@ const ShippingOrderDetails = () => {
   });
 
   useEffect(() => {
-    if (orderData && orderData.getAdminOrderDetails) {
-      let order: OrderData = orderData.getAdminOrderDetails;
+    if (orderData && orderData.getVendorOrderDetails) {
+      let order: OrderData = orderData.getVendorOrderDetails;
       setOrder(order);
     }
   }, [orderData]);
 
 
   const GET_ORDER_PRODUCT = gql`
-  query GetAdminOrderProduct($input: GetAdminOrderProductInput!) {
-  getAdminOrderProduct(input: $input) {
+  query GetVendorOrderProduct($input: GetVendorOrderProductInput!) {
+  getVendorOrderProduct(input: $input) {
     _id
     userId
     vendorId
-    vendorName
-    warehouseSkuId
     productId
     itemId
     orderId
@@ -222,7 +220,20 @@ const ShippingOrderDetails = () => {
       mimeType
       originalName
     }
-    
+    shippingAddress {
+      _id
+      firstname
+      email
+      mobile
+      streetName
+      city
+      houseNumber
+      country
+      postCode
+      apartment
+      suite
+      unit
+    }
   }
 }
   `
@@ -241,8 +252,8 @@ const ShippingOrderDetails = () => {
   })
 
   useEffect(() => {
-    if (orderProductData && orderProductData.getAdminOrderProduct) {
-      let product: ProductsData = orderProductData.getAdminOrderProduct;
+    if (orderProductData && orderProductData.getVendorOrderProduct) {
+      let product: ProductsData = orderProductData.getVendorOrderProduct;
       setProduct(product);
     }
   }, [orderProductData]);
@@ -252,6 +263,16 @@ const ShippingOrderDetails = () => {
     { text: "Shipping Orders", link: `/shipping-orders` },
   ];
 
+
+  const calculatePaidAmount = () => {
+    const isPaid = product?.paymentStatus === "COMPLETED";
+    const totalSellingPrice = isPaid ? (product?.sellingPrice || 0) : 0;
+    const totalShippingCharge = isPaid ? (product?.shippingCharge || 0) : 0;
+    const totalRefundAmount = order?.orderPriceInfo?.totalRefundAmount || 0;
+    const paidAmount = totalSellingPrice + totalShippingCharge - totalRefundAmount;
+
+    return paidAmount;
+  };
 
   return (
     <React.Fragment>
@@ -317,6 +338,7 @@ const ShippingOrderDetails = () => {
                             <p className="form-control-static">Shipping Charge</p>
                             <p className="form-control-static">Refund Amount</p>
                             <p className="form-control-static" style={{ fontWeight: 500 }}>Effective Price</p>
+                            <p className="form-control-static" style={{ fontWeight: 500 }}>Paid Amount</p>
                           </div>
                           <div style={{ textAlign: "right" }}>
                             <p className="form-control-static">{formatCurrency(product?.sellingPrice)}</p>
@@ -327,6 +349,11 @@ const ShippingOrderDetails = () => {
                                 (product?.sellingPrice ?? 0) +
                                 (product?.shippingCharge ?? 0) -
                                 (product?.refundAmount ?? 0)
+                              )}
+                            </p>
+                            <p className="form-control-static" style={{ fontWeight: 500 }}>
+                              {formatCurrency(
+                                calculatePaidAmount()
                               )}
                             </p>
                           </div>

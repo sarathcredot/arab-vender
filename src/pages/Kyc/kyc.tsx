@@ -601,70 +601,75 @@ const CategoryList: React.FC<addCompany> = () => {
                   </Row>
                 ) : (
                   <Row>
-                    <div className={styles.edit}>
-                      {" "}
-                      {companydetail == "REJECTED" ? (
-                        <div
-                          className={styles.circle}
-                          onClick={() => setCompany(!company)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <MdEdit size={25} />
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                    <h4 className="mb-3">Company Details</h4>
+                    <Col md={8}>
+                      <div className={styles.edit}>
+                        {" "}
+                        {companydetail == "REJECTED" ? (
+                          <div
+                            className={styles.circle}
+                            onClick={() => setCompany(!company)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            <MdEdit size={25} />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                      <h4 className="mb-3">Company Details</h4>
 
-                    <div className="mb-3 d-flex align-items-center">
-                      <div className={styles.labeldiv}> Status </div>
-                      {
-                        loading ? "Loading..." :
-                          <StatusIndicator status={companydetail == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : companydetail} variant="chip" />
-                      }
-
-                    </div>
-                    <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Company Name </div>
-                      {data?.getVendorAllKycRecordByVendor?.record?.companyName ? <span>
-                        {data?.getVendorAllKycRecordByVendor?.record?.companyName}
-                      </span> : ""}
-                    </div>
-                    <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Company Type </div>
-                      {data?.getVendorAllKycRecordByVendor?.record?.companyType ? <span>
-                        {data?.getVendorAllKycRecordByVendor?.record?.companyType}
-                      </span> : ""}
-                    </div>
-                    <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Cr Number </div>
-                      {data?.getVendorAllKycRecordByVendor?.record
-                        ?.companyCrNumber ? <span>
+                      <div className="mb-3 d-flex align-items-center">
+                        <div className={styles.labeldiv}> Status </div>
                         {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.companyCrNumber
+                          loading ? "Loading..." :
+                            <StatusIndicator status={companydetail == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : companydetail} variant="chip" />
                         }
-                      </span> : ""}
-                    </div>
-                    <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Attachments </div>
-                      <div style={{ cursor: "pointer" }}>
-                        {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ?
-                          <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.mimeType || "")}>
-                            <div className="mb-2">
-                              <FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div>
-                          </p> : ""}
 
-                        {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ?
-                          <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.mimeType || "")}>
-                            <div className="mb-2">
-                              <FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate
-                            </div>
-                          </p> : ""}
+                      </div>
+                      <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Company Name </div>
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyName ? <span>
+                          {data?.getVendorAllKycRecordByVendor?.record?.companyName}
+                        </span> : ""}
+                      </div>
+                      <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Company Type </div>
+                        {data?.getVendorAllKycRecordByVendor?.record?.companyType ? <span>
+                          {data?.getVendorAllKycRecordByVendor?.record?.companyType}
+                        </span> : ""}
+                      </div>
+                      <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Cr Number </div>
+                        {data?.getVendorAllKycRecordByVendor?.record
+                          ?.companyCrNumber ? <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.companyCrNumber
+                          }
+                        </span> : ""}
                       </div>
 
-                    </div>
+                    </Col>
+                    <Col md={4}>
+                      <h4 className="mb-3">Attachments</h4>
+                      <div className="mb-3 d-flex">
+                        <div style={{ cursor: "pointer" }}>
+                          {data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL ?
+                            <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.companyCrLicense?.mimeType || "")}>
+                              <div className="mb-2">
+                                <FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Cr License</div>
+                            </p> : ""}
+
+                          {data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL ?
+                            <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.companyCooCertificate?.mimeType || "")}>
+                              <div className="mb-2">
+                                <FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Coo Certificate
+                              </div>
+                            </p> : ""}
+                        </div>
+
+                      </div>
+                    </Col>
                   </Row>
                 )}
               </Card>
@@ -944,14 +949,17 @@ const CategoryList: React.FC<addCompany> = () => {
                         ""
                       )}
                     </div>
-                    <h4 className="mb-3">Outlet Details</h4>
-                    <div className="mb-3 d-flex align-items-center">
-                      <div className={styles.labeldiv}> Status </div>
-                      {
-                        loading ? "Loading..." :
-                          <StatusIndicator status={outletstatus == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : outletstatus} variant="chip" />
-                      }
-                      {/* <span
+                    <Col md={8}>
+
+
+                      <h4 className="mb-3">Outlet Details</h4>
+                      <div className="mb-3 d-flex align-items-center">
+                        <div className={styles.labeldiv}> Status </div>
+                        {
+                          loading ? "Loading..." :
+                            <StatusIndicator status={outletstatus == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : outletstatus} variant="chip" />
+                        }
+                        {/* <span
                         className={styles.status}
                         style={
                           outletstatus == 'COMPLETED'
@@ -963,93 +971,96 @@ const CategoryList: React.FC<addCompany> = () => {
                       >
                         {outletstatus == "UNDER_VERIFICATION" ? "UNDER VERIFICATION" : outletstatus}
                       </span>      */}
-                    </div>
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletName ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Outlet Name </div>
-                      <span>
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletName}
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Village </div>
-                      <span>
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record
-                      ?.outletDistrict ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> District </div>
-                      <span>
-                        {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.outletDistrict
-                        }
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record
-                      ?.outletCountry ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Country </div>
-                      <span>
-                        {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.outletCountry
-                        }
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record
-                      ?.outletContactPersonName ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Contact Person Name </div>
-                      <span>
-                        {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.outletContactPersonName
-                        }
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record
-                      ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Contact Person Number </div>
-                      <span>
-                        {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.outletContactPersonNumber
-                        }
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record
-                      ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Contact Person Designation </div>
-                      <span>
-                        {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.outletContactPersonDesignation
-                        }
-                      </span>
-                    </div> : ""}
-                    {data?.getVendorAllKycRecordByVendor?.record
-                      ?.outletAddress ? <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Address </div>
-                      <span>
-                        {
-                          data?.getVendorAllKycRecordByVendor?.record
-                            ?.outletAddress
-                        }
-                      </span>
-                    </div> : ""}
-                    <div className="mb-3 d-flex">
-                      <div className={styles.labeldiv}> Attachments </div>
-                      <div style={{ cursor: "pointer" }}>
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ?
-                          <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.mimeType || "")}
-                          >
-                            <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div>
-                          </p> : ""}
-
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.mimeType || "")} > <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></p> : ""}
-                        {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.mimeType || "")} > <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></p> : ""}
                       </div>
+                      {data?.getVendorAllKycRecordByVendor?.record?.outletName ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Outlet Name </div>
+                        <span>
+                          {data?.getVendorAllKycRecordByVendor?.record?.outletName}
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record?.outletVillage ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Village </div>
+                        <span>
+                          {data?.getVendorAllKycRecordByVendor?.record?.outletVillage}
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletDistrict ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> District </div>
+                        <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.outletDistrict
+                          }
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletCountry ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Country </div>
+                        <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.outletCountry
+                          }
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonName ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Contact Person Name </div>
+                        <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.outletContactPersonName
+                          }
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonNumber ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Contact Person Number </div>
+                        <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.outletContactPersonNumber
+                          }
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletContactPersonDesignation ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Contact Person Designation </div>
+                        <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.outletContactPersonDesignation
+                          }
+                        </span>
+                      </div> : ""}
+                      {data?.getVendorAllKycRecordByVendor?.record
+                        ?.outletAddress ? <div className="mb-3 d-flex">
+                        <div className={styles.labeldiv}> Address </div>
+                        <span>
+                          {
+                            data?.getVendorAllKycRecordByVendor?.record
+                              ?.outletAddress
+                          }
+                        </span>
+                      </div> : ""}
+                    </Col>
+                    <Col md={4}>
+                      <h4 className="mb-3">Attachments</h4>
+                      <div className="mb-3 d-flex">
+                        <div style={{ cursor: "pointer" }}>
+                          {data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL ?
+                            <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletLicense?.mimeType || "")}
+                            >
+                              <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Outlet Licence</div>
+                            </p> : ""}
 
-                    </div>
+                          {data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL ? <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletInteriorImage?.mimeType || "")} > <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Interior Image</div></p> : ""}
+                          {data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL ? <p onClick={() => handleImageClick(data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.fileURL || "", data?.getVendorAllKycRecordByVendor?.record?.outletExteriorImage?.mimeType || "")} > <div className="mb-2"><FaFilePdf style={{ fontSize: "25px", marginRight: "15px", color: "red" }} />Exterior Image</div></p> : ""}
+                        </div>
+
+                      </div>
+                    </Col>
                   </Row>
                 }
               </Card>

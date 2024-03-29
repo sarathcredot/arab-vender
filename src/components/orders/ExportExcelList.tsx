@@ -40,8 +40,9 @@ function ExportExcelList({ name }: any) {
     const popoverRef = useRef<HTMLDivElement>(null);
 
     const GET_JOBS_QUEUE = gql`
- query GetJobsQueue($input: GetJobQueueInput!) {
-  getJobsQueue(input: $input) {
+    query GetVendorJobsQueue($input: GetJobQueueInput!) {
+     getVendorJobsQueue(input: $input) {
+    maxRecords
     records {
       _id
       name
@@ -49,7 +50,6 @@ function ExportExcelList({ name }: any) {
       isExpired
       createdAt
     }
-    maxRecords
   }
 }`
 
@@ -74,8 +74,8 @@ function ExportExcelList({ name }: any) {
                     ...(vendorId && { vendorId })
                 }
             });
-            setJobsQueueList(result.data.getJobsQueue.records);
-            setMaxRecords(result.data.getJobsQueue.maxRecords);
+            setJobsQueueList(result.data.getVendorJobsQueue.records);
+            setMaxRecords(result.data.getVendorJobsQueue.maxRecords);
         } catch (error) {
             console.error(error)
         }
@@ -86,11 +86,11 @@ function ExportExcelList({ name }: any) {
     }, [jobsQueueData, jobsQueueRefetch, currentPage])
 
     const GET_DOWNLOAD_LINK = gql`
-    query GetAdminDownloadToken($input: GetAdminDownloadTokenInput!) {
-        getAdminDownloadToken(input: $input) {
-         url
-        }
-    }
+    query GetVendorDownloadToken($input: GetAdminDownloadTokenInput!) {
+  getVendorDownloadToken(input: $input) {
+    url
+  }
+}
      `
 
     const { data: downloadLinkData, refetch: downloadLinkRefetch } = useQuery(GET_DOWNLOAD_LINK, {
@@ -109,7 +109,7 @@ function ExportExcelList({ name }: any) {
                     _id: id
                 }
             });
-            const downloadUrl = result.data.getAdminDownloadToken.url;
+            const downloadUrl = result.data.getVendorDownloadToken.url;
             const link = document.createElement('a');
             link.href = downloadUrl;
 
