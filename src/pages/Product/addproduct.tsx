@@ -430,7 +430,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             <Input
                               type="select"
                               style={{ borderRadius: "0px", backgroundColor: "white" }}
-                              value={value}
+                              value={editedProduct?.brandName}
+                              disabled
                               onChange={(event: any) => {
                                 const selectedBrand = brandData.find(
                                   (brand: any) => brand.brandName === event.target.value
@@ -445,7 +446,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                                 }
                                 onChange(event);
                               }}
-                              defaultValue={editedProduct?.brandName || "Select"}
                             >
                               <option value="">Select</option>
                               {brandData?.map((brand: any, index: number) => {
@@ -497,6 +497,12 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         </DropdownMenu>
                       </Dropdown>
                     </FormGroup>
+
+                    <Catattributes
+                      selectedCategoryData={getSelectedCategoryData()}
+                      onSelectChange={handleAttributesSelectChange}
+                      editedProduct={editedProduct}
+                    />
 
                     <FormGroup>
                       <Label for="shortDescription">Product Short Description</Label>
@@ -597,11 +603,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                       ))}
                     </FormGroup>
 
-                    <Catattributes
-                      selectedCategoryData={getSelectedCategoryData()}
-                      onSelectChange={handleAttributesSelectChange}
-                      editedProduct={editedProduct}
-                    />
+
 
                     <Row style={{ marginTop: "13px" }}>
                       <Col md={6}>
@@ -721,8 +723,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           ) : null}
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row style={{ marginTop: "13px" }}>
+
                       <Col md={6}>
                         <FormGroup>
                           <Label for="tags">Tags</Label>
@@ -746,6 +747,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           />
                         </FormGroup>
                       </Col>
+                    </Row>
+                    <Row style={{ marginTop: "13px" }}>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="rating">Rating</Label>
