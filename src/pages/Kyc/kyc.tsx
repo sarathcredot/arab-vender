@@ -459,10 +459,13 @@ const CategoryList: React.FC<addCompany> = () => {
           <Breadcrumb items={items} currentPage="Kyc Details" />
           <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
             <span style={{ marginRight: "20px", fontWeight: "500" }}>KYC Status :</span>
-            <StatusIndicator status={data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted == true ? "COMPLETED" : "PENDING"} variant="chip" />
+            {
+              loading ? "Loading..." :
+                <StatusIndicator status={data?.getVendorAllKycRecordByVendor?.record?.isKycCompleted == true ? "COMPLETED" : "PENDING"} variant="chip" />
+            }
           </div>
           <Row style={{ height: "100% !important" }}>
-            <Col xs={6} style={{}}>
+            <Col xs={12} style={{}}>
               <Card style={{ padding: "20px", borderRadius: "0px", height: "100% !important" }} className="h-100">
                 {companydetail == "PENDING" || company ? (
                   <Row>
@@ -616,7 +619,10 @@ const CategoryList: React.FC<addCompany> = () => {
 
                     <div className="mb-3 d-flex align-items-center">
                       <div className={styles.labeldiv}> Status </div>
-                      <StatusIndicator status={companydetail == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : companydetail} variant="chip" />
+                      {
+                        loading ? "Loading..." :
+                          <StatusIndicator status={companydetail == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : companydetail} variant="chip" />
+                      }
 
                     </div>
                     <div className="mb-3 d-flex">
@@ -663,7 +669,8 @@ const CategoryList: React.FC<addCompany> = () => {
                 )}
               </Card>
             </Col>
-            <Col xs={6}>
+
+            <Col xs={12}>
               <Card style={{ padding: "20px", borderRadius: "0px", height: "100% !important" }} className="h-100">
                 {outletstatus == 'PENDING' || outletform ? (<Row>
                   <Form onSubmit={handleSubmit1(onSubmitOutlet)}>
@@ -940,8 +947,10 @@ const CategoryList: React.FC<addCompany> = () => {
                     <h4 className="mb-3">Outlet Details</h4>
                     <div className="mb-3 d-flex align-items-center">
                       <div className={styles.labeldiv}> Status </div>
-
-                      <StatusIndicator status={outletstatus == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : outletstatus} variant="chip" />
+                      {
+                        loading ? "Loading..." :
+                          <StatusIndicator status={outletstatus == "UNDER_VERIFICATION" ? "UNDER_VERIFICATION" : outletstatus} variant="chip" />
+                      }
                       {/* <span
                         className={styles.status}
                         style={

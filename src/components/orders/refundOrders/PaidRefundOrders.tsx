@@ -258,8 +258,8 @@ const PaidRefundOrders = () => {
                     ...((filterData.invoiceNumber) && { invoiceNumber: filterData.invoiceNumber }),
                 },
             });
-            setOrders(result.data.getAdminRefundProducts.records);
-            setMaxRecords(result.data.getAdminRefundProducts.maxRecords);
+            setOrders(result.data.getVendorRefundProducts.records);
+            setMaxRecords(result.data.getVendorRefundProducts.maxRecords);
         } catch (error: any) {
             console.error(error)
         }
@@ -367,7 +367,7 @@ const PaidRefundOrders = () => {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{capitalCase(order?.username)}</td>
+                                                <td>{order?.username && capitalCase(order?.username)}</td>
 
                                                 <td>
                                                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>

@@ -257,8 +257,8 @@ const PendingRefundOrders = () => {
                     ...((filterData.invoiceNumber) && { invoiceNumber: filterData.invoiceNumber }),
                 },
             });
-            setOrders(result.data.getAdminRefundProducts.records);
-            setMaxRecords(result.data.getAdminRefundProducts.maxRecords);
+            setOrders(result.data.getVendorRefundProducts.records);
+            setMaxRecords(result.data.getVendorRefundProducts.maxRecords);
         } catch (error: any) {
             console.error(error)
         }

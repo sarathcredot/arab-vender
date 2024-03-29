@@ -36,37 +36,35 @@ query GetKycStatus {
     fetchPolicy: "network-only"
   });
 
-  useEffect(() => {
-    if (!loading && !error && data) {
-      const receivedKycStatus = data?.getKycStatus?.record;
-      setKycStatus(receivedKycStatus);
-    }
-  }, [loading, error, data, setKycStatus]);
-
 
 
   return (
     <div className="page-content">
       {
-        data?.getKycStatus?.record.outletStatus !== "COMPLETED" || data?.getKycStatus?.record.companyStatus !== "COMPLETED" || data?.getKycStatus?.record.isKycCompleted !== true ?
+        data?.getKycStatus?.record.outletStatus !== "COMPLETED" || data?.getKycStatus?.record.companyStatus !== "COMPLETED" || data?.getKycStatus?.record.isKycCompleted !== true && !loading ?
           <Row>
-            <Col xs={12}>
-              <Alert onClick={() => navigate("/kyc")} color={data?.getKycStatus?.record?.outletStatus == 'PENDING' ? "warning" : data?.getKycStatus?.record?.outletStatus == 'UNDER_VERIFICATION' ? "info" : data?.getKycStatus?.record?.outletStatus == 'COMPLETED' ? 'success' : 'error'} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "20px 20px" }} >
-                <Iconify icon="ep:warning-filled" />
-                <span>
-                  {data?.getKycStatus?.record?.outletStatus == 'PENDING' ? "Your outlet status is PENDING" : data?.getKycStatus?.record?.outletStatus == 'UNDER_VERIFICATION' ? "Your outlet status is UNDER VERIFICATION " : data?.getKycStatus?.record?.outletStatus == 'COMPLETED' ? 'Your outlet status is COMPLETED' : 'Your outlet status is REJECTED'}
-                </span>
-              </Alert>
-            </Col>
-            <Col xs={12}>
-              <Alert onClick={() => navigate("/kyc")} color={data?.getKycStatus?.record?.companyStatus == 'PENDING' ? "warning" : data?.getKycStatus?.record?.companyStatus == 'UNDER_VERIFICATION' ? "info " : data?.getKycStatus?.record?.companyStatus == 'COMPLETED' ? 'success' : 'error'} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "20px 20px" }} >
-                <Iconify icon="ep:warning-filled" />
-                <span>
-                  {data?.getKycStatus?.record?.companyStatus == 'PENDING' ? "Your company status is PENDING" : data?.getKycStatus?.record?.companyStatus == 'UNDER_VERIFICATION' ? "Your company status is UNDER VERIFICATION " : data?.getKycStatus?.record?.companyStatus == 'COMPLETED' ? 'Your company status is COMPLETED' : 'Your company status is REJECTED'}
-                </span>
-              </Alert>
-
-            </Col>
+            {data?.getKycStatus?.record?.outletStatus == 'PENDING' || data?.getKycStatus?.record?.outletStatus == 'UNDER_VERIFICATION' || data?.getKycStatus?.record?.outletStatus == 'COMPLETED' || data?.getKycStatus?.record?.outletStatus == 'REJECTED' ?
+              <Col xs={12}>
+                <Alert onClick={() => navigate("/kyc")} color={data?.getKycStatus?.record?.outletStatus == 'PENDING' ? "warning" : data?.getKycStatus?.record?.outletStatus == 'UNDER_VERIFICATION' ? "info" : data?.getKycStatus?.record?.outletStatus == 'COMPLETED' ? 'success' : 'error'} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "20px 20px" }} >
+                  <Iconify icon="ep:warning-filled" />
+                  <span>
+                    {data?.getKycStatus?.record?.outletStatus == 'PENDING' ? "Your outlet status is PENDING" : data?.getKycStatus?.record?.outletStatus == 'UNDER_VERIFICATION' ? "Your outlet status is UNDER VERIFICATION " : data?.getKycStatus?.record?.outletStatus == 'COMPLETED' ? 'Your outlet status is COMPLETED' : data?.getKycStatus?.record?.outletStatus == 'REJECTED' ? 'Your outlet status is REJECTED' : ""}
+                  </span>
+                </Alert>
+              </Col> : ""
+            }
+            {
+              data?.getKycStatus?.record?.companyStatus == 'PENDING' || data?.getKycStatus?.record?.companyStatus == 'UNDER_VERIFICATION' || data?.getKycStatus?.record?.companyStatus == 'COMPLETED' || data?.getKycStatus?.record?.companyStatus == 'REJECTED' ?
+                <Col xs={12}>
+                  <Alert onClick={() => navigate("/kyc")} color={data?.getKycStatus?.record?.companyStatus == 'PENDING' ? "warning" : data?.getKycStatus?.record?.companyStatus == 'UNDER_VERIFICATION' ? "info " : data?.getKycStatus?.record?.companyStatus == 'COMPLETED' ? 'success' : 'error'} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", padding: "20px 20px" }} >
+                    <Iconify icon="ep:warning-filled" />
+                    <span>
+                      {data?.getKycStatus?.record?.companyStatus == 'PENDING' ? "Your company status is PENDING" : data?.getKycStatus?.record?.companyStatus == 'UNDER_VERIFICATION' ? "Your company status is UNDER VERIFICATION " : data?.getKycStatus?.record?.companyStatus == 'COMPLETED' ? 'Your company status is COMPLETED' : data?.getKycStatus?.record?.companyStatus == 'REJECTED' ? 'Your company status is REJECTED' : ""}
+                    </span>
+                  </Alert>
+                </Col>
+                : ""
+            }
           </Row> : ""
       }
 

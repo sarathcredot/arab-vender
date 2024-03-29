@@ -18,6 +18,7 @@ import Breadcrumb from "src/components/Common/Breadcrumb";
 
 import { bR } from "@fullcalendar/core/internal-common";
 import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
+import Loader from "src/components/Common/Loader";
 // import BrandForm from "./BrandForm";
 
 
@@ -67,11 +68,12 @@ const BrandList: React.FC = () => {
     data: brandDataResponse,
     refetch: brandRefetch,
   } = useQuery(GET_BRAND, {
+    fetchPolicy: "network-only",
     variables: {
       input: {
         page: currentPage,
         size: pageSize,
-
+        query: searchTerm
       },
     },
   });
@@ -82,7 +84,7 @@ const BrandList: React.FC = () => {
       setBrandData(brandDataResponse.getAllBrandRecordsWithVendorByVendor.records);
       setMaxRecords(brandDataResponse.getAllBrandRecordsWithVendorByVendor.maxRecords);
     }
-  }, [brandDataResponse, brandRefetch]);
+  }, [brandDataResponse, brandRefetch, searchTerm]);
 
 
   if (brandError) {
@@ -90,17 +92,7 @@ const BrandList: React.FC = () => {
   }
 
 
-
-
-
   const totalPages = Math.ceil(maxRecords / pageSize);
-
-  const handleNextPage = () => {
-    if (currentPage + 1 < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
 
 
   const items = [
@@ -126,46 +118,44 @@ const BrandList: React.FC = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{ width: "50%", marginBottom: "20px", borderRadius: "0px" }}
                   />
+                  {
+                    brandLoading ?
+                      <Loader /> :
 
-                  <Table
-                    responsive
-                    className="table table-bordered table-centered mb-0"
-                  >
-                    <thead>
-                      <tr>
-                        <th>No</th>
-                        <th>Brand Name</th>
-                        <th>Logo</th>
-                        <th>Status</th>
-                        {/* <th>Action</th> */}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {brandData
-                        .filter((brand) =>
-                          brand.brandName
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
-                        )
-                        .map((brand, index) => (
-                          <tr key={brand._id}>
-                            <td>{index + 1}</td>
-                            <td>{brand.brandName}</td>
-
-                            <td>
-                              {brand.logo && (
-                                <img
-                                  src={brand.logo.fileURL}
-                                  alt={`Logo for ${brand.brandName}`}
-                                  style={{ width: '50px', height: '50px' }}
-                                />
-                              )}
-                            </td>
-                            <td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></td>
+                      <Table
+                        responsive
+                        className="table table-bordered table-centered mb-0"
+                      >
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Brand Name</th>
+                            <th>Logo</th>
+                            <th>Status</th>
+                            {/* <th>Action</th> */}
                           </tr>
-                        ))}
-                    </tbody>
-                  </Table>
+                        </thead>
+                        <tbody>
+                          {brandData?.map((brand, index) => (
+                            <tr key={brand._id}>
+                              <td>{index + 1}</td>
+                              <td>{brand.brandName}</td>
+
+                              <td>
+                                {brand.logo && (
+                                  <img
+                                    src={brand.logo.fileURL}
+                                    alt={`Logo for ${brand.brandName}`}
+                                    style={{ width: '50px', height: '50px' }}
+                                  />
+                                )}
+                              </td>
+                              <td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                  }
                   <Row style={{ marginTop: "20px" }}>
                     <Col>
                       <div className="d-flex justify-content-end mt-0 ">

@@ -9,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "./listing.css";
 import CustomButton from "src/components/Common/CustomButton";
 import Breadcrumb from "../../components/Common/Breadcrumb";
+import Loader from "src/components/Common/Loader";
 
 
 // const KYC_STATUS = gql`
@@ -313,53 +314,58 @@ const ProductListing = () => {
                   </div>
 
                 </CardHeader>
-                {products && products?.length > 0 ? (
 
-                  <CardBody>
-                    <div className="table-rep-plugin">
-                      <div className="table-responsive mb-0" data-pattern="priority-columns">
-                        <Table id="tech-companies-1" className="table table-striped table-bordered">
-                          <Thead>
-                            <Tr>
-                              <Th>No</Th>
-                              <Th data-priority="1">Name</Th>
-                              <Th>Product Code</Th>
+                <CardBody>
+                  <div className="table-rep-plugin">
+                    <div className="table-responsive mb-0" data-pattern="priority-columns">
+                      {
+                        productListLoading ?
+                          <Loader /> :
 
-                              <Th data-priority="3">Category</Th>
-                              <Th data-priority="1">Image</Th>
-                              <Th data-priority="3">Action</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {products?.map((product: Product, index: number) => (
-                              <Tr key={index}>
-                                <Td>{currentPage * pageSize + index + 1}</Td>
-                                <Td>{product.productName}</Td>
-                                <Td>{product.productCode}</Td>
+                          <Table id="tech-companies-1" className="table table-striped table-bordered">
+                            {products && products?.length > 0 ? (
+                              <>
+                                <Thead>
+                                  <Tr>
+                                    <Th>No</Th>
+                                    <Th data-priority="1">Name</Th>
+                                    <Th>Product Code</Th>
 
-                                <Td>{product?.categoryNamePath}</Td>
-                                <Td>
-                                  <img
-                                    src={product.images[0]?.fileURL}
-                                    alt={product?.productName}
-                                    width={80}
-                                    height={80}
-                                  />
-                                </Td>
-                                <Td>
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Button
-                                      color="primary"
-                                      size="sm"
-                                      tag={Link}
-                                      to={{
-                                        pathname: "/product/variant",
-                                        search: `?_code=${product?.productCode}`,
-                                      }}
-                                    >
-                                      View
-                                    </Button>
-                                    {/* <Button
+                                    <Th data-priority="3">Category</Th>
+                                    <Th data-priority="1">Image</Th>
+                                    <Th data-priority="3">Action</Th>
+                                  </Tr>
+                                </Thead>
+                                <Tbody>
+                                  {products?.map((product: Product, index: number) => (
+                                    <Tr key={index}>
+                                      <Td>{currentPage * pageSize + index + 1}</Td>
+                                      <Td>{product.productName}</Td>
+                                      <Td>{product.productCode}</Td>
+
+                                      <Td>{product?.categoryNamePath}</Td>
+                                      <Td>
+                                        <img
+                                          src={product.images[0]?.fileURL}
+                                          alt={product?.productName}
+                                          width={80}
+                                          height={80}
+                                        />
+                                      </Td>
+                                      <Td>
+                                        <div style={{ display: "flex", gap: "10px" }}>
+                                          <Button
+                                            color="primary"
+                                            size="sm"
+                                            tag={Link}
+                                            to={{
+                                              pathname: "/product/variant",
+                                              search: `?_code=${product?.productCode}`,
+                                            }}
+                                          >
+                                            View
+                                          </Button>
+                                          {/* <Button
                                   color="white"
                                   style={{
                                     backgroundColor: "black",
@@ -371,81 +377,85 @@ const ProductListing = () => {
                                     pathname: "/product/details/",
                                     search: `?_id=${product._id}`,
                                   }}
-                                >
+                                  >
                                   View Details
                                 </Button> */}
-                                  </div>
-                                </Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      </div>
+                                        </div>
+                                      </Td>
+                                    </Tr>
+                                  ))}
+                                </Tbody>
+                              </>
+                            ) : (
+                              <CardBody
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  borderRadius: "0px",
+                                  alignItems: "center",
+                                  minHeight: "200px",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                No Products
+                              </CardBody>
+                            )}
+
+                          </Table>
+                      }
                     </div>
-                    <Row>
-                      <Col>
-                        <div className="d-flex justify-content-end mt-0 ">
-                          <ul className="pagination">
-                            <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
+                  </div>
+                  <Row>
+                    <Col>
+                      <div className="d-flex justify-content-end mt-0 ">
+                        <ul className="pagination">
+                          <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
+                            <button
+                              style={{ borderRadius: "0px" }}
+                              className="page-link"
+                              onClick={() => setCurrentPage(currentPage - 1)}
+                              disabled={currentPage === 0}
+                            >
+                              Previous
+                            </button>
+                          </li>
+
+                          {Array.from({ length: totalPages }, (_, index) => (
+                            <li
+                              key={index}
+                              className={`page-item ${currentPage === index ? "active" : ""}`}
+                            >
                               <button
                                 style={{ borderRadius: "0px" }}
                                 className="page-link"
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                                disabled={currentPage === 0}
+                                onClick={() => setCurrentPage(index)}
                               >
-                                Previous
+                                {index + 1}
                               </button>
                             </li>
+                          ))}
 
-                            {Array.from({ length: totalPages }, (_, index) => (
-                              <li
-                                key={index}
-                                className={`page-item ${currentPage === index ? "active" : ""}`}
+                          {currentPage < totalPages - 1 && (
+                            <li
+                              className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
+                                }`}
+                            >
+                              <button
+                                style={{ borderRadius: "0px" }}
+                                className="page-link"
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                disabled={currentPage === totalPages - 1}
                               >
-                                <button
-                                  style={{ borderRadius: "0px" }}
-                                  className="page-link"
-                                  onClick={() => setCurrentPage(index)}
-                                >
-                                  {index + 1}
-                                </button>
-                              </li>
-                            ))}
+                                Next
+                              </button>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    </Col>
+                  </Row>
+                </CardBody>
 
-                            {currentPage < totalPages - 1 && (
-                              <li
-                                className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""
-                                  }`}
-                              >
-                                <button
-                                  style={{ borderRadius: "0px" }}
-                                  className="page-link"
-                                  onClick={() => setCurrentPage(currentPage + 1)}
-                                  disabled={currentPage === totalPages - 1}
-                                >
-                                  Next
-                                </button>
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                ) : (
-                  <CardBody
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      borderRadius: "0px",
-                      alignItems: "center",
-                      minHeight: "200px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    No Products
-                  </CardBody>
-                )}
               </Card>
             </Col>
           </Row>

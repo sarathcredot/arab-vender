@@ -184,8 +184,8 @@ const All = () => {
 
                 },
             });
-            setOrders(result.data.getAdminOrders.records);
-            setMaxRecords(result.data.getAdminOrders.maxRecords);
+            setOrders(result.data.getVendorOrders.records);
+            setMaxRecords(result.data.getVendorOrders.maxRecords);
         } catch (error: any) {
             console.error(error)
         }

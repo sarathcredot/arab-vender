@@ -264,8 +264,8 @@ const CancelledOrders = () => {
                     ...((filterData.invoiceNumber) && { invoiceNumber: filterData.invoiceNumber }),
                 },
             });
-            setOrders(result.data.getAdminShippingProducts.records);
-            setMaxRecords(result.data.getAdminShippingProducts.maxRecords);
+            setOrders(result.data.getVendorShippingProducts.records);
+            setMaxRecords(result.data.getVendorShippingProducts.maxRecords);
         } catch (error: any) {
             console.error(error)
         }

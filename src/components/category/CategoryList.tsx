@@ -30,6 +30,7 @@ import { C } from "@fullcalendar/core/internal-common";
 import { capitalCase } from "change-case";
 import { Link } from "react-router-dom";
 import StatusIndicator from "../statusIndicator/StatusIndicator";
+import Loader from "../Common/Loader";
 
 interface sizeChart {
   fileType: string;
@@ -232,38 +233,39 @@ const CategoryList: React.FC<Props> = () => {
                   </Row>
                 </CardHeader>
                 <CardBody>
+                  {
+                    categoryLoading ?
+                      <Loader /> :
 
-                  <Table
-                    responsive
-                    className="table table-bordered table-centered mb-0"
-                  >
-                    <thead>
-                      <tr>
-                        <th>No</th>
-                        <th>Category Name</th>
-                        <th>Category Path</th>
-                        {/* <th>Size Chart Image</th> */}
-                        <th>Status</th>
-                        {/* <th>Actions</th> */}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredCategory.map((category, index) => (
-                        <tr key={category._id}>
-                          <td>{index + 1}</td>
-                          <td>{category?.categoryName}</td>
-                          <td>{category?.fullCategoryName}</td>
+                      <Table
+                        responsive
+                        className="table table-bordered table-centered mb-0"
+                      >
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Category Name</th>
+                            <th>Category Path</th>
+                            {/* <th>Size Chart Image</th> */}
+                            <th>Status</th>
+                            {/* <th>Actions</th> */}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredCategory.map((category, index) => (
+                            <tr key={category._id}>
+                              <td>{index + 1}</td>
+                              <td>{category?.categoryName}</td>
+                              <td>{category?.fullCategoryName}</td>
 
-                          <td>
-                            <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
-
-                          </td>
-
-
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
+                              <td>
+                                <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                  }
 
                   <Modal
                     isOpen={isImageModalOpen}

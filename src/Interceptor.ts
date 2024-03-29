@@ -32,8 +32,8 @@ export const responseInterceptor = new ApolloLink(
           // Check if there are errors in the result
           if (result.errors && result.errors.some((error: any) => error.extensions?.code === "UNAUTHORIZED")) {
             console.log("Redirecting to login page");
-            localStorage.removeItem("token");
-            window.location.href = "/login"
+            // localStorage.removeItem("token");
+            // window.location.href = "/login"
           } else {
             observer.next(result);
           }
