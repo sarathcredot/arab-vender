@@ -69,7 +69,7 @@ function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: a
       data?.getAttributesDetailsWithCategory?.record?.attributes
     );
   }, [data]);
-  
+
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
 
@@ -106,15 +106,14 @@ function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: a
     <div>
       {attributeData &&
         attributeData?.map((attri: any, index: any) => {
-          console.log(attri, "attri");
-
           return (
             attri?.attributeValues?.length > 0 && (
 
               <div key={index} className="mt-3">
                 <Label>{attri?.description}</Label>
                 <Input
-                  style={{ borderRadius: "0px", backgroundColor:"white" }}
+                  disabled
+                  style={{ borderRadius: "0px", backgroundColor: "white" }}
                   type="select"
                   onChange={(e: any) => handleSelectChange(e, index)}
                   defaultValue={editedProduct?.attributes[index]?.attributeValueId || "Select"}

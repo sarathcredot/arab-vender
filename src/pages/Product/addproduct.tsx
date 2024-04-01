@@ -431,7 +431,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                               type="select"
                               style={{ borderRadius: "0px", backgroundColor: "white" }}
                               value={editedProduct?.brandName}
-                              disabled
+                              disabled={Edit}
                               onChange={(event: any) => {
                                 const selectedBrand = brandData.find(
                                   (brand: any) => brand.brandName === event.target.value
