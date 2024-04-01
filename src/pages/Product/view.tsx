@@ -449,6 +449,7 @@ const ProductDetails = () => {
                                     style={{
                                       width: "100px",
                                       height: "100px",
+
                                       objectFit: "contain",
                                       borderRadius: "8px",
                                     }}
