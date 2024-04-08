@@ -18,7 +18,7 @@ import { withTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
 // users
-import user1 from "../../../assets/images/users/avatar-1.jpg";
+import user1 from "../../../assets/images/users/avatar-dummy.webp";
 
 //redux
 import { useSelector } from "react-redux";
@@ -189,8 +189,8 @@ const ProfileMenu = (props: any) => {
           >
             Cancel
           </Button>
-          <Button
-            style={{ backgroundColor: "rgba(0, 0, 0, 1)", borderRadius: "0px", border: "none" }}
+          <Button color="primary"
+            style={{ borderRadius: "0px", border: "none" }}
             onClick={handleLogout}
 
           >

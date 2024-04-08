@@ -25,7 +25,7 @@ import withRouter from "../../components/Common/withRouter";
 //Import Breadcrumb
 import Breadcrumb from "../../components/Common/Breadcrumb";
 
-import avatar from "../../assets/images/users/avatar-1.jpg";
+// import avatar from "../../assets/images/users/avatar-1.jpg";
 
 // actions
 import { editProfile, resetProfileFlag } from "../../store/actions";
@@ -33,6 +33,10 @@ import { createSelector } from "reselect";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router";
+
+import avatar from "../../assets/images/users/avatar-dummy.webp";
+
+
 interface profilePic {
   fileURL: string;
 }
@@ -230,7 +234,7 @@ const UserProfile = () => {
                   <div className="d-flex">
                     <div className="ms-3">
                       <img
-                        src={data?.profilePic?.fileURL}
+                        src={data?.profilePic?.fileURL || avatar}
                         alt=""
                         className="avatar-md rounded-circle img-thumbnail"
                       />
@@ -238,7 +242,7 @@ const UserProfile = () => {
                     <div className="flex-grow-1 align-self-center ms-3">
                       <div className="text-muted">
                         <h5>{data?.fullName}</h5>
-                        <p className="mb-1">Email : {data?.email} </p>
+                        <p className="mb-1">Email : {data?.email || "nill"} </p>
                         <p className="mb-0">Mobile Number : {data?.countryCode} {data?.mobileNumber}</p>
                       </div>
                     </div>
@@ -250,7 +254,7 @@ const UserProfile = () => {
 
           <h4 className="card-title mb-4">Update Profile</h4>
 
-          <Card style={{ width: "50%" }}>
+          <Card style={{ width: "100%" }}>
             <CardBody>
               <div className="">
                 <Form

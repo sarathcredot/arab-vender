@@ -268,70 +268,57 @@ const ProductListing = () => {
           <div>
             <Card>
               <CardHeader>
-                <Row>
-                  <Col
-                    xs={12}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
-                      <h5 style={{ margin: "0" }}>Filters : </h5>
-                      <Dropdown isOpen={statusDropdownOpen} toggle={toggleStatusDropdown}>
-                        <DropdownToggle caret>
-                          {selectedStatus ? selectedStatus.label : "Select Status"}
-                          <FontAwesomeIcon icon={faAngleDown} />
-                        </DropdownToggle>
-                        <DropdownMenu>
-                          {statusOptions.map((option) => (
-                            <DropdownItem
-                              key={option.value}
-                              onClick={() => handleStatusSelect(option)}
-                            >
-                              {option.label}
-                            </DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown>
+                <h5 >Filters : </h5>
+                <Row >
+                  <Col xs={12} md={6} lg={8} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Row style={{ width: "100%", display: "flex", alignItems: "center", }}>
+                      <Col xs={6} md={6} lg={3}>
+                        <Dropdown style={{ width: "100%" }} isOpen={statusDropdownOpen} toggle={toggleStatusDropdown}>
+                          <DropdownToggle caret>
+                            {selectedStatus ? selectedStatus.label : "Select Status"}{" "}
 
-                      <Dropdown isOpen={statusDropdownOpen2} toggle={toggleStatusDropdown2}>
-                        <DropdownToggle caret>
-                          {selectedStatus2 ? selectedStatus2.label : "Verification Status"}
-                          <FontAwesomeIcon icon={faAngleDown} />
-                        </DropdownToggle>
-                        <DropdownMenu>
-                          {statusOptions2.map((option) => (
-                            <DropdownItem
-                              key={option.value}
-                              onClick={() => handleStatusSelect2(option)}
-                            >
-                              {option.label}
-                            </DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown>
+                            <FontAwesomeIcon icon={faAngleDown} />
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            {statusOptions.map((option) => (
+                              <DropdownItem key={option.value} onClick={() => handleStatusSelect(option)}>
+                                {option.label}
+                              </DropdownItem>
+                            ))}
+                          </DropdownMenu>
+                        </Dropdown>
+                      </Col>
+                      <Col xs={6} md={6} lg={3} >
+                        <Dropdown style={{ width: "100%" }} isOpen={statusDropdownOpen2} toggle={toggleStatusDropdown2}>
+                          <DropdownToggle caret>
+                            {selectedStatus2 ? selectedStatus2.label : "Verification Status"}
+                            {" "}
 
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Label
-                          style={{ marginTop: "3px", marginLeft: "10px", width: "100px" }}
-                          check
-                        >
-                          Low Stock :
-                        </Label>
-                        <FormGroup switch>
-                          <Input
-                            type="checkbox"
-                            style={{ width: "40px", height: "20px" }}
-                            checked={outOfStockChecked}
-                            onChange={handleOutOfStockToggle}
-                          />
-                        </FormGroup>
-                      </div>
-                    </div>
-
-                    <div style={{ width: "auto" }}>
+                            <FontAwesomeIcon icon={faAngleDown} />
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            {statusOptions2.map((option) => (
+                              <DropdownItem key={option.value} onClick={() => handleStatusSelect2(option)}>
+                                {option.label}
+                              </DropdownItem>
+                            ))}
+                          </DropdownMenu>
+                        </Dropdown>
+                      </Col>
+                      <Col xs={12} md={6} lg={4} >
+                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                          <Label style={{ marginTop: "3px", marginLeft: "10px", }} check>
+                            Low Stock :
+                          </Label>
+                          <FormGroup switch>
+                            <Input type="checkbox" style={{ width: "40px", height: "20px" }} checked={outOfStockChecked} onChange={handleOutOfStockToggle} />
+                          </FormGroup>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col xs={12} md={6} lg={4}>
+                    <div>
                       <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
                         <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Category : </p>
                         {cardHeaderData?.category}
@@ -341,14 +328,14 @@ const ProductListing = () => {
                         {cardHeaderData?.brandName}
                       </p>
                       <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
-                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>
-                          Product Code :{" "}
-                        </p>
+                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Product Code : </p>
                         {cardHeaderData?.productCode}
                       </p>
                     </div>
                   </Col>
                 </Row>
+
+
               </CardHeader>
 
               <CardHeader style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -480,8 +467,8 @@ const ProductListing = () => {
             </Card>
           </div>
         </Container>
-      </div>
-    </React.Fragment>
+      </div >
+    </React.Fragment >
   );
 };
 

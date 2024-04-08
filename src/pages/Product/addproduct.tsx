@@ -104,7 +104,7 @@ const CREATE_PRODUCT = gql`
   }
 `;
 const UPDATE_PRODUCT = gql`
-  mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload], $productDetailImages: [Upload]) {
+mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload], $productDetailImages: [Upload]) {
   updateProduct(input: $input, images: $images, productDetailImages: $productDetailImages) {
     _id
     message
@@ -321,10 +321,9 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       shortDescription: data?.shortDescription,
       skuId: data?.skuId,
       stock: parseInt(data?.stock),
-      tags: editedProduct ? (editedProduct?.tags).join(" ") : data?.tags,
+      tags: data?.tags?.join(","),
       attributes: attributeid,
     };
-
     const file = data?.images?.map((image: any) => image.file);
 
     const medias = data?.media?.map((media: any) => media.file);
@@ -332,7 +331,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
     try {
       if (Edit) {
-        formdatas.tags = (data?.tags).join(" ");
         const response = await updateproduct({
           variables: { input: { ...formdatas }, images: file },
         });
@@ -431,7 +429,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                               type="select"
                               style={{ borderRadius: "0px", backgroundColor: "white" }}
                               value={editedProduct?.brandName}
-                              disabled
+                              disabled={Edit}
                               onChange={(event: any) => {
                                 const selectedBrand = brandData.find(
                                   (brand: any) => brand.brandName === event.target.value
@@ -709,6 +707,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
+                                  disabled
                                   type="text"
                                   value={value}
                                   onChange={onChange}
@@ -735,6 +734,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                               <>
                                 <Input
                                   type="text"
+                                  placeholder="Separate with commas"
                                   id="tags"
                                   {...field}
                                   className={styles.inputfield}

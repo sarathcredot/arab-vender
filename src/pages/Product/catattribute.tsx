@@ -55,7 +55,6 @@ function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: a
   console.log(selectedCategoryData);
   // const catId = selectedCategoryData?._id;
   const catId = selectedCategoryData;
-  console.log(editedProduct);
 
   const { loading, error, data } = useQuery(GET_ATTRIBUTE, {
     variables: { input: { categoryId: catId } },
@@ -69,7 +68,7 @@ function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: a
       data?.getAttributesDetailsWithCategory?.record?.attributes
     );
   }, [data]);
-  
+
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
 
@@ -100,21 +99,19 @@ function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: a
     setattributeSelectedValues(newSelectedValues);
     onSelectChange(newSelectedValues);
   };
-  console.log(attributeselectedValues);
 
   return (
     <div>
       {attributeData &&
         attributeData?.map((attri: any, index: any) => {
-          console.log(attri, "attri");
-
           return (
             attri?.attributeValues?.length > 0 && (
 
               <div key={index} className="mt-3">
                 <Label>{attri?.description}</Label>
                 <Input
-                  style={{ borderRadius: "0px", backgroundColor:"white" }}
+                  disabled={editedProduct}
+                  style={{ borderRadius: "0px", backgroundColor: "white" }}
                   type="select"
                   onChange={(e: any) => handleSelectChange(e, index)}
                   defaultValue={editedProduct?.attributes[index]?.attributeValueId || "Select"}

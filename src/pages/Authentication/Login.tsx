@@ -186,7 +186,7 @@ const Login = (props: any) => {
     // console.log("click");
 
     try {
-      const response = await getotp({ variables: { input: { mobileNumber: localStorage?.getItem("mobile"), countryCode: localStorage?.getItem("countrycode") } } })
+      const response = await getotp({ variables: { input: { mobileNumber: localStorage?.getItem("mobile"), countryCode: "+" + localStorage?.getItem("countrycode") } } })
       console.log("response", response);
       if (response) {
         setVendorid(response?.data?.loginVendorWithOtp?._id)

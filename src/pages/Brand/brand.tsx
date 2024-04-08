@@ -7,7 +7,6 @@ import {
   Col,
   Container,
   Row,
-  Table,
   Input,
   Button,
   Nav,
@@ -19,6 +18,7 @@ import Breadcrumb from "src/components/Common/Breadcrumb";
 import { bR } from "@fullcalendar/core/internal-common";
 import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
 import Loader from "src/components/Common/Loader";
+import { Tbody, Td, Th, Thead, Tr, Table } from "react-super-responsive-table";
 // import BrandForm from "./BrandForm";
 
 
@@ -122,26 +122,23 @@ const BrandList: React.FC = () => {
                     brandLoading ?
                       <Loader /> :
 
-                      <Table
-                        responsive
-                        className="table table-bordered table-centered mb-0"
-                      >
-                        <thead>
-                          <tr>
-                            <th>No</th>
-                            <th>Brand Name</th>
-                            <th>Logo</th>
-                            <th>Status</th>
+                      <Table id="tech-companies-1" className="table table-striped table-bordered">
+                        <Thead>
+                          <Tr>
+                            <Th>No</Th>
+                            <Th>Brand Name</Th>
+                            <Th>Logo</Th>
+                            <Th>Status</Th>
                             {/* <th>Action</th> */}
-                          </tr>
-                        </thead>
-                        <tbody>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
                           {brandData?.map((brand, index) => (
-                            <tr key={brand._id}>
-                              <td>{index + 1}</td>
-                              <td>{brand.brandName}</td>
+                            <Tr key={brand._id}>
+                              <Td>{index + 1}</Td>
+                              <Td>{brand.brandName}</Td>
 
-                              <td>
+                              <Td>
                                 {brand.logo && (
                                   <img
                                     src={brand.logo.fileURL}
@@ -149,29 +146,32 @@ const BrandList: React.FC = () => {
                                     style={{ width: '50px', height: '50px' }}
                                   />
                                 )}
-                              </td>
-                              <td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></td>
-                            </tr>
+                              </Td>
+                              <Td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></Td>
+                            </Tr>
                           ))}
-                        </tbody>
+                        </Tbody>
                       </Table>
                   }
                   <Row style={{ marginTop: "20px" }}>
                     <Col>
                       <div className="d-flex justify-content-end mt-0 ">
                         <ul className="pagination">
-                          <li
-                            className={`page-item ${currentPage === 0 ? "disabled" : ""
-                              }`}
-                          >
-                            <button
-                              className="page-link"
-                              onClick={() => setCurrentPage(currentPage - 1)}
-                              disabled={currentPage === 0}
+                          {
+                            currentPage !== 0 &&
+                            <li
+                              className={`page-item ${currentPage === 0 ? "disabled" : ""
+                                }`}
                             >
-                              Previous
-                            </button>
-                          </li>
+                              <button
+                                className="page-link"
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                disabled={currentPage === 0}
+                              >
+                                Previous
+                              </button>
+                            </li>
+                          }
 
                           {Array.from({ length: totalPages }, (_, index) => (
                             <li

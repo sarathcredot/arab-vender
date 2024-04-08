@@ -6,7 +6,7 @@ function header() {
     <div>
       <div className={styles.header_container} >
         <div className={styles.header}>
-          <img src="/images/arabdeallogo.svg" />
+          <img src="/images/arabdeallogo.svg" width={"130px"} />
 
         </div></div>
     </div>
