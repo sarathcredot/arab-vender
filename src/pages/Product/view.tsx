@@ -571,8 +571,8 @@ const ProductDetails = () => {
                             </div>
                             <ul>
                               {
-                                product?.productInfo?.map((item: any) => (
-                                  <li>{item}</li>
+                                product?.productInfo?.map((item: any, index: number) => (
+                                  <li key={`${index}-item`}>{item}</li>
                                 ))
                               }
                             </ul>
@@ -623,8 +623,8 @@ const ProductDetails = () => {
                               </label>
                               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                                 {
-                                  product?.tags?.map((item: any) => (
-                                    <button style={{ background: "white", border: "1px solid black", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", borderRadius: "10px", width: "auto", height: "10px", fontSize: "12px" }}>{item}</button>
+                                  product?.tags?.map((item: any, index: number) => (
+                                    <button style={{ background: "white", border: "1px solid black", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", borderRadius: "10px", width: "auto", height: "10px", fontSize: "12px" }} key={`btn-${index}`}>{item}</button>
                                   ))
                                 }
                               </div>
