@@ -110,7 +110,6 @@ const Login = (props: any) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get("token");
-  console.log("token", token);
 
   const [fullNameError, setFullNameError] = useState("")
   const [fullName, setFullName] = useState("");
@@ -257,7 +256,7 @@ const Login = (props: any) => {
     }
   }
 
-
+  console.log(fullNameError)
   const handleOtpChange = (index: any, value: any) => {
     const newValue = value.replace(/\D/, ''); // Remove non-numeric characters
     const newOtp = [...otp];
@@ -527,18 +526,25 @@ const Login = (props: any) => {
                     <Controller
                       control={control}
                       name="fullName"
-                      render={({ field: { onChange, value } }) => (
+                      rules={{ required: "Full Name is required" }}
+                      render={({ field }) => (
                         <Input
                           style={{ borderRadius: "0px" }}
                           type="text"
-                          value={value}
-                          onChange={onChange}
+                          {...field}
                           placeholder="Full Name"
                           className={styles.inputfield}
                         />
                       )}
                     />
+                    {errors.fullName && (
+                      <div style={{ color: "red", margin: "0", padding: "0" }}>
+                        {errors.fullName.message}
+                      </div>
+                    )}
                   </div>
+
+
 
                   <div className="mb-3">
                     <Controller
@@ -578,7 +584,7 @@ const Login = (props: any) => {
                   <div>
                     <div className={styles.filediv} >
                       <div>
-                        {selectedImage ? <p style={{ marginBottom: 0 }}>{selectedImage.name}</p> : <p style={{ marginBottom: 0 }}>Select file</p>}
+                        {selectedImage ? <p style={{ marginBottom: 0 }}>{selectedImage.name}</p> : <p style={{ marginBottom: 0 }}>Select profile pic</p>}
                         {/* {selectedImage?[0].name) */}
                       </div>
                       <label

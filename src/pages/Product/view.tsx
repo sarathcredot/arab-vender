@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Card, CardBody, Container, CardHeader } from "reactstrap";
+import { Row, Col, Card, CardBody, Container, CardHeader, Button } from "reactstrap";
 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Dropdown, DropdownButton } from "react-bootstrap";
@@ -80,7 +80,7 @@ const ProductDetails = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const productId = params.get("_id");
-  const [product, setProduct] = useState<ProductData>();
+  const [product, setProduct] = useState<any>();
   const [productVariants, setProductVariants] = useState<IVariant[]>([]);
   const [selectedVSize, setSelectedVSize] = useState<string>("");
   const [selectedVColor, setSelectedVColor] = useState<string>("");
@@ -169,7 +169,7 @@ const ProductDetails = () => {
   const [preview] = useMutation(PREVIEW);
   useEffect(() => {
     if (data && data.getProductByVendor && data.getProductByVendor.product) {
-      let product: ProductData = data.getProductByVendor.product;
+      let product = data.getProductByVendor.product;
       setProduct(product);
       // setSelectedVSize(product.size);
       // setSelectedVColor(product.color);
@@ -400,7 +400,7 @@ const ProductDetails = () => {
                             </label>
 
                             <div style={{ display: "flex", marginTop: "10px" }}>
-                              {product?.images.map((item, index) => (
+                              {product?.images?.map((item: any, index: any) => (
                                 <div
                                   key={index}
                                   className="relative"
@@ -435,7 +435,7 @@ const ProductDetails = () => {
                             </label>
 
                             <div style={{ display: "flex", marginTop: "10px" }}>
-                              {product?.productDetailImages?.map((item, index) => (
+                              {product?.productDetailImages?.map((item: any, index: any) => (
                                 <div
                                   key={index}
                                   className="relative"
@@ -535,7 +535,7 @@ const ProductDetails = () => {
                       <div className="mt-4">
                         <Row>
                           <Col xl={6}>
-                            {product?.attributes?.map((attribute, index) => (
+                            {product?.attributes?.map((attribute: any, index: any) => (
                               <div key={index}>
                                 <div className="mb-3" key={index}>
                                   <label htmlFor="cleave-time-format" className="form-label">
@@ -549,6 +549,38 @@ const ProductDetails = () => {
                         </Row>
                       </div>
                       <div className="border mt-3 border-dashed"></div>
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={12}>
+                            <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-numeral" className="form-label">
+                                {" "}
+                                Product Short Info :
+                              </label>
+                            </div>
+                            <p className="form-control-static">
+                              {product?.productShortInfo}
+                            </p>
+                          </Col>
+                          <Col xl={12}>
+                            <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
+                              <label htmlFor="cleave-numeral" className="form-label">
+                                {" "}
+                                Product Info :
+                              </label>
+                            </div>
+                            <ul>
+                              {
+                                product?.productInfo?.map((item: any) => (
+                                  <li>{item}</li>
+                                ))
+                              }
+                            </ul>
+                          </Col>
+                        </Row>
+                      </div>
+                      <div className="border mt-3 border-dashed"></div>
+
 
                       <div className="mt-4">
                         <Row>
@@ -587,9 +619,15 @@ const ProductDetails = () => {
                           <Col xl={6}>
                             <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
                               <label htmlFor="cleave-numeral" className="form-label">
-                                tags:
+                                Tags:
                               </label>
-                              <p className="form-control-static">{product?.tags}</p>
+                              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                {
+                                  product?.tags?.map((item: any) => (
+                                    <button style={{ background: "white", border: "1px solid black", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", borderRadius: "10px", width: "auto", height: "10px", fontSize: "12px" }}>{item}</button>
+                                  ))
+                                }
+                              </div>
                             </div>
                           </Col>
 

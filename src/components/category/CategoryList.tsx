@@ -7,7 +7,6 @@ import {
   Col,
   Container,
   Row,
-  Table,
   Button,
   Input,
   Pagination,
@@ -31,6 +30,7 @@ import { capitalCase } from "change-case";
 import { Link } from "react-router-dom";
 import StatusIndicator from "../statusIndicator/StatusIndicator";
 import Loader from "../Common/Loader";
+import { Th, Thead, Tr, Table, Tbody, Td } from "react-super-responsive-table";
 
 interface sizeChart {
   fileType: string;
@@ -195,13 +195,13 @@ const CategoryList: React.FC<Props> = () => {
               <Card style={{ borderRadius: "0px" }}>
                 <CardHeader>
                   <Row>
-                    <Col xs={5} style={{ display: "flex", gap: "20px" }}>
+                    <Col xs={12} sm={6} style={{ display: "flex", gap: "20px" }}>
                       <Input
                         type="text"
                         placeholder="Search by name"
                         value={searchTerm}
                         onChange={handleSearch}
-                        style={{ width: "50%", borderRadius: "0" }}
+                        style={{ width: "100%", borderRadius: "0" }}
 
                       />
                       <Dropdown
@@ -236,34 +236,30 @@ const CategoryList: React.FC<Props> = () => {
                   {
                     categoryLoading ?
                       <Loader /> :
-
-                      <Table
-                        responsive
-                        className="table table-bordered table-centered mb-0"
-                      >
-                        <thead>
-                          <tr>
-                            <th>No</th>
-                            <th>Category Name</th>
-                            <th>Category Path</th>
+                      <Table id="tech-companies-1" className="table table-striped table-bordered">
+                        <Thead>
+                          <Tr>
+                            <Th>No</Th>
+                            <Th>Category Name</Th>
+                            <Th>Category Path</Th>
                             {/* <th>Size Chart Image</th> */}
-                            <th>Status</th>
+                            <Th>Status</Th>
                             {/* <th>Actions</th> */}
-                          </tr>
-                        </thead>
-                        <tbody>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
                           {filteredCategory.map((category, index) => (
-                            <tr key={category._id}>
-                              <td>{index + 1}</td>
-                              <td>{category?.categoryName}</td>
-                              <td>{category?.fullCategoryName}</td>
+                            <Tr key={category._id}>
+                              <Td>{index + 1}</Td>
+                              <Td>{category?.categoryName}</Td>
+                              <Td>{category?.fullCategoryName}</Td>
 
-                              <td>
+                              <Td>
                                 <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
-                              </td>
-                            </tr>
+                              </Td>
+                            </Tr>
                           ))}
-                        </tbody>
+                        </Tbody>
                       </Table>
                   }
 

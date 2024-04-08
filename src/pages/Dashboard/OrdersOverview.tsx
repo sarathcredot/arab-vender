@@ -58,7 +58,7 @@ function OrdersOverview() {
         let startDate;
         switch (selectedType) {
             case "DAY":
-                startDate = moment().subtract(2, 'weeks').format('YYYY-MM-DD');
+                startDate = moment().subtract(1, 'weeks').format('YYYY-MM-DD');
                 break;
             case "WEEK":
                 startDate = moment().subtract(3, 'months').format('YYYY-MM-DD');
@@ -102,7 +102,7 @@ function OrdersOverview() {
                 horizontal: false
             }
         },
-        colors: ["#b12349"],
+        colors: ["#e30613"],
         stroke: {
             curve: "smooth",
             width: 2,
@@ -301,13 +301,15 @@ query GetVendorDashboardOrdersPieChartData($input: GetVendorDashboardOrdersPieCh
 
             <Row>
                 <Col xs={12} sm={12} xl={8}>
-                    <Card className="card-h-100" style={{ height: "500px", width: "100%", borderRadius: "7px", borderColor: "1px solid #F9F9F9", boxShadow: "1px solid #F9F9F9" }}>
+                    <Card className="card-h-100" style={{ height: "500px", width: "100%", }}>
                         <CardHeader>
                             <h5>
                                 Orders
                             </h5>
                         </CardHeader>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: '10px 20px 10px 20px' }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: '10px 20px 10px 20px', flexWrap: "wrap" }}>
+
+
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "340px" }}>
                                 <FormGroup >
                                     <Label check >Start Date</Label>
@@ -318,6 +320,7 @@ query GetVendorDashboardOrdersPieChartData($input: GetVendorDashboardOrdersPieCh
                                     <Input value={endDate} onChange={(e) => setEndDate(e.target.value)} type="date" id="endDate" style={{ width: "150px" }} />
                                 </FormGroup>
                             </div>
+
 
                             <FormGroup >
                                 <Label check for="type">Type</Label>
@@ -339,7 +342,7 @@ query GetVendorDashboardOrdersPieChartData($input: GetVendorDashboardOrdersPieCh
                                 type="bar"
                                 className="apex-charts  "
                                 dir="ltr"
-                                height={280}
+                                height={300}
                                 options={options}
                             />
 
@@ -349,7 +352,7 @@ query GetVendorDashboardOrdersPieChartData($input: GetVendorDashboardOrdersPieCh
 
                 </Col>
                 <Col xs={12} sm={12} xl={4}>
-                    <Card className="card-h-100" style={{ height: "500px", width: "100%", borderRadius: "7px", borderColor: "1px solid #F9F9F9", boxShadow: "1px solid #F9F9F9" }}>
+                    <Card className="card-h-100" style={{ height: "500px", width: "100%" }}>
                         <CardHeader>
                             <h5>
                                 Total  Orders
@@ -376,7 +379,7 @@ query GetVendorDashboardOrdersPieChartData($input: GetVendorDashboardOrdersPieCh
                                 height={320}
                                 options={{
                                     ...donutGraphOptions,
-                                    colors: ['#2ab57d', '#ffbf53', '#fd625e'], //he desired color here
+                                    colors: ['#2ab57d', '#ffbf53', '#fd625e'],
                                 }}
                             />
 

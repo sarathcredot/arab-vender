@@ -30,3 +30,15 @@
 .errmsg{
     color: red;
 }
+
+
+@media only screen and (max-width: 600px) {
+    .labeldiv{
+        width: 50%;
+    }
+}
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+    .labeldiv{
+        width: 50%;
+    }
+}
