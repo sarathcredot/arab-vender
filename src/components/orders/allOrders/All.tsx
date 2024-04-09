@@ -14,7 +14,6 @@ import {
     Input,
     Label,
     Row,
-    Table
 } from "reactstrap";
 import { formatCurrency } from "src/utils/formatCurrency";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +22,7 @@ import { toast } from "react-toastify";
 import AllOrderFilters from "../AllOrderFilters";
 import Loader from "src/components/Common/Loader";
 import CustomButton from "src/components/Common/CustomButton";
+import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
 
 
 interface ShippingAddress {
@@ -285,16 +285,17 @@ const All = () => {
 
                 </Col>
                 <Col xs={3} style={{ display: "flex", gap: "20px", justifyContent: "flex-end" }}>
-
-                    <Button onClick={handleExportClick} outline color="primary" style={{ width: "100px", display: "flex", gap: "5px", alignItems: "center", justifyContent: "center", }} >
-                        <Iconify icon="ph:export-bold" />
-                        Export
-                    </Button>
-                    <Button onClick={toggle} style={{ background: "black", width: "100px", display: "flex", gap: "5px", alignItems: "center", justifyContent: "center", }} >
-                        <Iconify icon="foundation:filter" />
-                        Filters
-                    </Button>
-
+                    <CustomButton bgColor="unset" style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "40px",
+                        borderRadius: "10px",
+                        gap: "5px",
+                        fontSize: "13px",
+                    }} outline color="primary" name="Export" icon="ph:export-bold" onClick={handleExportClick} />
+                    <CustomButton name="Filters" onClick={toggle} icon="foundation:filter" />
                 </Col>
                 <Collapse isOpen={isOpen} style={{ marginTop: '20px', }}>
                     <AllOrderFilters onSubmit={handleFormSubmit} />
@@ -310,26 +311,26 @@ const All = () => {
                                 :
 
                                 <Table id="tech-companies-1" className="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th> Order Date</th>
-                                            <th>Order Id</th>
-                                            <th>Username</th>
-                                            <th>Payment Mode</th>
-                                            <th>Order Status</th>
-                                            <th>Address</th>
-                                            <th>Amount</th>
-                                            <th>View</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                                    <Thead>
+                                        <Tr>
+                                            <Th>No</Th>
+                                            <Th> Order Date</Th>
+                                            <Th>Order Id</Th>
+                                            <Th>Username</Th>
+                                            <Th>Payment Mode</Th>
+                                            <Th>Order Status</Th>
+                                            <Th>Address</Th>
+                                            <Th>Amount</Th>
+                                            <Th>View</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
                                         {orders.map((order, index) => (
-                                            <tr key={order._id}>
-                                                <td> {currentPage * pageSize + index + 1}</td>
-                                                <td>{moment(order.orderDate).format("ll")}</td>
-                                                <td>{order.orderId}</td>
-                                                <td>
+                                            <Tr key={order._id}>
+                                                <Td> {currentPage * pageSize + index + 1}</Td>
+                                                <Td>{moment(order.orderDate).format("ll")}</Td>
+                                                <Td>{order.orderId}</Td>
+                                                <Td>
                                                     {
                                                         order?.username &&
                                                         <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "space-between" }}>
@@ -353,18 +354,18 @@ const All = () => {
                                                                 }} />
                                                         </div>
                                                     }
-                                                </td>
-                                                <td>{order.paymentMode}</td>
-                                                <td><div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                                                </Td>
+                                                <Td>{order.paymentMode}</Td>
+                                                <Td><div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                                                     <div style={{
                                                         width: "8px", height: "8px", borderRadius: "50%",
                                                         background: order?.orderStatus === "PENDING" ? "#ff9500" : (order.orderStatus === "IN_PROGRESS" ? "#fff200" : "green")
                                                     }} />
                                                     {order.orderStatus.replace("_", " ")}
                                                 </div>
-                                                </td>
-                                                <td>  {`${order.shippingAddress["streetName"]},  ${order.shippingAddress["city"]}`}</td>
-                                                <td>
+                                                </Td>
+                                                <Td>  {`${order.shippingAddress["streetName"]},  ${order.shippingAddress["city"]}`}</Td>
+                                                <Td>
                                                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                                         <div>
                                                             <div>
@@ -395,11 +396,11 @@ const All = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td><Button size="sm" onClick={() => navigate(`/orders/details?orderId=${order.orderId}`)} color="primary">View</Button></td>
-                                            </tr>
+                                                </Td>
+                                                <Td><Button size="sm" onClick={() => navigate(`/orders/details?orderId=${order.orderId}`)} color="primary">View</Button></Td>
+                                            </Tr>
                                         ))}
-                                    </tbody>
+                                    </Tbody>
                                 </Table>
                         }
                     </div>

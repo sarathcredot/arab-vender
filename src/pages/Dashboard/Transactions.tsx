@@ -7,6 +7,7 @@ import {
 //SimpleBar
 import { gql, useQuery } from "@apollo/client";
 import Iconify from "src/components/iconify/Iconify";
+import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
 
 interface OrderSummary {
   pending: number;
@@ -56,17 +57,17 @@ query GetVendorDashboardReturnedOrderSummary {
 
         <CardBody className="px-0">
 
-          <table className="table align-middle table-nowrap table-borderless">
-            <tbody >
-              <tr style={{ borderRadius: "36px", backgroundColor: "#FAF9F9" }}>
-                <td style={{ width: "50px" }}>
+          <Table className="table align-middle table-nowrap table-borderless">
+            <Tbody>
+              <Tr style={{ borderRadius: "36px", backgroundColor: "#FAF9F9" }}>
+                <Td style={{ width: "50px" }}>
                   <div className="font-size-22 text-warning" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
                     <Iconify icon="carbon:time-filled" width={22} />
                     <h5 className="font-size-14" style={{ margin: "0" }}> Pending</h5>
                   </div>
-                </td>
+                </Td>
 
-                <td>
+                <Td>
                   <div className="text-end">
                     <h5 className="font-size-14 text-muted mb-0">
                       {orderSummary.pending}
@@ -75,23 +76,23 @@ query GetVendorDashboardReturnedOrderSummary {
                       Orders
                     </p>
                   </div>
-                </td>
+                </Td>
 
-                <td>
+                <Td>
 
-                </td>
+                </Td>
 
-              </tr>
+              </Tr>
 
-              <tr style={{ borderRadius: "36px", backgroundColor: "#FAF9F9" }}>
-                <td style={{ width: "50px" }}>
+              <Tr style={{ borderRadius: "36px", backgroundColor: "#FAF9F9" }}>
+                <Td style={{ width: "50px" }}>
                   <div className="font-size-22 text-success" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
                     <Iconify icon="mdi:tick-circle" width={22} />
                     <h5 className="font-size-14 " style={{ margin: "0" }}> Approved</h5>
                   </div>
-                </td>
+                </Td>
 
-                <td>
+                <Td>
                   <div className="text-end">
                     <h5 className="font-size-14 text-muted mb-0">
                       {orderSummary.approvedToday}
@@ -100,23 +101,23 @@ query GetVendorDashboardReturnedOrderSummary {
                       Orders
                     </p>
                   </div>
-                </td>
-                <td>
-                </td>
-              </tr>
+                </Td>
+                <Td>
+                </Td>
+              </Tr>
 
-              <tr style={{ borderRadius: "36px", backgroundColor: "#FAF9F9" }}>
+              <Tr style={{ borderRadius: "36px", backgroundColor: "#FAF9F9" }}>
 
-                <td style={{ width: "50px" }}>
+                <Td style={{ width: "50px" }}>
                   <div className="font-size-22 text-danger" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
                     <Iconify icon="carbon:close-filled" width={22} />
                     <h5 className="font-size-14 " style={{ margin: "0" }}> Rejected</h5>
                   </div>
-                </td>
+                </Td>
 
 
 
-                <td>
+                <Td>
                   <div className="text-end">
                     <h5 className="font-size-14 text-muted mb-0">
                       {orderSummary.rejectedToday}
@@ -125,12 +126,12 @@ query GetVendorDashboardReturnedOrderSummary {
                       Orders
                     </p>
                   </div>
-                </td>
-                <td>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </Td>
+                <Td>
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
         </CardBody>
       </Card>
     </React.Fragment>

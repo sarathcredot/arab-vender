@@ -13,7 +13,6 @@ import {
     Input,
     Label,
     Row,
-    Table
 } from "reactstrap";
 import { formatCurrency } from "src/utils/formatCurrency";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -23,6 +22,7 @@ import RefundOrdersFilters from "../RefundOrdersFilters";
 import CustomButton from "src/components/Common/CustomButton";
 
 
+import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
 
 
 interface FileData {
@@ -324,10 +324,7 @@ const PendingRefundOrders = () => {
 
                 </Col>
                 <Col xl={1} style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button onClick={toggle} style={{ width: "100%", display: "flex", gap: "5px", alignItems: "center", justifyContent: "center", background: "black" }} >
-                        <Iconify icon="foundation:filter" />
-                        Filters
-                    </Button>
+                    <CustomButton name="Filters" onClick={toggle} icon="foundation:filter" />
 
                 </Col>
                 <Collapse isOpen={isOpen} style={{ marginTop: '20px' }}>
@@ -347,25 +344,25 @@ const PendingRefundOrders = () => {
                                 :
 
                                 <Table id="tech-companies-1" className="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Requested On</th>
-                                            <th>Order Id</th>
-                                            <th>Username</th>
-                                            <th>Product</th>
-                                            <th>Payment Mode</th>
-                                            {/* <th>Payment Status</th> */}
-                                            <th>Amount</th>
-                                            <th>View</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                                    <Thead>
+                                        <Tr>
+                                            <Th>No</Th>
+                                            <Th>Requested On</Th>
+                                            <Th>Order Id</Th>
+                                            <Th>Username</Th>
+                                            <Th>Product</Th>
+                                            <Th>Payment Mode</Th>
+                                            {/* <Th>Payment Status</Th> */}
+                                            <Th>Amount</Th>
+                                            <Th>View</Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
                                         {orders?.map((order, index) => (
-                                            <tr key={order?._id}>
-                                                <td> {currentPage * pageSize + index + 1}</td>
-                                                <td>{moment(order?.refundRequestDate).format("ll")}</td>
-                                                <td>
+                                            <Tr key={order?._id}>
+                                                <Td> {currentPage * pageSize + index + 1}</Td>
+                                                <Td>{moment(order?.refundRequestDate).format("ll")}</Td>
+                                                <Td>
                                                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                                                         <div>
                                                             <p style={{ margin: "0", fontSize: "10px", fontWeight: "500" }}> Order Id :</p>
@@ -376,8 +373,8 @@ const PendingRefundOrders = () => {
                                                             {<p style={{ fontSize: "14px", margin: "0", }}>{order?.itemId}</p>}
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td>
+                                                </Td>
+                                                <Td>
                                                     {
                                                         order?.username &&
                                                         <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "space-between" }}>
@@ -401,9 +398,9 @@ const PendingRefundOrders = () => {
                                                                 }} />
                                                         </div>
                                                     }
-                                                </td>
+                                                </Td>
 
-                                                <td>
+                                                <Td>
                                                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                                                         <div>
                                                             <img width={"50px"} src={order?.image?.fileURL} />
@@ -415,17 +412,17 @@ const PendingRefundOrders = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td>{order?.paymentMode}</td>
-                                                {/* <td><div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                                                </Td>
+                                                <Td>{order?.paymentMode}</Td>
+                                                {/* <Td><div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                                         <div style={{
                                             width: "8px", height: "8px", borderRadius: "50%",
                                             background: order?.paymentStatus === "PENDING" ? "#ff9500" : (order.paymentStatus === "IN_PROGRESS" ? "#fff200" : "green")
                                         }} />
                                         {order?.paymentStatus?.replace("_", " ")}
                                         </div>
-                                    </td> */}
-                                                <td>
+                                    </Td> */}
+                                                <Td>
                                                     <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                                         <div>
                                                             {/* <div>
@@ -456,11 +453,11 @@ const PendingRefundOrders = () => {
                                                 </div> */}
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td><Button size="sm" color="primary" onClick={() => navigate(`/refund-orders/details?orderId=${order?.orderId}&_id=${order?._id}`)}>View</Button></td>
-                                            </tr>
+                                                </Td>
+                                                <Td><Button size="sm" color="primary" onClick={() => navigate(`/refund-orders/details?orderId=${order?.orderId}&_id=${order?._id}`)}>View</Button></Td>
+                                            </Tr>
                                         ))}
-                                    </tbody>
+                                    </Tbody>
                                 </Table>
                         }
                     </div>

@@ -187,7 +187,7 @@ const TableContainer = ({
         <Row>
           <Col sm={12} md={6}>
             <label className="d-flex">
-              <span className="pt-1 fw-normal">Show</span> 
+              <span className="pt-1 fw-normal">Show</span>
               <Col lg={1} className="ms-1 me-1">
                 <select
                   className="custom-select me-2 pe-3 custom-select-sm form-control form-control-sm form-select form-select-sm"

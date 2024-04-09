@@ -13,7 +13,6 @@ import {
   DropdownToggle,
   Input,
   Row,
-  Table,
 } from "reactstrap";
 import AddColor from "../Color/AddColor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +21,7 @@ import SizeAdd from "./SizeAdd";
 import { gql, useQuery } from "@apollo/client";
 import ReactSelect from "react-select";
 import Breadcrumb from "src/components/Common/Breadcrumb";
+import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
 
 function SizeList() {
   interface Category {
@@ -244,30 +244,30 @@ function SizeList() {
                     className="table table-bordered table-centered mb-0"
                     style={{ width: "100%" }}
                   >
-                    <thead>
-                      <tr>
-                        <th style={{ width: "10%" }}>No</th>
-                        <th style={{ width: "40%" }}>Size</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                    <Thead>
+                      <Tr>
+                        <Th style={{ width: "10%" }}>No</Th>
+                        <Th style={{ width: "40%" }}>Size</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
                       {selectedCategory ? (
                         <>
                           {filteredSize?.map((size: SizeType, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{size.size}</td>
-                            </tr>
+                            <Tr key={index}>
+                              <Td>{index + 1}</Td>
+                              <Td>{size.size}</Td>
+                            </Tr>
                           ))}
                         </>
                       ) : (
-                        <tr>
-                          <td colSpan={3} className="text-center">
+                        <Tr>
+                          <Td colSpan={3} className="text-center">
                             Please select a category
-                          </td>
-                        </tr>
+                          </Td>
+                        </Tr>
                       )}
-                    </tbody>
+                    </Tbody>
                   </Table>
                 </CardBody>
               </Card>

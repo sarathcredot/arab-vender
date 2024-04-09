@@ -100,7 +100,7 @@ interface Product {
     fileURL: string;
   }[];
   isBlocked: boolean;
-  stock: string;
+  stock: number;
   status: string;
 }
 
@@ -226,7 +226,7 @@ const ProductListing = () => {
   useEffect(() => {
     setFilteredProducts(
       products.filter(
-        (item: any) =>
+        (item) =>
           (selectedStatus === null ||
             selectedStatus.value === "all" ||
             selectedStatus.pass === null ||
@@ -234,12 +234,16 @@ const ProductListing = () => {
           (!selectedStatus2 ||
             selectedStatus2.value === "all" ||
             item.status === selectedStatus2.value) &&
-          (!outOfStockChecked || item.stock < 10)
+          (!outOfStockChecked || item.stock < 10) &&
+          (searchTerm === '' || item.skuId?.toLowerCase()?.includes(searchTerm?.toLowerCase()))
       )
     );
-  }, [products, selectedStatus, outOfStockChecked, selectedStatus2]);
+  }, [products, selectedStatus, outOfStockChecked, selectedStatus2, searchTerm]);
 
 
+  const handleSearch = (e: any) => {
+    setSearchTerm(e.target.value)
+  }
   const handleStatusSelect = (selectedOption: any) => {
     setSelectedStatus(selectedOption);
     setStatusDropdownOpen(false);
@@ -268,15 +272,36 @@ const ProductListing = () => {
           <div>
             <Card>
               <CardHeader>
-                <h5 >Filters : </h5>
-                <Row >
-                  <Col xs={12} md={6} lg={8} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <Row style={{ width: "100%", display: "flex", alignItems: "center", }}>
-                      <Col xs={6} md={6} lg={3}>
-                        <Dropdown style={{ width: "100%" }} isOpen={statusDropdownOpen} toggle={toggleStatusDropdown}>
-                          <DropdownToggle caret>
-                            {selectedStatus ? selectedStatus.label : "Select Status"}{" "}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  {/* <h5>Filters:</h5> */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                    <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
 
+                      {/* <div style={{ flex: "1 1 100%", maxWidth: "100%" }}>
+                        <Input
+                          type="text"
+                          placeholder="Search By Sku ID"
+                          value={searchTerm}
+                          onChange={handleSearch}
+                        />
+                      </div> */}
+                      <div style={{ flex: "1 1 100%", maxWidth: "100%" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <Label check>
+                            Low Stock:
+                          </Label>
+                          <FormGroup switch>
+                            <Input type="checkbox" style={{ width: "40px", height: "20px" }} checked={outOfStockChecked} onChange={handleOutOfStockToggle} />
+                          </FormGroup>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+                      <div style={{ flex: "1 1 100%", maxWidth: "100%" }}>
+                        <Dropdown isOpen={statusDropdownOpen} toggle={toggleStatusDropdown}>
+                          <DropdownToggle caret>
+                            {selectedStatus ? selectedStatus.label : "Select Status"}
+                            {" "}
                             <FontAwesomeIcon icon={faAngleDown} />
                           </DropdownToggle>
                           <DropdownMenu>
@@ -287,13 +312,12 @@ const ProductListing = () => {
                             ))}
                           </DropdownMenu>
                         </Dropdown>
-                      </Col>
-                      <Col xs={6} md={6} lg={3} >
-                        <Dropdown style={{ width: "100%" }} isOpen={statusDropdownOpen2} toggle={toggleStatusDropdown2}>
+                      </div>
+                      <div style={{ flex: "1 1 100%", maxWidth: "100%" }}>
+                        <Dropdown isOpen={statusDropdownOpen2} toggle={toggleStatusDropdown2}>
                           <DropdownToggle caret>
                             {selectedStatus2 ? selectedStatus2.label : "Verification Status"}
                             {" "}
-
                             <FontAwesomeIcon icon={faAngleDown} />
                           </DropdownToggle>
                           <DropdownMenu>
@@ -304,36 +328,19 @@ const ProductListing = () => {
                             ))}
                           </DropdownMenu>
                         </Dropdown>
-                      </Col>
-                      <Col xs={12} md={6} lg={4} >
-                        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                          <Label style={{ marginTop: "3px", marginLeft: "10px", }} check>
-                            Low Stock :
-                          </Label>
-                          <FormGroup switch>
-                            <Input type="checkbox" style={{ width: "40px", height: "20px" }} checked={outOfStockChecked} onChange={handleOutOfStockToggle} />
-                          </FormGroup>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col xs={12} md={6} lg={4}>
-                    <div>
-                      <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
-                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Category : </p>
-                        {cardHeaderData?.category}
-                      </p>
-                      <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
-                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Brand : </p>
-                        {cardHeaderData?.brandName}
-                      </p>
-                      <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
-                        <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Product Code : </p>
-                        {cardHeaderData?.productCode}
-                      </p>
+                      </div>
                     </div>
-                  </Col>
-                </Row>
+                  </div>
+                  <div style={{ maxWidth: "100%" }}>
+                    <div>
+                      <p style={{ margin: 0, fontWeight: 500 }}>Category: {cardHeaderData?.category}</p>
+                      <p style={{ margin: 0, fontWeight: 500 }}>Brand: {cardHeaderData?.brandName}</p>
+                      <p style={{ margin: 0, fontWeight: 500 }}>Product Code: {cardHeaderData?.productCode}</p>
+                    </div>
+                  </div>
+                </div>
+
+
 
 
               </CardHeader>

@@ -242,9 +242,9 @@ const CategoryList: React.FC<Props> = () => {
                             <Th>No</Th>
                             <Th>Category Name</Th>
                             <Th>Category Path</Th>
-                            {/* <th>Size Chart Image</th> */}
+                            {/* <Th>Size Chart Image</Th> */}
                             <Th>Status</Th>
-                            {/* <th>Actions</th> */}
+                            {/* <Th>Actions</Th> */}
                           </Tr>
                         </Thead>
                         <Tbody>

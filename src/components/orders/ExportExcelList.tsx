@@ -6,7 +6,6 @@ import {
     PopoverBody,
     PopoverHeader,
     Row,
-    Table
 } from "reactstrap";
 
 import { gql, useQuery } from "@apollo/client";
@@ -15,6 +14,7 @@ import CustomButton from "src/components/Common/CustomButton";
 import Loader from "../Common/Loader";
 import Iconify from "../iconify/Iconify";
 import { useSearchParams } from "react-router-dom";
+import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
 
 interface Record {
     _id: string;
@@ -158,13 +158,13 @@ function ExportExcelList({ name }: any) {
                         jobsQueueLoading ?
                             <Loader />
                             :
-                            <Table bordered width={"500px"}>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>
+                            <Table id="tech-companies-1" className="table table-striped table-bordered">
+                                <Thead>
+                                    <Tr>
+                                        <Th>#</Th>
+                                        <Th>Date</Th>
+                                        <Th>Status</Th>
+                                        <Th>
                                             <CustomButton onClick={() => fetchData()}
                                                 iconWidth={15} icon="mingcute:refresh-3-line" name="reload"
                                                 style={{
@@ -182,30 +182,30 @@ function ExportExcelList({ name }: any) {
                                                 }}
                                             />
 
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                        </Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
                                     {jobsQueueList.map((item, index) => (
-                                        <tr key={index}>
-                                            <td>{currentPage * pageSize + index + 1}</td>
-                                            <td>
+                                        <Tr key={index}>
+                                            <Td>{currentPage * pageSize + index + 1}</Td>
+                                            <Td>
                                                 <div>
                                                     <p style={{ margin: "0px" }}>{moment(item.createdAt).format("ll")}</p>
                                                     <p style={{ margin: "0px" }}>{moment(item.createdAt).format("LT")}</p>
                                                 </div>
-                                            </td>
-                                            <td>{item.status}</td>
-                                            <td>
+                                            </Td>
+                                            <Td>{item.status}</Td>
+                                            <Td>
                                                 <Button onClick={() => handleFileDownloadClick(item._id)} color="primary" style={{ width: "30px", height: "30px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                     <Iconify icon="material-symbols:download-sharp" />
                                                 </Button>
-                                            </td>
-                                        </tr>
+                                            </Td>
+                                        </Tr>
                                     ))
                                     }
 
-                                </tbody>
+                                </Tbody>
                             </Table>
 
                     }

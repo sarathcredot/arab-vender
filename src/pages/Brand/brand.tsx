@@ -129,7 +129,7 @@ const BrandList: React.FC = () => {
                             <Th>Brand Name</Th>
                             <Th>Logo</Th>
                             <Th>Status</Th>
-                            {/* <th>Action</th> */}
+                            {/* <Th>Action</Th> */}
                           </Tr>
                         </Thead>
                         <Tbody>
