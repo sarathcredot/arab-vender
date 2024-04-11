@@ -354,69 +354,76 @@ const ProductListing = () => {
 
                 <div className="table-rep-plugin">
                   <div className="table-responsive mb-0" data-pattern="priority-columns">
-                    <Table id="tech-companies-1" className="table table-striped table-bordered">
-                      <Thead>
-                        <Tr>
-                          <Th data-priority="1">Sl.No</Th>
-                          <Th data-priority="1">Name</Th>
-                          <Th data-priority="1">Image</Th>
-                          <Th data-priority="1">SKU ID</Th>
-                          <Th data-priority="1">Attributes</Th>
-                          <Th data-priority="1">Stock</Th>
+                    <div className="table-rep-plugin">
 
-                          <Th data-priority="3">Verify Status</Th>
-                          <Th data-priority="3">Status</Th>
-                          <Th data-priority="3">Action</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {filteredProducts?.map((product: Product, index: number) => (
-                          <Tr key={index}>
-                            <Td>{index + 1}</Td>
-                            <Td>{product?.productName}</Td>
-                            <Td>
-                              <img
-                                src={product.images[0]?.fileURL}
-                                alt={product?.productName}
-                                width={80}
-                                height={80}
-                              />
-                            </Td>
-                            <Td>{product?.skuId}</Td>
-                            <Td>
-                              {product.attributes.map((attribute, index) => (
-                                <div key={index}>
-                                  <p>
-                                    {attribute.attributeName}: {attribute.attributeValue}
-                                  </p>
-                                </div>
-                              ))}
-                            </Td>
-                            <Td>{product?.stock}</Td>
+                      <div className="table-responsive mb-0" data-pattern="priority-columns">
 
-                            <Td>
-                              <StatusIndicator status={product?.status} />
-                            </Td>
-                            <Td>
-                              <StatusIndicator status={product.isBlocked ? "BLOCKED" : "ACTIVE"} />
-                            </Td>
-                            <Td>
-                              <Button
-                                color="primary"
-                                size="sm"
-                                tag={Link}
-                                to={{
-                                  pathname: "/product/details/",
-                                  search: `?_id=${product._id}`,
-                                }}
-                              >
-                                View
-                              </Button>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
+
+                        <Table id="tech-companies-1" className="table table-striped table-bordered">
+                          <Thead>
+                            <Tr>
+                              <Th data-priority="1">Sl.No</Th>
+                              <Th data-priority="1">Name</Th>
+                              <Th data-priority="1">Image</Th>
+                              <Th data-priority="1">SKU ID</Th>
+                              <Th data-priority="1">Attributes</Th>
+                              <Th data-priority="1">Stock</Th>
+
+                              <Th data-priority="3">Verify Status</Th>
+                              <Th data-priority="3">Status</Th>
+                              <Th data-priority="3">Action</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {filteredProducts?.map((product: Product, index: number) => (
+                              <Tr key={index}>
+                                <Td>{index + 1}</Td>
+                                <Td>{product?.productName}</Td>
+                                <Td>
+                                  <img
+                                    src={product.images[0]?.fileURL}
+                                    alt={product?.productName}
+                                    width={80}
+                                    height={80}
+                                  />
+                                </Td>
+                                <Td>{product?.skuId}</Td>
+                                <Td>
+                                  {product.attributes.map((attribute, index) => (
+                                    <div key={index}>
+                                      <p>
+                                        {attribute.attributeName}: {attribute.attributeValue}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </Td>
+                                <Td>{product?.stock}</Td>
+
+                                <Td>
+                                  <StatusIndicator status={product?.status} />
+                                </Td>
+                                <Td>
+                                  <StatusIndicator status={product.isBlocked ? "BLOCKED" : "ACTIVE"} />
+                                </Td>
+                                <Td>
+                                  <Button
+                                    color="primary"
+                                    size="sm"
+                                    tag={Link}
+                                    to={{
+                                      pathname: "/product/details/",
+                                      search: `?_id=${product._id}`,
+                                    }}
+                                  >
+                                    View
+                                  </Button>
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 {/* <Row>

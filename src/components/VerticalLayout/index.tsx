@@ -71,26 +71,9 @@ const Layout = (props: any) => {
     }
   };
 
-  // useEffect(() => {
-  //   //init body click event fot toggle rightbar
-  //   document.body.addEventListener("click", hideRightbar, true);
-
-  //   if (isPreloader === true) {
-  //     ref.current.style.display = "block";
-
-  //     setTimeout(function () {
-  //       if (ref.current) {
-  //         ref.current.style.display = "none";
-  //       }
-  //     }, 1000);
-  //   } else {
-  //     ref.current.style.display = "none";
-  //   }
-  // }, [isPreloader]);
-
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     dispatch(changeLayout("vertical"));
@@ -127,9 +110,7 @@ const Layout = (props: any) => {
     }
   }, [topbarTheme, dispatch]);
 
-  /*
-  call dark/light mode
-  */
+
   const onChangeLayoutMode = (value: any) => {
     if (changelayoutMode) {
       dispatch(changelayoutMode(value, layoutType));
@@ -143,17 +124,6 @@ const Layout = (props: any) => {
 
   return (
     <React.Fragment>
-      {/* <div className="pace pace-active" id="preloader" ref={ref}>
-        <div
-          className="pace-progress"
-          data-progress-text="100%"
-          data-progress="99"
-          style={{ transform: "translate3d(100%, 0px, 0px)" }}
-        >
-          <div className="pace-progress-inner"></div>
-        </div>
-        <div className="pace-activity"></div>
-      </div> */}
 
       <div id="layout-wrapper">
         <Header

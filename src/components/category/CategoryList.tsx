@@ -236,31 +236,38 @@ const CategoryList: React.FC<Props> = () => {
                   {
                     categoryLoading ?
                       <Loader /> :
-                      <Table id="tech-companies-1" className="table table-striped table-bordered">
-                        <Thead>
-                          <Tr>
-                            <Th>No</Th>
-                            <Th>Category Name</Th>
-                            <Th>Category Path</Th>
-                            {/* <Th>Size Chart Image</Th> */}
-                            <Th>Status</Th>
-                            {/* <Th>Actions</Th> */}
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {filteredCategory.map((category, index) => (
-                            <Tr key={category._id}>
-                              <Td>{index + 1}</Td>
-                              <Td>{category?.categoryName}</Td>
-                              <Td>{category?.fullCategoryName}</Td>
+                      <div className="table-rep-plugin">
 
-                              <Td>
-                                <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
-                              </Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
+                        <div className="table-responsive mb-0" data-pattern="priority-columns">
+
+
+                          <Table id="tech-companies-1" className="table table-striped table-bordered">
+                            <Thead>
+                              <Tr>
+                                <Th>No</Th>
+                                <Th>Category Name</Th>
+                                <Th>Category Path</Th>
+                                {/* <Th>Size Chart Image</Th> */}
+                                <Th>Status</Th>
+                                {/* <Th>Actions</Th> */}
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {filteredCategory.map((category, index) => (
+                                <Tr key={category._id}>
+                                  <Td>{index + 1}</Td>
+                                  <Td>{category?.categoryName}</Td>
+                                  <Td>{category?.fullCategoryName}</Td>
+
+                                  <Td>
+                                    <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
+                                  </Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        </div>
+                      </div>
                   }
 
                   <Modal
