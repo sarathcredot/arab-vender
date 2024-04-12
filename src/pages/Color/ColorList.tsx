@@ -9,7 +9,6 @@ import {
   Container,
   Input,
   Row,
-  Table,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
@@ -24,6 +23,7 @@ import { gql, useQuery } from "@apollo/client";
 import Select from "react-select/dist/declarations/src/Select";
 import ReactSelect from "react-select";
 import Breadcrumb from "src/components/Common/Breadcrumb";
+import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
 
 
 function ColorList() {
@@ -268,22 +268,22 @@ function ColorList() {
                     className="table table-bordered table-centered mb-0"
                     style={{ width: "100%" }}
                   >
-                    <thead>
-                      <tr>
-                        <th style={{ width: "10%" }}>No</th>
-                        <th style={{ width: "40%" }}>Color Name</th>
-                        <th style={{ width: "40%" }}>Color Code</th>
-                        <th style={{ width: "40%" }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                    <Thead>
+                      <Tr>
+                        <Th style={{ width: "10%" }}>No</Th>
+                        <Th style={{ width: "40%" }}>Color Name</Th>
+                        <Th style={{ width: "40%" }}>Color Code</Th>
+                        <Th style={{ width: "40%" }}>Action</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
                       {selectedCategory ? (
                         <>
                           {filteredColors?.map((color: ColorType, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{color.colorName}</td>
-                              <td>
+                            <Tr key={index}>
+                              <Td>{index + 1}</Td>
+                              <Td>{color.colorName}</Td>
+                              <Td>
                                 <div
                                   style={{
                                     display: "flex",
@@ -302,8 +302,8 @@ function ColorList() {
 
                                   {color.colorCode}
                                 </div>
-                              </td>
-                              <td>
+                              </Td>
+                              <Td>
                                 <Button
                                   size="sm"
                                   style={{
@@ -314,18 +314,18 @@ function ColorList() {
                                 >
                                   Edit
                                 </Button>{" "}
-                              </td>
-                            </tr>
+                              </Td>
+                            </Tr>
                           ))}
                         </>
                       ) : (
-                        <tr>
-                          <td colSpan={3} className="text-center">
+                        <Tr>
+                          <Td colSpan={3} className="text-center">
                             Please select a category
-                          </td>
-                        </tr>
+                          </Td>
+                        </Tr>
                       )}
-                    </tbody>
+                    </Tbody>
                   </Table>
                 </CardBody>
               </Card>

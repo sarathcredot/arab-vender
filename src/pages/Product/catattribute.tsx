@@ -52,14 +52,12 @@ const GET_ATTRIBUTE = gql`
   }
 `;
 function catattribute({ selectedCategoryData, onSelectChange, editedProduct }: any) {
-  console.log(selectedCategoryData);
   // const catId = selectedCategoryData?._id;
   const catId = selectedCategoryData;
 
   const { loading, error, data } = useQuery(GET_ATTRIBUTE, {
     variables: { input: { categoryId: catId } },
   });
-  console.log(data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [attributeData, setAttributeData] = useState([]) as any;
 

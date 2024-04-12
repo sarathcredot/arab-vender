@@ -122,36 +122,43 @@ const BrandList: React.FC = () => {
                     brandLoading ?
                       <Loader /> :
 
-                      <Table id="tech-companies-1" className="table table-striped table-bordered">
-                        <Thead>
-                          <Tr>
-                            <Th>No</Th>
-                            <Th>Brand Name</Th>
-                            <Th>Logo</Th>
-                            <Th>Status</Th>
-                            {/* <th>Action</th> */}
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {brandData?.map((brand, index) => (
-                            <Tr key={brand._id}>
-                              <Td>{index + 1}</Td>
-                              <Td>{brand.brandName}</Td>
+                      <div className="table-rep-plugin">
 
-                              <Td>
-                                {brand.logo && (
-                                  <img
-                                    src={brand.logo.fileURL}
-                                    alt={`Logo for ${brand.brandName}`}
-                                    style={{ width: '50px', height: '50px' }}
-                                  />
-                                )}
-                              </Td>
-                              <Td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
+                        <div className="table-responsive mb-0" data-pattern="priority-columns">
+
+
+                          <Table id="tech-companies-1" className="table table-striped table-bordered">
+                            <Thead>
+                              <Tr>
+                                <Th>No</Th>
+                                <Th>Brand Name</Th>
+                                <Th>Logo</Th>
+                                <Th>Status</Th>
+                                {/* <Th>Action</Th> */}
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {brandData?.map((brand, index) => (
+                                <Tr key={brand._id}>
+                                  <Td>{index + 1}</Td>
+                                  <Td>{brand.brandName}</Td>
+
+                                  <Td>
+                                    {brand.logo && (
+                                      <img
+                                        src={brand.logo.fileURL}
+                                        alt={`Logo for ${brand.brandName}`}
+                                        style={{ width: '50px', height: '50px' }}
+                                      />
+                                    )}
+                                  </Td>
+                                  <Td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        </div>
+                      </div>
                   }
                   <Row style={{ marginTop: "20px" }}>
                     <Col>

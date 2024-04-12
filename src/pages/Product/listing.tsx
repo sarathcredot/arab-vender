@@ -322,50 +322,55 @@ const ProductListing = () => {
                         productListLoading ?
                           <Loader /> :
 
-                          <Table id="tech-companies-1" className="table table-striped table-bordered">
-                            {products && products?.length > 0 ? (
-                              <>
-                                <Thead>
-                                  <Tr>
-                                    <Th>No</Th>
-                                    <Th data-priority="1">Name</Th>
-                                    <Th>Product Code</Th>
+                          <div className="table-rep-plugin">
 
-                                    <Th data-priority="3">Category</Th>
-                                    <Th data-priority="1">Image</Th>
-                                    <Th data-priority="3">Action</Th>
-                                  </Tr>
-                                </Thead>
-                                <Tbody>
-                                  {products?.map((product: Product, index: number) => (
-                                    <Tr key={index}>
-                                      <Td>{currentPage * pageSize + index + 1}</Td>
-                                      <Td>{product.productName}</Td>
-                                      <Td>{product.productCode}</Td>
+                            <div className="table-responsive mb-0" data-pattern="priority-columns">
 
-                                      <Td>{product?.categoryNamePath}</Td>
-                                      <Td>
-                                        <img
-                                          src={product.images[0]?.fileURL}
-                                          alt={product?.productName}
-                                          width={80}
-                                          height={80}
-                                        />
-                                      </Td>
-                                      <Td>
-                                        <div style={{ display: "flex", gap: "10px" }}>
-                                          <Button
-                                            color="primary"
-                                            size="sm"
-                                            tag={Link}
-                                            to={{
-                                              pathname: "/product/variant",
-                                              search: `?_code=${product?.productCode}`,
-                                            }}
-                                          >
-                                            View
-                                          </Button>
-                                          {/* <Button
+
+                              <Table id="tech-companies-1" className="table table-striped table-bordered">
+                                {products && products?.length > 0 ? (
+                                  <>
+                                    <Thead>
+                                      <Tr>
+                                        <Th>No</Th>
+                                        <Th data-priority="1">Name</Th>
+                                        <Th>Product Code</Th>
+
+                                        <Th data-priority="3">Category</Th>
+                                        <Th data-priority="1">Image</Th>
+                                        <Th data-priority="3">Action</Th>
+                                      </Tr>
+                                    </Thead>
+                                    <Tbody>
+                                      {products?.map((product: Product, index: number) => (
+                                        <Tr key={index}>
+                                          <Td>{currentPage * pageSize + index + 1}</Td>
+                                          <Td>{product.productName}</Td>
+                                          <Td>{product.productCode}</Td>
+
+                                          <Td>{product?.categoryNamePath}</Td>
+                                          <Td>
+                                            <img
+                                              src={product.images[0]?.fileURL}
+                                              alt={product?.productName}
+                                              width={80}
+                                              height={80}
+                                            />
+                                          </Td>
+                                          <Td>
+                                            <div style={{ display: "flex", gap: "10px" }}>
+                                              <Button
+                                                color="primary"
+                                                size="sm"
+                                                tag={Link}
+                                                to={{
+                                                  pathname: "/product/variant",
+                                                  search: `?_code=${product?.productCode}`,
+                                                }}
+                                              >
+                                                View
+                                              </Button>
+                                              {/* <Button
                                   color="white"
                                   style={{
                                     backgroundColor: "black",
@@ -380,28 +385,30 @@ const ProductListing = () => {
                                   >
                                   View Details
                                 </Button> */}
-                                        </div>
-                                      </Td>
-                                    </Tr>
-                                  ))}
-                                </Tbody>
-                              </>
-                            ) : (
-                              <CardBody
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  borderRadius: "0px",
-                                  alignItems: "center",
-                                  minHeight: "200px",
-                                  fontWeight: 600,
-                                }}
-                              >
-                                No Products
-                              </CardBody>
-                            )}
+                                            </div>
+                                          </Td>
+                                        </Tr>
+                                      ))}
+                                    </Tbody>
+                                  </>
+                                ) : (
+                                  <CardBody
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      borderRadius: "0px",
+                                      alignItems: "center",
+                                      minHeight: "200px",
+                                      fontWeight: 600,
+                                    }}
+                                  >
+                                    No Products
+                                  </CardBody>
+                                )}
 
-                          </Table>
+                              </Table>
+                            </div>
+                          </div>
                       }
                     </div>
                   </div>

@@ -222,7 +222,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       setValue("shortDescription", editedProduct?.shortDescription || "");
       setValue("skuId", editedProduct?.skuId || "");
       setValue("stock", editedProduct?.stock);
-      setValue("tags", editedProduct?.tags);
+      setValue("tags", editedProduct?.tags.join(","));
       setValue("brandName", editedProduct?.brandName || "");
       setValue("categoryNamePath", editedProduct?.categoryNamePath || "");
       setValue("media", editedProduct?.images);
@@ -238,6 +238,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
+
   const getSelectedCategoryData = () => {
 
     if (editedProduct) {
@@ -321,7 +322,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       shortDescription: data?.shortDescription,
       skuId: data?.skuId,
       stock: parseInt(data?.stock),
-      tags: data?.tags?.join(","),
+      tags: data?.tags,
       attributes: attributeid,
     };
     const file = data?.images?.map((image: any) => image.file);
@@ -359,10 +360,10 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
           variables,
         });
 
-        if (response) {
-          toast.success(response?.data?.createProduct?.message);
-          navigate("/product");
-        }
+
+        toast.success(response?.data?.createProduct?.message);
+        navigate(`/product/variant?_code=${editedProduct?.productCode}`);
+
       }
     } catch (error: any) {
       console.log(error);
