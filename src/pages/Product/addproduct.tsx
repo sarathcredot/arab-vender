@@ -503,7 +503,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                       editedProduct={editedProduct}
                     />
 
-                    <FormGroup>
+                    <FormGroup style={{ marginTop: "20px" }}>
                       <Label for="shortDescription">Product Short Description</Label>
                       <Controller
                         control={control}

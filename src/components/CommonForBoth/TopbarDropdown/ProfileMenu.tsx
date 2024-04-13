@@ -23,7 +23,7 @@ import user1 from "../../../assets/images/users/avatar-dummy.webp";
 //redux
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { addInvoice } from "src/helpers/fakebackend_helper";
 
 interface profilePic {
@@ -74,10 +74,23 @@ const ProfileMenu = (props: any) => {
   }, [success]);
 
   const toggleLogoutModal = () => setLogoutModal(!logoutModal);
+
+  const LOGOUT_VENDOR = gql`
+mutation LogoutVendor {
+  logoutVendor {
+    message
+  }
+}`;
+
+  const [LogoutVendor] = useMutation(LOGOUT_VENDOR);
+
   const handleLogout = async () => {
-    localStorage.clear();
-    localStorage.removeItem("token");
-    navigate("/login");
+    const result = await LogoutVendor();
+    if (result.data) {
+      localStorage.clear();
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
   };
 
   const GET_VENDOR = gql`

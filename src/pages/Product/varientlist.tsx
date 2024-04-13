@@ -331,12 +331,23 @@ const ProductListing = () => {
                       </div>
                     </div>
                   </div>
-                  <div style={{ maxWidth: "100%" }}>
-                    <div>
-                      <p style={{ margin: 0, fontWeight: 500 }}>Category: {cardHeaderData?.category}</p>
-                      <p style={{ margin: 0, fontWeight: 500 }}>Brand: {cardHeaderData?.brandName}</p>
-                      <p style={{ margin: 0, fontWeight: 500 }}>Product Code: {cardHeaderData?.productCode}</p>
-                    </div>
+
+
+                  <div style={{ width: "auto" }}>
+                    <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                      <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Category : </p>
+                      {cardHeaderData?.category}
+                    </p>
+                    <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                      <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Brand : </p>
+                      {cardHeaderData?.brandName}
+                    </p>
+                    <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
+                      <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>
+                        Product Code :{" "}
+                      </p>
+                      {cardHeaderData?.productCode}
+                    </p>
                   </div>
                 </div>
 
