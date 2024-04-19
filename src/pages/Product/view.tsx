@@ -72,7 +72,6 @@ interface IVariant {
   colorCode: string;
 }
 
-
 const ProductDetails = () => {
   // const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -91,55 +90,55 @@ const ProductDetails = () => {
 
   const GET_PRODUCTDETAIL = gql`
     query GetProductByVendor($input: ProductId!) {
-  getProductByVendor(input: $input) {
-    product {
-      _id
-      vendorId
-      brandId
-      brandName
-      productName
-      shortDescription
-      skuId
-      description
-      productInfo
-      productShortInfo
-      images {
-        fileType
-        fileURL
-        mimeType
-        originalName
+      getProductByVendor(input: $input) {
+        product {
+          _id
+          vendorId
+          brandId
+          brandName
+          productName
+          shortDescription
+          skuId
+          description
+          productInfo
+          productShortInfo
+          images {
+            fileType
+            fileURL
+            mimeType
+            originalName
+          }
+          rating
+          sellingPrice
+          price
+          mrp
+          tags
+          productCode
+          categoryId
+          categoryNamePath
+          categoryIdPath
+          isBlocked
+          stock
+          status
+          offerPrice
+          attributes {
+            attributeId
+            attributeName
+            attributeValueId
+            attributeValue
+            attributeDescription
+          }
+          productDetailImages {
+            fileType
+            fileURL
+            mimeType
+            originalName
+          }
+          warehouseSkuId
+        }
+        message
       }
-      rating
-      sellingPrice
-      price
-      mrp
-      tags
-      productCode
-      categoryId
-      categoryNamePath
-      categoryIdPath
-      isBlocked
-      stock
-      status
-      offerPrice
-      attributes {
-        attributeId
-        attributeName
-        attributeValueId
-        attributeValue
-        attributeDescription
-      }
-      productDetailImages {
-        fileType
-        fileURL
-        mimeType
-        originalName
-      }
-      warehouseSkuId
     }
-    message
-  }
-}
   `;
   const GET_VARIANTS = gql`
     query Variants($input: VariantsInput!) {
@@ -317,8 +316,8 @@ const ProductDetails = () => {
                           ? "#2B2B2A "
                           : "#E3E5E4"
                         : isActive
-                          ? "#2B2B2A "
-                          : "white",
+                        ? "#2B2B2A "
+                        : "white",
                       minWidth: "70px",
                       height: "50px",
                       color: isActive ? "white" : "#2B2B2A",
@@ -342,13 +341,11 @@ const ProductDetails = () => {
     setEdit(true);
   };
 
-
   const items = [
     { text: "Dashboard", link: `/` },
     { text: "Products", link: `/product` },
     { text: "Variants", link: `/product/variant?_code=${product?.productCode}` },
   ];
-
 
   return (
     <React.Fragment>
@@ -373,13 +370,12 @@ const ProductDetails = () => {
                   <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Status : </p>
                   {product?.status}
                 </p>
-                {
-                  product?.status === "REJECTED" &&
+                {product?.status === "REJECTED" && (
                   <p style={{ margin: 0, fontWeight: 500, display: "flex" }}>
                     <p style={{ margin: 0, fontWeight: 500, width: "100px" }}>Reject Reason : </p>
                     {"nill"}
                   </p>
-                }
+                )}
               </div>
               <CustomButton
                 onClick={handleEditProduct}
@@ -477,12 +473,21 @@ const ProductDetails = () => {
                           <Col xl={3}>
                             <div
                               className=""
-                              style={{ display: "flex", gap: "4px", alignItems: "center" }}
+                              style={{
+                                display: "flex",
+                                gap: "4px",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
                             >
-                              <label htmlFor="cleave-date" className="form-label">
+                              <label
+                                htmlFor="cleave-date"
+                                className="form-label"
+                                style={{ margin: 0 }}
+                              >
                                 Status :&nbsp;
                               </label>
-                              <p className="form-control-static">
+                              <p className="form-control-static" style={{ margin: 0 }}>
                                 <StatusIndicator
                                   status={product?.isBlocked ? "BLOCKED" : "ACTIVE"}
                                   variant="chip"
@@ -558,9 +563,7 @@ const ProductDetails = () => {
                                 Product Short Info :
                               </label>
                             </div>
-                            <p className="form-control-static">
-                              {product?.productShortInfo}
-                            </p>
+                            <p className="form-control-static">{product?.productShortInfo}</p>
                           </Col>
                           <Col xl={12}>
                             <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
@@ -570,17 +573,14 @@ const ProductDetails = () => {
                               </label>
                             </div>
                             <ul>
-                              {
-                                product?.productInfo?.map((item: any, index: number) => (
-                                  <li key={`${index}-item`}>{item}</li>
-                                ))
-                              }
+                              {product?.productInfo?.map((item: any, index: number) => (
+                                <li key={`${index}-item`}>{item}</li>
+                              ))}
                             </ul>
                           </Col>
                         </Row>
                       </div>
                       <div className="border mt-3 border-dashed"></div>
-
 
                       <div className="mt-4">
                         <Row>
@@ -618,20 +618,32 @@ const ProductDetails = () => {
 
                           <Col xl={6}>
                             <div className="mb-3" style={{ display: "flex", gap: "4px" }}>
-                              <label htmlFor="cleave-numeral" className="form-label">
+                              <label htmlFor="cleave-numeral" className="form-label" style={{ margin: 0 }}>
                                 Tags:
                               </label>
                               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                {
-                                  product?.tags?.map((item: any, index: number) => (
-                                    <button style={{ background: "white", border: "1px solid black", display: "flex", alignItems: "center", justifyContent: "center", padding: "10px", borderRadius: "10px", width: "auto", height: "10px", fontSize: "12px" }} key={`btn-${index}`}>{item}</button>
-                                  ))
-                                }
+                                {product?.tags?.map((item: any, index: number) => (
+                                  <button
+                                    style={{
+                                      background: "white",
+                                      border: "1px solid black",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      padding: "10px",
+                                      borderRadius: "10px",
+                                      width: "auto",
+                                      height: "10px",
+                                      fontSize: "12px",
+                                    }}
+                                    key={`btn-${index}`}
+                                  >
+                                    {item}
+                                  </button>
+                                ))}
                               </div>
                             </div>
                           </Col>
-
-
                         </Row>
                       </div>
                     </form>

@@ -174,7 +174,7 @@ const GET_BRAND = gql`
   }
 `;
 
-const AddVariant = ({ }) => {
+const AddVariant = ({}) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const categoryId = params.get("catId");
@@ -199,7 +199,7 @@ const AddVariant = ({ }) => {
     setValue("mrp", data?.getProductByVendor?.product?.mrp);
     setValue("shortDescription", data?.getProductByVendor?.product?.shortDescription);
     setValue("skuId", data?.getProductByVendor?.product?.skuId);
-    setValue("stock", data?.getProductByVendor?.product?.stock);
+    // setValue("stock", data?.getProductByVendor?.product?.stock);
     setValue("tags", data?.getProductByVendor?.product?.tags);
     setValue("categoryNamePath", data?.getProductByVendor?.product?.categoryNamePath);
     setRemarks(data?.getProductByVendor?.product?.productInfo || [""]);
@@ -304,7 +304,6 @@ const AddVariant = ({ }) => {
   }, [categoryDataResponse, brandDataResponse]);
 
   const onSubmit: SubmitHandler<ProductForm> = async (data1: any) => {
-
     const urlSearchParams = new URLSearchParams(location.search);
     const productCodeParam = urlSearchParams.get("productCode");
     console.log(data1);
@@ -320,7 +319,7 @@ const AddVariant = ({ }) => {
       sellingPrice: parseInt(data1?.sellingPrice),
       shortDescription: data1?.shortDescription,
       skuId: data1?.skuId,
-      stock: parseInt(data1?.stock),
+      // stock: parseInt(data1?.stock),
       tags: data?.tags,
       attributes: attributeid,
     };
@@ -329,11 +328,9 @@ const AddVariant = ({ }) => {
 
     const medias = data1?.media?.map((media: any) => media.file);
 
-
-
     try {
       const variables: any = {
-        input: formdatas,
+        input: { ...formdatas, stock: 0 },
         images: null,
         productDetailImages: null,
       };
@@ -577,7 +574,7 @@ const AddVariant = ({ }) => {
                       </Col> */}
                     </Row>
                     <Row>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="stock">Stock</Label>
                           <Controller
@@ -599,7 +596,7 @@ const AddVariant = ({ }) => {
                             )}
                           />
                         </FormGroup>
-                      </Col>
+                      </Col> */}
                       <Col md={6}>
                         <FormGroup>
                           <Label for="tags">Tags</Label>
@@ -631,8 +628,10 @@ const AddVariant = ({ }) => {
                             render={({ field }) => (
                               <>
                                 <Input
-                                  type="number"
+                                  type="text"
                                   id="rating"
+                                  min={0}
+                                  max={5}
                                   {...field}
                                   className={styles.inputfield}
                                 />

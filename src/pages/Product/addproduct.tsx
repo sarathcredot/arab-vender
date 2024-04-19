@@ -46,7 +46,7 @@ interface ProductForm {
   shortDescription: string;
   price: string;
   mrp: string;
-  sellingPrice: string;
+  sellingPrice: string; 
   tags: string;
   image: FileWithPath[];
   stock: string;
@@ -56,7 +56,7 @@ interface ProductForm {
   skuId: string;
   size: string;
   color: string;
-  offerPrice: number;
+  // offerPrice: number;
   productCode: number;
   productInfo: string[];
   brandName: string;
@@ -104,12 +104,16 @@ const CREATE_PRODUCT = gql`
   }
 `;
 const UPDATE_PRODUCT = gql`
-mutation UpdateProduct($input: ProductUpdateInput!, $images: [Upload], $productDetailImages: [Upload]) {
-  updateProduct(input: $input, images: $images, productDetailImages: $productDetailImages) {
-    _id
-    message
+  mutation UpdateProduct(
+    $input: ProductUpdateInput!
+    $images: [Upload]
+    $productDetailImages: [Upload]
+  ) {
+    updateProduct(input: $input, images: $images, productDetailImages: $productDetailImages) {
+      _id
+      message
+    }
   }
-}
 `;
 
 const GET_CATEGORY = gql`
@@ -146,7 +150,7 @@ const GET_BRAND = gql`
   }
 `;
 
-const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
+const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) => {
   const {
     control,
     handleSubmit,
@@ -186,7 +190,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     setRemarks(updatedRemarks);
   };
 
-
   const id = localStorage?.getItem("vendorid");
   const {
     loading: categoryLoading,
@@ -209,19 +212,17 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   });
 
   useEffect(() => {
-
     if (editedProduct) {
       setValue("productName", editedProduct?.productName || "");
       setValue("description", editedProduct?.description || "");
       setValue("sellingPrice", editedProduct?.sellingPrice);
       setValue("price", editedProduct?.price || "");
       setValue("rating", editedProduct?.rating);
-      setValue("offerPrice", editedProduct?.offerPrice);
+      // setValue("offerPrice", editedProduct?.offerPrice);
       setValue("productCode", editedProduct?.productCode);
       setValue("mrp", editedProduct?.mrp);
       setValue("shortDescription", editedProduct?.shortDescription || "");
       setValue("skuId", editedProduct?.skuId || "");
-      setValue("stock", editedProduct?.stock);
       setValue("tags", editedProduct?.tags.join(","));
       setValue("brandName", editedProduct?.brandName || "");
       setValue("categoryNamePath", editedProduct?.categoryNamePath || "");
@@ -240,7 +241,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
   const getSelectedCategoryData = () => {
-
     if (editedProduct) {
       const selectedCategoryData = editedProduct?.categoryId;
       return selectedCategoryData;
@@ -274,7 +274,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     media: {
       required: "media required",
     },
-    offerPrice: {},
+    // offerPrice: {},
     productCode: {
       required: "productCode required",
     },
@@ -284,16 +284,16 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     price: {
       required: "This field is required.",
     },
-    stock: {
-      required: "This field is required.",
-    },
+    // stock: {
+    //   required: "This field is required.",
+    // },
     brand: {
       required: "Brand is required",
     },
     rating: {
       required: "Rating is required",
       pattern: {
-        value: /^[0-4](\.\d{1,2})?$/, // Adjust the pattern as needed
+        value: /^[0-5](\.\d{1,2})?$/, // Adjust the pattern as needed
         message: "Invalid rating. Please enter a valid value less than 5.",
       },
     },
@@ -303,7 +303,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
   };
 
   const onSubmit: SubmitHandler<ProductForm> = async (data: any) => {
-
     data.attribute = attributeid;
 
     const formdatas = {
@@ -312,16 +311,15 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       brandName: selectedbrand?.name,
       categoryId: selectedCategory,
       description: data?.description,
-      offerPrice: parseInt(data?.offerPrice),
+      // offerPrice: parseInt(data?.offerPrice),
       mrp: parseInt(data?.mrp),
       price: parseInt(data?.price),
       productInfo: remarks && remarks?.length > 0 ? remarks : [""],
       productName: data?.productName,
-      rating: parseInt(data?.rating),
+      rating: parseFloat(data?.rating),
       sellingPrice: parseInt(data?.sellingPrice),
       shortDescription: data?.shortDescription,
       skuId: data?.skuId,
-      stock: parseInt(data?.stock),
       tags: data?.tags,
       attributes: attributeid,
     };
@@ -329,21 +327,10 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
 
     const medias = data?.media?.map((media: any) => media.file);
 
-
     try {
       if (Edit) {
-        const response = await updateproduct({
-          variables: { input: { ...formdatas }, images: file },
-        });
-        if (response) {
-
-
-          toast.success(response?.data?.updateProduct?.message);
-          navigate("/product");
-        }
-      } else {
         const variables: any = {
-          input: formdatas,
+          input: { ...formdatas },
           images: null,
           productDetailImages: null,
         };
@@ -356,14 +343,34 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
           variables.productDetailImages = medias;
         }
 
+        const response = await updateproduct({
+          variables,
+        });
+        if (response) {
+          toast.success(response?.data?.updateProduct?.message);
+          navigate("/product");
+        }
+      } else {
+        const variables: any = {
+          input: { ...formdatas, stock: 0 },
+          images: null,
+          productDetailImages: null,
+        };
+
+        if (file?.length > 0) {
+          variables.images = file;
+        }
+
+        if (medias?.length > 0) {
+          variables.productDetailImages = medias;
+        }
+        console.log(variables);
         const response = await createproduct({
           variables,
         });
 
-
         toast.success(response?.data?.createProduct?.message);
         navigate(`/product/variant?_code=${editedProduct?.productCode}`);
-
       }
     } catch (error: any) {
       console.log(error);
@@ -371,15 +378,13 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
     }
   };
 
-
   const items = [
     { text: "Dashboard", link: `/` },
     { text: "Products", link: `/product` },
-
   ];
 
   if (Edit) {
-    items.push({ text: "Variants", link: `/product/variant?_code=${editedProduct?.productCode}` })
+    items.push({ text: "Variants", link: `/product/variant?_code=${editedProduct?.productCode}` });
   }
 
   return (
@@ -388,7 +393,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumb items={items} currentPage={Edit ? "Edit Product" : "Add Product"} />
-
 
           <Row>
             <Col lg={12}>
@@ -479,8 +483,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                           {editedProduct && editedProduct?.categoryNamePath}
                           {selectedCategory
                             ? categoryData.find(
-                              (category: any) => category._id === getSelectedCategoryData()
-                            )?.fullCategoryName
+                                (category: any) => category._id === getSelectedCategoryData()
+                              )?.fullCategoryName
                             : "Select Category"}
                           <FontAwesomeIcon icon={faAngleDown} style={{ marginLeft: "5px" }} />
                         </DropdownToggle>
@@ -541,7 +545,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                               value={value}
                               onChange={onChange}
                               className={styles.inputfield}
-                            // {...field}
+                              // {...field}
                             />
                           </>
                         )}
@@ -601,8 +605,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         </FormGroup>
                       ))}
                     </FormGroup>
-
-
 
                     <Row style={{ marginTop: "13px" }}>
                       <Col md={6}>
@@ -676,7 +678,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                         </FormGroup>
                       </Col>
 
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="offerPrice">Offer Price</Label>
                           <Controller
@@ -698,8 +700,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             <div className={styles.errmsg}>{errors?.offerPrice?.message}</div>
                           ) : null}
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                      </Col> */}
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="stock">Stock</Label>
                           <Controller
@@ -722,7 +724,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             <div className={styles.errmsg}>{errors?.stock?.message}</div>
                           ) : null}
                         </FormGroup>
-                      </Col>
+                      </Col> */}
 
                       <Col md={6}>
                         <FormGroup>
@@ -759,8 +761,10 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                             render={({ field: { value, onChange } }) => (
                               <>
                                 <Input
-                                  type="number"
+                                  type="text"
                                   value={value}
+                                  min={0}
+                                  max={5}
                                   onChange={onChange}
                                   className={styles.inputfield}
                                 />
@@ -830,7 +834,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit, editedProduct }) => {
                       <CardBody>
                         <Controller
                           control={control}
-                          name="images"
+                          name="media"
                           render={({ field }) => (
                             <>
                               <MediaUpload
