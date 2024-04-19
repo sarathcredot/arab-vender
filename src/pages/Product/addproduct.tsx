@@ -46,7 +46,7 @@ interface ProductForm {
   shortDescription: string;
   price: string;
   mrp: string;
-  sellingPrice: string; 
+  sellingPrice: string;
   tags: string;
   image: FileWithPath[];
   stock: string;
@@ -364,13 +364,16 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
         if (medias?.length > 0) {
           variables.productDetailImages = medias;
         }
-        console.log(variables);
         const response = await createproduct({
           variables,
         });
 
         toast.success(response?.data?.createProduct?.message);
-        navigate(`/product/variant?_code=${editedProduct?.productCode}`);
+        if (editedProduct?.productCode) {
+          navigate(`/product/variant?_code=${editedProduct?.productCode}`);
+        } else {
+          navigate(`/product`);
+        }
       }
     } catch (error: any) {
       console.log(error);
@@ -483,8 +486,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                           {editedProduct && editedProduct?.categoryNamePath}
                           {selectedCategory
                             ? categoryData.find(
-                                (category: any) => category._id === getSelectedCategoryData()
-                              )?.fullCategoryName
+                              (category: any) => category._id === getSelectedCategoryData()
+                            )?.fullCategoryName
                             : "Select Category"}
                           <FontAwesomeIcon icon={faAngleDown} style={{ marginLeft: "5px" }} />
                         </DropdownToggle>
@@ -545,7 +548,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                               value={value}
                               onChange={onChange}
                               className={styles.inputfield}
-                              // {...field}
+                            // {...field}
                             />
                           </>
                         )}

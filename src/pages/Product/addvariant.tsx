@@ -31,10 +31,11 @@ import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import FileUpload from "react-drag-n-drop-image";
 import Catattributes from "./catattribute";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { Icon } from "@ailibs/feather-react-ts";
 import styles from "../Kyc/kyc.module.css";
 import Breadcrumb from "../../components/Common/Breadcrumb";
+import { C } from "@fullcalendar/core/internal-common";
 
 interface ProductInfoInput {
   [key: string]: string;
@@ -89,10 +90,55 @@ interface ProductData {
 }
 const CREATE_VARIENT = gql`
   mutation CreateVariant($input: VariantInput!, $images: [Upload], $productDetailImages: [Upload]) {
-    createVariant(input: $input, images: $images, productDetailImages: $productDetailImages) {
-      message
+  createVariant(input: $input, images: $images, productDetailImages: $productDetailImages) {
+    product {
+      _id
+      vendorId
+      brandId
+      brandName
+      productName
+      shortDescription
+      skuId
+      description
+      productInfo
+      productShortInfo
+      images {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      rating
+      sellingPrice
+      price
+      mrp
+      tags
+      productCode
+      categoryId
+      categoryNamePath
+      categoryIdPath
+      isBlocked
+      stock
+      status
+      offerPrice
+      attributes {
+        attributeId
+        attributeName
+        attributeValueId
+        attributeValue
+        attributeDescription
+      }
+      productDetailImages {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      warehouseSkuId
     }
+    message
   }
+}
 `;
 
 const GET_PRODUCTDETAIL = gql`
@@ -174,12 +220,13 @@ const GET_BRAND = gql`
   }
 `;
 
-const AddVariant = ({}) => {
+const AddVariant = ({ }) => {
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const categoryId = params.get("catId");
-  const Productid = params.get("id");
-  const productCode = params.get("code");
+  const [searchParams] = useSearchParams();
+  const categoryId = searchParams.get("catId");
+  const Productid = searchParams.get("id");
+  const productCode = searchParams.get("code");
+  console.log(productCode)
   console.log(Productid);
 
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
@@ -349,13 +396,19 @@ const AddVariant = ({}) => {
 
       if (response) {
         toast.success(response?.data?.createvarient?.message);
-        navigate(`/product/variant?_code=${productCode}`);
+        if (productCode) {
+          navigate(`/product/variant?_code=${productCode}`);
+        } else {
+          navigate(`/product`);
+        }
       }
     } catch (error: any) {
       console.log(error);
       toast.error(error.message);
     }
   };
+
+  console.log(errors)
 
   const items = [
     { text: "Dashboard", link: `/` },
