@@ -550,9 +550,9 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                             </div>
                         </div>
 
-                        <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+                        {/* <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                             <CustomButton icon="ic:baseline-edit" onClick={toggleProductEditModal} name="Edit Product" />
-                        </div>
+                        </div> */}
 
                     </div>
 
@@ -608,6 +608,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                         id="exampleSelect"
                                         name="select"
                                         type="select"
+                                        disabled
                                         value={product?.shippingStatus}
                                         onChange={(e) => handleShippingStatusChange(e)}
                                     >
@@ -637,6 +638,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                         id="exampleSelect"
                                         name="select"
                                         type="select"
+                                        disabled
                                         value={product?.returnStatus}
                                         onChange={(e) => handleReturnStatusChange(e)}
                                     >
@@ -662,6 +664,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                         id="exampleSelect"
                                         name="select"
                                         type="select"
+                                        disabled
                                         value={product?.refundStatus}
                                         onChange={(e) => handleRefundStatusChange(e)}
                                     >
@@ -725,7 +728,8 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                     Invoice:
                                 </label>
                             </div>
-                            <Button
+
+                            {/* <Button
                                 onClick={toggleInvoiceModal}
 
                                 style={{
@@ -746,7 +750,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                             Edit Invoice
                                         </div>
                                 }
-                            </Button>
+                            </Button> */}
                         </div>
                         <div style={{ marginTop: "30px" }}>
                             <img style={{ cursor: "pointer", border: "1px solid black" }} width={"150px"} src={signedUrl} onClick={() => window.open(signedUrl)} />
@@ -771,7 +775,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                             <Card>
                                 <CardBody>
                                     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
-                                        <Button
+                                        {/* <Button
                                             onClick={toggleCommentEditModal}
                                             style={{
                                                 display: "flex",
@@ -787,7 +791,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                             }}
                                         >
                                             <Iconify icon="ic:baseline-edit" style={{ fontSize: "5px" }} width={16} />  Edit Comments
-                                        </Button>
+                                        </Button> */}
                                     </div>
                                     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
@@ -912,6 +916,7 @@ function OrderProductDetails({ product, orderProdcutsRefetch, orderRefetch }: an
                                     id="paymentStatus"
                                     name="paymentStatus"
                                     type="select"
+                                    disabled
                                     value={paymentStatus}
                                     onChange={(e) => setPaymentStatus(e.target.value)}
                                 >
