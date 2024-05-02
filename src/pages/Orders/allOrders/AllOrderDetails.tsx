@@ -252,14 +252,55 @@ const ALlOrderDetails = () => {
     ];
 
 
+
     const calculatePaidAmount = () => {
-        const paidProducts = orderProducts.filter((item: any) => item.paymentStatus === "COMPLETED");
-        const totalSellingPrice = paidProducts.reduce((acc, curr: any) => acc + (curr?.sellingPrice || 0), 0);
-        const totalShippingCharge = paidProducts.reduce((acc, curr: any) => acc + (curr?.shippingCharge || 0), 0);
+        const completedProducts = orderProducts?.filter((item: any) => {
+            if (item.cancelledDate) {
+                return item.paymentStatus === "COMPLETED";
+            } else {
+                return item.paymentStatus === "COMPLETED" || (item.paymentStatus === "PENDING" && item.shippingStatus === "SHIPPED");
+            }
+        });
+        const totalSellingPrice = completedProducts?.reduce((acc: any, curr: any) => acc + (curr?.sellingPrice || 0), 0);
+        const totalShippingCharge = completedProducts?.reduce((acc: any, curr: any) => acc + (curr?.shippingCharge || 0), 0);
         const totalRefundAmount = order?.orderPriceInfo?.totalRefundAmount || 0;
-        const paidAmount = totalSellingPrice + totalShippingCharge - totalRefundAmount;
+        const paidAmount = (totalSellingPrice || 0) + (totalShippingCharge || 0)
         return paidAmount;
     };
+
+    const calculateTotalSellingPrice = () => {
+        let totalSellingPrice = 0;
+        orderProducts.forEach((product: any) => {
+            if (!product.cancelledDate) {
+                if (product.paymentStatus === "COMPLETED") {
+                    totalSellingPrice += product.sellingPrice;
+                } else if (product.paymentStatus === "PENDING") {
+                    totalSellingPrice += product.sellingPrice;
+                }
+            } else {
+                if (product.paymentStatus === "COMPLETED") {
+                    totalSellingPrice += product.sellingPrice;
+                }
+            }
+        });
+        return totalSellingPrice;
+    };
+
+    const calculateTotalShippingCharge = () => {
+        let totalShippingCharge = 0;
+        orderProducts.forEach((product: any) => {
+            if (!product.cancelledDate) {
+                if (product.paymentStatus === "COMPLETED") {
+                    totalShippingCharge += product.shippingCharge;
+                } else if (product.paymentStatus === "PENDING") {
+                    totalShippingCharge += product.shippingCharge;
+                }
+            }
+        });
+        return totalShippingCharge;
+    };
+
+
 
 
     return (
@@ -332,23 +373,22 @@ const ALlOrderDetails = () => {
                                                         <p className="form-control-static" style={{ fontWeight: 500 }}>Effective Price</p>
                                                     </div>
                                                     <div style={{ textAlign: "right" }}>
-                                                        <p className="form-control-static">{formatCurrency(order?.orderPriceInfo["totalSellingPrice"])}</p>
-                                                        <p className="form-control-static">{formatCurrency(order?.orderPriceInfo["totalShippingCharge"])}</p>
-                                                        <p className="form-control-static" style={{ fontWeight: 500 }}>
-                                                            {formatCurrency(
-                                                                (order?.orderPriceInfo?.["totalSellingPrice"] ?? 0) +
-                                                                (order?.orderPriceInfo?.["totalShippingCharge"] ?? 0) -
-                                                                (order?.orderPriceInfo?.["totalRefundAmount"] ?? 0)
-                                                            )}
-                                                        </p>
-                                                        <p className="form-control-static">{formatCurrency(order?.orderPriceInfo["totalRefundAmount"])}</p>
-                                                        <hr />
-
+                                                        <p className="form-control-static">{formatCurrency(calculateTotalSellingPrice())}</p>
+                                                        <p className="form-control-static">{formatCurrency(calculateTotalShippingCharge())}</p>
                                                         <p className="form-control-static" style={{ fontWeight: 500 }}>
                                                             {formatCurrency(
                                                                 calculatePaidAmount()
                                                             )}
                                                         </p>
+                                                        <p className="form-control-static">{formatCurrency(order?.orderPriceInfo["totalRefundAmount"])}</p>
+                                                        <hr />
+                                                        <p className="form-control-static" style={{ fontWeight: 500 }}>
+                                                            {formatCurrency(
+                                                                calculatePaidAmount() -
+                                                                (order?.orderPriceInfo?.["totalRefundAmount"] ?? 0)
+                                                            )}
+                                                        </p>
+
                                                     </div>
 
                                                 </div>
