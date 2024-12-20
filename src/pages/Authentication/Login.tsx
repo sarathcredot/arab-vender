@@ -303,13 +303,15 @@ const Login = (props: any) => {
 
 
   const token = localStorage?.getItem('token')
-  // useEffect(() => {
-  //   if (!token) {
-  //     navigate("/login");
-  //   } else {
-  //     navigate("/");
-  //   }
-  // }, [token]);
+
+  useEffect(() => {
+    if (!token) {
+      localStorage.removeItem("desktopView");
+      navigate("/login");
+    } else {
+      navigate("/");
+    }
+  }, [token]);
 
   return (
 

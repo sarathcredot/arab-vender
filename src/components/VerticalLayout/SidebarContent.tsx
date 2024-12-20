@@ -332,3 +332,4 @@ SidebarContent.propTypes = {
 };
 
 export default withTranslation()(withRouter(SidebarContent));
+    
