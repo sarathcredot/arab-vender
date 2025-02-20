@@ -416,7 +416,7 @@ const All = () => {
                   </Table>
                 </div>
               </div>
-            )}
+            }
           </div>
         </CardBody>
         <Row>

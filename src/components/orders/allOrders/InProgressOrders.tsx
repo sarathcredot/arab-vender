@@ -416,7 +416,7 @@ const InProgressOrders = () => {
                   </Table>
                 </div>
               </div>
-            )}
+            }
           </div>
         </CardBody>
         <Row>

@@ -299,8 +299,7 @@ const CompletedOrders = () => {
             <Card>
                 <CardBody>
                     <div>
-                        {
-                            ordersLoading ?
+                        {ordersLoading ?
                                 <Loader />
                                 :
                                 <div className="table-rep-plugin">
@@ -417,7 +416,7 @@ const CompletedOrders = () => {
                   </Table>
                 </div>
               </div>
-            )}
+            }
           </div>
         </CardBody>
         <Row>
