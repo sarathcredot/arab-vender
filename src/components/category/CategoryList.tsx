@@ -260,7 +260,9 @@ const CategoryList: React.FC<Props> = () => {
                                   <Td>{category?.fullCategoryName}</Td>
 
                                   <Td>
+                                  <div style={{ display: "flex", gap: "10px", alignItems: "center",justifyContent:"center" }}>
                                     <StatusIndicator status={category?.isBlocked == false ? "ACTIVE" : "BLOCKED"} />
+                                  </div>
                                   </Td>
                                 </Tr>
                               ))}

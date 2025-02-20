@@ -411,10 +411,14 @@ const ProductListing = () => {
                                 <Td>{product?.stock}</Td>
 
                                 <Td>
+                                <div style={{ display: "flex", gap: "10px", alignItems: "center",justifyContent:"center" }}>
                                   <StatusIndicator status={product?.status} />
+                                </div>
                                 </Td>
                                 <Td>
+                                <div style={{ display: "flex", gap: "10px", alignItems: "center",justifyContent:"center" }}>
                                   <StatusIndicator status={product.isBlocked ? "BLOCKED" : "ACTIVE"} />
+                                </div>
                                 </Td>
                                 <Td>
                                   <Button

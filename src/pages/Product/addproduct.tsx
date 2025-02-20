@@ -64,6 +64,8 @@ interface ProductForm {
   _id: string;
   media: any;
   images: any;
+  delivery_type: string;
+  returnPolicy: string;
 }
 interface ProductData {
   _id: string;
@@ -86,6 +88,8 @@ interface ProductData {
   categoryNamePath: string;
   isBlocked: boolean;
   brandName: string;
+  delivery_type: string;
+  returnPolicy: string;
 }
 
 interface AddProductProps {
@@ -150,6 +154,38 @@ const GET_BRAND = gql`
   }
 `;
 
+const GET_ALL_POLICIES = gql`
+  query GetAllPoliciesBySuperAdmin($input: getAllPoliciesBySuperAdminInput) {
+  getAllPoliciesBySuperAdmin(input: $input) {
+    success
+    data {
+      _id
+      name
+      description
+      duration
+      isEnable
+      returnCharge
+      
+    }
+    maxRecords
+  }
+}
+`;
+
+const GET_POLICY_FOR_PRODUCT = gql`
+query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInput!) {
+  getDefaultReturnPolicyInProduct(input: $input) {
+    _id
+    name
+    description
+    duration
+    isEnable
+    returnCharge
+    isDeleted
+  }
+}
+`;
+
 const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) => {
   const {
     control,
@@ -190,6 +226,13 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
     setRemarks(updatedRemarks);
   };
 
+  const [changePolicy,setChangePolicy] = useState(false)
+  const handleChangePolicy = (e:any)=>{
+    setChangePolicy(e.target.checked)
+    
+  }
+
+
   const id = localStorage?.getItem("vendorid");
   const {
     loading: categoryLoading,
@@ -198,6 +241,34 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
     refetch: categoryRefetch,
   } = useQuery(GET_CATEGORY);
 
+  // get all policies
+  const {
+    loading: policiesLoading,
+    error: policiesError,
+    data: policiesDataResponse,
+    refetch: policiesRefetch,
+  } = useQuery(GET_ALL_POLICIES, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {},
+    },
+  });
+  
+  // get policy for product from brand and category
+  const {
+    loading: policyLoading,
+    error: policyError,
+    data: policyDataResponse,
+    refetch: policyRefetch,
+  } = useQuery(GET_POLICY_FOR_PRODUCT, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        brandId: selectedbrand?.id,
+        categoryId: selectedCategory,
+      },
+    },
+  });
   const {
     loading: brandLoading,
     error: brandError,
@@ -210,9 +281,26 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
       },
     },
   });
+  useEffect(()=>{
+    if(selectedbrand.id&&selectedCategory){
+      console.log("REFETCH  = ",selectedbrand.id,selectedCategory)
+      policyRefetch() 
+    }
+  },[selectedbrand.id,selectedCategory])
+
+  useEffect(()=>{
+    console.log("POLICY = ",policyDataResponse)
+    if(policyDataResponse && !changePolicy){
+      setValue("returnPolicy",policyDataResponse?.getDefaultReturnPolicyInProduct?._id)
+    }
+  },[policyDataResponse,policiesRefetch,changePolicy])
 
   useEffect(() => {
     if (editedProduct) {
+      console.log("editedProduct = ",editedProduct)
+      if(editedProduct?.returnPolicyData){
+        setChangePolicy(true)
+      }
       setValue("productName", editedProduct?.productName || "");
       setValue("description", editedProduct?.description || "");
       setValue("sellingPrice", editedProduct?.sellingPrice);
@@ -226,9 +314,18 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
       setValue("tags", editedProduct?.tags.join(","));
       setValue("brandName", editedProduct?.brandName || "");
       setValue("categoryNamePath", editedProduct?.categoryNamePath || "");
+      setValue("delivery_type", editedProduct?.delivery_type || "");
       setValue("media", editedProduct?.images);
       setRemarks(editedProduct ? editedProduct?.productInfo : [""]);
       setValue("images", editedProduct?.images);
+      setValue("returnPolicy", editedProduct?.returnPolicyData&&editedProduct?.returnPolicyData?._id || "");
+
+      setselectedbrand({
+        name: editedProduct.brandName,
+        id: editedProduct.brandId,
+      });
+      setSelectedCategory(editedProduct?.categoryId)
+
     }
   }, [editedProduct]);
   useEffect(() => {
@@ -237,8 +334,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
   }, [categoryDataResponse, brandDataResponse]);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
+  
 
   const getSelectedCategoryData = () => {
     if (editedProduct) {
@@ -260,7 +357,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
       required: "Description is required",
     },
     shortDescription: {
-      required: "ShortDescription is required",
+      required: "Short Description is required",
     },
     mrp: {
       required: "Mrp is required",
@@ -289,6 +386,9 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
     // },
     brand: {
       required: "Brand is required",
+    },
+    delivery_type: {
+      required: "Delivery Type is required",
     },
     rating: {
       required: "Rating is required",
@@ -322,7 +422,12 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
       skuId: data?.skuId,
       tags: data?.tags,
       attributes: attributeid,
+      delivery_type: data?.delivery_type,
+      returnPolicy: changePolicy?data?.returnPolicy:null,
     };
+
+    
+
     const file = data?.images?.map((image: any) => image.file);
 
     const medias = data?.media?.map((media: any) => media.file);
@@ -389,6 +494,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
   if (Edit) {
     items.push({ text: "Variants", link: `/product/variant?_code=${editedProduct?.productCode}` });
   }
+  
 
   return (
     <React.Fragment>
@@ -439,6 +545,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                               value={editedProduct?.brandName}
                               disabled={Edit}
                               onChange={(event: any) => {
+                                
                                 const selectedBrand = brandData.find(
                                   (brand: any) => brand.brandName === event.target.value
                                 );
@@ -495,13 +602,43 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                           {categoryData?.map((category: any) => (
                             <DropdownItem
                               key={category._id}
-                              onClick={() => setSelectedCategory(category._id)}
+                              onClick={() => {
+                                setSelectedCategory(category._id)
+                              }}
                             >
                               {category.fullCategoryName}
                             </DropdownItem>
                           ))}
                         </DropdownMenu>
                       </Dropdown>
+                    </FormGroup>
+                    <FormGroup className="mt-3">
+                      <Label for="delivery_type">Delivery Type</Label>
+                      <Controller
+                        control={control}
+                        name="delivery_type"
+                        render={({ field: { value, onChange } }) => (
+                          <>
+                            <Input
+                              type="select"
+                              style={{ borderRadius: "0px", backgroundColor: "white" }}
+                              value={value}
+                              // disabled={Edit}
+                              onChange={onChange}
+                            >
+                              <option value="">Select Delivery Type</option>
+                              <option value="ArabDeals">ArabDeals</option>
+                              <option value="Vendor">Vendor</option>
+                              <option value="ThirdParty">ThirdParty</option>
+                              
+                            </Input>
+                          </>
+                        )}
+                        rules={fieldRules.delivery_type}
+                      />
+                      {errors?.delivery_type && (
+                        <div className={styles.errmsg}>{errors?.delivery_type?.message}</div>
+                      )}
                     </FormGroup>
 
                     <Catattributes
@@ -528,7 +665,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                             />
                           </>
                         )}
-                        rules={fieldRules.productName}
+                        rules={fieldRules.shortDescription}
                       />
                       {errors?.shortDescription ? (
                         <div className={styles.errmsg}>{errors?.shortDescription?.message}</div>
@@ -800,6 +937,63 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                               </>
                             )}
                           />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row style={{ marginTop: "13px" }}>
+                      <Col md={6}>
+
+                        <FormGroup>
+                        <div style={{display:"flex",alignItems:"center",gap:10, justifyContent:"space-between",marginBottom:"3px"}}>
+                          <Label for="returnPolicy" style={{margin:0}}>Return Policy </Label>
+                          <div style={{display:"flex",alignItems:"center",gap:10}}>
+
+                          <Label
+                            style={{ fontWeight:"lighter",color:"#737373",margin:0,fontSize:"12px"}}
+                            >
+                            change policy
+                          </Label>
+                          <FormGroup
+                          switch
+                          >
+                          <Input
+                            className={ changePolicy ? "bg-success border-success" : ""}
+                            type="switch"
+                            style={{ width: "40px", height: "20px" }}
+                            checked={changePolicy}
+                            onChange={handleChangePolicy}
+                            />
+                          
+                        </FormGroup>
+                            </div>
+                        </div>
+                          <Controller
+                            control={control}
+                            name="returnPolicy"
+                            render={({ field: { value, onChange } }) => (
+                              <>
+                                <Input
+                                  type="select"
+                                  value={value}
+                                  onChange={onChange}
+                                  className={styles.inputfield}
+                                  disabled={!changePolicy}
+                                >
+
+                                <option value="">Select</option>
+                                {policiesDataResponse && policiesDataResponse?.getAllPoliciesBySuperAdmin?.data?.map((item:any,index:any)=>(
+                                  <option key={index} value={item?._id}>{item?.name}</option>
+                                ))}
+                                </Input>
+                              </>
+                            )}
+                            // rules={fieldRules.rating}
+                          />
+                            {/* <Button color="primary">Edit</Button> */}
+                            
+                          {errors?.rating ? (
+                            <div className={styles.errmsg}>{errors?.rating?.message}</div>
+                          ) : null}
                         </FormGroup>
                       </Col>
                     </Row>

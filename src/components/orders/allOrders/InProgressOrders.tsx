@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import AllOrderFilters from "../AllOrderFilters";
 import CustomButton from "src/components/Common/CustomButton";
 import { Thead, Table, Th, Tbody, Td, Tr } from "react-super-responsive-table";
+import StatusIndicator from "src/components/statusIndicator/StatusIndicator";
 
 
 interface ShippingAddress {
@@ -365,12 +366,8 @@ const InProgressOrders = () => {
                                                             }
                                                         </Td>
                                                         <Td>{order?.paymentMode}</Td>
-                                                        <Td><div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                                                            <div style={{
-                                                                width: "8px", height: "8px", borderRadius: "50%",
-                                                                background: order?.orderStatus === "PENDING" ? "#ff9500" : (order?.orderStatus === "IN_PROGRESS" ? "#fff200" : "green")
-                                                            }} />
-                                                            {order?.orderStatus.replace("_", " ")}
+                                                        <Td><div style={{ display: "flex", gap: "10px", alignItems: "center",justifyContent:"center" }}>
+                                                        <StatusIndicator variant="default" status={order.orderStatus} />
                                                         </div>
                                                         </Td>
                                                         <Td>  {`${order.shippingAddress["streetName"]},  ${order.shippingAddress["city"]}`}</Td>

@@ -152,7 +152,11 @@ const BrandList: React.FC = () => {
                                       />
                                     )}
                                   </Td>
-                                  <Td ><StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} /></Td>
+                                  <Td style={{width:150}}>
+                                    <div style={{ display: "flex", gap: "10px", alignItems: "center",justifyContent:"center" }}>
+                                      <StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} />
+                                    </div>
+                                    </Td>
                                 </Tr>
                               ))}
                             </Tbody>

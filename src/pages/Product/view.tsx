@@ -62,6 +62,15 @@ interface ProductData {
     originalName: string;
   }[];
   warehouseSkuId?: string;
+  delivery_type?: string;
+  // returnPolicy?: {
+  //   _id:string;
+  //   name:string;
+  //   description:string;
+  //   duration:string;
+  //   returnCharge:string;
+  //   isDeleted:boolean;
+  // }
 }
 
 interface IVariant {
@@ -87,59 +96,83 @@ const ProductDetails = () => {
   const [vSizes, setVSizes] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [editedProduct, setEditedProduct] = useState<ProductData | undefined>(undefined);
+  const [returnPolicy,setReturnPolicy]= useState<any>(null)
 
   const GET_PRODUCTDETAIL = gql`
     query GetProductByVendor($input: ProductId!) {
-      getProductByVendor(input: $input) {
-        product {
-          _id
-          vendorId
-          brandId
-          brandName
-          productName
-          shortDescription
-          skuId
-          description
-          productInfo
-          productShortInfo
-          images {
-            fileType
-            fileURL
-            mimeType
-            originalName
-          }
-          rating
-          sellingPrice
-          price
-          mrp
-          tags
-          productCode
-          categoryId
-          categoryNamePath
-          categoryIdPath
-          isBlocked
-          stock
-          status
-          offerPrice
-          attributes {
-            attributeId
-            attributeName
-            attributeValueId
-            attributeValue
-            attributeDescription
-          }
-          productDetailImages {
-            fileType
-            fileURL
-            mimeType
-            originalName
-          }
-          warehouseSkuId
-        }
-        message
+  getProductByVendor(input: $input) {
+    product {
+      _id
+      vendorId
+      brandId
+      brandName
+      productName
+      shortDescription
+      skuId
+      description
+      productInfo
+      productShortInfo
+      rating
+      sellingPrice
+      price
+      mrp
+      tags
+      productCode
+      categoryId
+      categoryNamePath
+      categoryIdPath
+      isBlocked
+      stock
+      status
+      offerPrice
+      warehouseSkuId
+      delivery_type
+      attributes {
+        attributeId
+        attributeName
+        attributeValueId
+        attributeValue
+        attributeDescription
+      }
+      images {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      productDetailImages {
+        fileType
+        fileURL
+        mimeType
+        originalName
+      }
+      returnPolicyData {
+        _id
+        name
+        description
+        duration
+        isEnable
+        returnCharge
+        isDeleted
       }
     }
-  `;
+  }
+}  `;
+
+const GET_POLICY_FOR_PRODUCT = gql`
+query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInput!) {
+  getDefaultReturnPolicyInProduct(input: $input) {
+    _id
+    name
+    description
+    duration
+    isEnable
+    returnCharge
+    isDeleted
+  }
+}
+`;
+
   const GET_VARIANTS = gql`
     query Variants($input: VariantsInput!) {
       getVariants(input: $input) {
@@ -161,8 +194,34 @@ const ProductDetails = () => {
       }
     }
   `;
+
+  // get policy for product from brand and category
+  const {
+    loading: policyLoading,
+    error: policyError,
+    data: policyDataResponse,
+    refetch: policyRefetch,
+  } = useQuery(GET_POLICY_FOR_PRODUCT, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        brandId: product?.brandId,
+        categoryId: product?.categoryId,
+      },
+    },
+    skip:!product
+  });
+
+  useEffect(()=>{
+    console.log("POLICY = ",policyDataResponse)
+    if(policyDataResponse){
+      setReturnPolicy(policyDataResponse?.getDefaultReturnPolicyInProduct)
+    }
+  },[policyDataResponse])
+
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
     variables: { input: { _id: productId } },
+    fetchPolicy:"network-only"
   });
 
   const [preview] = useMutation(PREVIEW);
@@ -528,15 +587,16 @@ const ProductDetails = () => {
                             <div className="mb-3">
                               <label htmlFor="cleave-time-format" className="form-label">
                                 {" "}
-                                Short Description:
+                                Short Description :
                               </label>
                               <p className="form-control-static">{product?.shortDescription}</p>
                             </div>
                           </Col>
                         </Row>
                       </div>
-                      <div className="border mt-3 border-dashed"></div>
+                      {product?.attributes?.length?<>
 
+                      <div className="border mt-3 border-dashed"></div>
                       <div className="mt-4">
                         <Row>
                           <Col xl={6}>
@@ -552,7 +612,8 @@ const ProductDetails = () => {
                             ))}
                           </Col>
                         </Row>
-                      </div>
+                      </div></>
+                      :null}
                       <div className="border mt-3 border-dashed"></div>
                       <div className="mt-4">
                         <Row>
@@ -580,8 +641,23 @@ const ProductDetails = () => {
                           </Col>
                         </Row>
                       </div>
-                      <div className="border mt-3 border-dashed"></div>
 
+                      <div className="border mt-3 border-dashed"></div>
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={6}>
+                            <div className="mb-3">
+                              <label htmlFor="cleave-time-format" className="form-label">
+                                {" "}
+                                Return Policy :
+                              </label>
+                              <p className="form-control-static">{product?.returnPolicyData?.name ?? returnPolicy?.name}</p>
+                            </div>
+                          </Col>
+                        </Row>
+                      </div>
+
+                      <div className="border mt-3 border-dashed"></div>
                       <div className="mt-4">
                         <Row>
                           <Col xl={4}>
