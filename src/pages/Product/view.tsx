@@ -97,6 +97,7 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [editedProduct, setEditedProduct] = useState<ProductData | undefined>(undefined);
   const [returnPolicy,setReturnPolicy]= useState<any>(null)
+  const [warrantyPolicy,setWarrantyPolicy]= useState<any>(null)
 
   const GET_PRODUCTDETAIL = gql`
     query GetProductByVendor($input: ProductId!) {
@@ -155,6 +156,15 @@ const ProductDetails = () => {
         returnCharge
         isDeleted
       }
+      warrantyPolicyData {
+        _id
+        name
+        description
+        duration
+        isEnable
+        isDeleted
+        warrantyType
+      }
     }
   }
 }  `;
@@ -169,6 +179,19 @@ query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInp
     isEnable
     returnCharge
     isDeleted
+  }
+}
+`;
+const GET_WARRANTY_POLICY_FOR_PRODUCT = gql`
+  query GetDefaultWarrantyPolicyInProduct($input: getDefaultWarrantyPolicyInProductInput) {
+  getDefaultWarrantyPolicyInProduct(input: $input) {
+    _id
+    name
+    description
+    duration
+    isEnable
+    isDeleted
+    warrantyType
   }
 }
 `;
@@ -195,7 +218,7 @@ query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInp
     }
   `;
 
-  // get policy for product from brand and category
+  // get return policy for product from brand and category
   const {
     loading: policyLoading,
     error: policyError,
@@ -211,13 +234,32 @@ query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInp
     },
     skip:!product
   });
+   // get warranty policy for product from brand and category
+   const {
+    data: warrantyPolicyDataResponse,
+  } = useQuery(GET_WARRANTY_POLICY_FOR_PRODUCT, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        brandId: product?.brandId,
+        categoryId: product?.categoryId,
+      },
+    },
+    skip:!product
+  });
 
   useEffect(()=>{
-    console.log("POLICY = ",policyDataResponse)
+    console.log("RETURN POLICY = ",policyDataResponse)
     if(policyDataResponse){
       setReturnPolicy(policyDataResponse?.getDefaultReturnPolicyInProduct)
     }
   },[policyDataResponse])
+  useEffect(()=>{
+    console.log("WARRANTY POLICY = ",warrantyPolicyDataResponse)
+    if(warrantyPolicyDataResponse){
+      setWarrantyPolicy(warrantyPolicyDataResponse?.getDefaultWarrantyPolicyInProduct)
+    }
+  },[warrantyPolicyDataResponse])
 
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
     variables: { input: { _id: productId } },
@@ -652,6 +694,21 @@ query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInp
                                 Return Policy :
                               </label>
                               <p className="form-control-static">{product?.returnPolicyData?.name ?? returnPolicy?.name}</p>
+                            </div>
+                          </Col>
+                          
+                        </Row>
+                      </div>
+                      <div className="border mt-3 border-dashed"></div>
+                      <div className="mt-4">
+                        <Row>
+                          <Col xl={6}>
+                            <div className="mb-3">
+                              <label htmlFor="cleave-time-format" className="form-label">
+                                {" "}
+                                Warranty Policy:
+                              </label>
+                              <p className="form-control-static">{product?.warrantyPolicyData?.name ?? warrantyPolicy?.name ?? "No warranty policies have been attached."}</p>
                             </div>
                           </Col>
                         </Row>

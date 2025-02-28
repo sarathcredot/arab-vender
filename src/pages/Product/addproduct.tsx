@@ -66,6 +66,7 @@ interface ProductForm {
   images: any;
   delivery_type: string;
   returnPolicy: string;
+  warrantyPolicy: string;
 }
 interface ProductData {
   _id: string;
@@ -154,7 +155,7 @@ const GET_BRAND = gql`
   }
 `;
 
-const GET_ALL_POLICIES = gql`
+const GET_ALL_RETURN_POLICIES = gql`
   query GetAllPoliciesBySuperAdmin($input: getAllPoliciesBySuperAdminInput) {
   getAllPoliciesBySuperAdmin(input: $input) {
     success
@@ -171,8 +172,18 @@ const GET_ALL_POLICIES = gql`
   }
 }
 `;
+const GET_ALL_WARRANTY_POLICIES = gql`
+  query GetAllWarrantyPoliciesBySuperAdmin($input: getAllWarrantyPoliciesBySuperAdminInput) {
+  getAllWarrantyPoliciesBySuperAdmin(input: $input) {
+    data {
+      _id
+      name
+    }
+  }
+}
+`;
 
-const GET_POLICY_FOR_PRODUCT = gql`
+const GET_RETURN_POLICY_FOR_PRODUCT = gql`
 query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInput!) {
   getDefaultReturnPolicyInProduct(input: $input) {
     _id
@@ -184,6 +195,19 @@ query GetDefaultReturnPolicyInProduct($input: getDefaultReturnPolicyInProductInp
     isDeleted
   }
 }
+`;
+const GET_WARRANTY_POLICY_FOR_PRODUCT = gql`
+  query GetDefaultWarrantyPolicyInProduct($input: getDefaultWarrantyPolicyInProductInput) {
+    getDefaultWarrantyPolicyInProduct(input: $input) {
+      _id
+      name
+      description
+      duration
+      isEnable
+      isDeleted
+      warrantyType
+    }
+  }
 `;
 
 const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) => {
@@ -226,10 +250,14 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
     setRemarks(updatedRemarks);
   };
 
-  const [changePolicy,setChangePolicy] = useState(false)
-  const handleChangePolicy = (e:any)=>{
-    setChangePolicy(e.target.checked)
+  const [changeReturnPolicy,setChangeReturnPolicy] = useState(false)
+  const [changeWarrantyPolicy,setChangeWarrantyPolicy] = useState(false)
+  const handleChangeReturnPolicy = (e:any)=>{
+    setChangeReturnPolicy(e.target.checked)
     
+  }
+  const handleChangeWarrantyPolicy = (e:any)=>{
+    setChangeWarrantyPolicy(e.target.checked)
   }
 
 
@@ -241,26 +269,54 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
     refetch: categoryRefetch,
   } = useQuery(GET_CATEGORY);
 
-  // get all policies
+  // get all return policies
   const {
     loading: policiesLoading,
     error: policiesError,
     data: policiesDataResponse,
     refetch: policiesRefetch,
-  } = useQuery(GET_ALL_POLICIES, {
+  } = useQuery(GET_ALL_RETURN_POLICIES, {
     fetchPolicy: "network-only",
     variables: {
       input: {},
     },
   });
+
+  // get all warranty policies
+  const {
+    loading: warrantyPoliciesLoading,
+    error: warrantyPoliciesError,
+    data: warrantyPoliciesDataResponse,
+    refetch: warrantyPoliciesRefetch,
+  } = useQuery(GET_ALL_WARRANTY_POLICIES, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        isEnable:true,
+      },
+    },
+  });
   
-  // get policy for product from brand and category
+  // get return policy for product from brand and category
   const {
     loading: policyLoading,
     error: policyError,
     data: policyDataResponse,
     refetch: policyRefetch,
-  } = useQuery(GET_POLICY_FOR_PRODUCT, {
+  } = useQuery(GET_RETURN_POLICY_FOR_PRODUCT, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        brandId: selectedbrand?.id,
+        categoryId: selectedCategory,
+      },
+    },
+  });
+
+   // get warranty policy for product from brand and category
+   const {
+    data: warrantypolicyDataResponse,
+  } = useQuery(GET_WARRANTY_POLICY_FOR_PRODUCT, {
     fetchPolicy: "network-only",
     variables: {
       input: {
@@ -289,18 +345,29 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
   },[selectedbrand.id,selectedCategory])
 
   useEffect(()=>{
-    console.log("POLICY = ",policyDataResponse)
-    if(policyDataResponse && !changePolicy){
+    console.log("RETURN POLICY = ",policyDataResponse)
+    if(policyDataResponse && !changeReturnPolicy){
       setValue("returnPolicy",policyDataResponse?.getDefaultReturnPolicyInProduct?._id)
     }
-  },[policyDataResponse,policiesRefetch,changePolicy])
+  },[policyDataResponse,policiesRefetch,changeReturnPolicy])
+
+  useEffect(()=>{
+    console.log("WARRANTY POLICY = ",warrantypolicyDataResponse)
+    if(warrantypolicyDataResponse && !changeWarrantyPolicy){
+      setValue("warrantyPolicy",warrantypolicyDataResponse?.getDefaultWarrantyPolicyInProduct?._id)
+    }
+  },[warrantypolicyDataResponse,changeWarrantyPolicy])
 
   useEffect(() => {
     if (editedProduct) {
       console.log("editedProduct = ",editedProduct)
       if(editedProduct?.returnPolicyData){
-        setChangePolicy(true)
+        setChangeReturnPolicy(true)
       }
+      if(editedProduct?.warrantyPolicyData){
+        setChangeWarrantyPolicy(true)
+      }
+
       setValue("productName", editedProduct?.productName || "");
       setValue("description", editedProduct?.description || "");
       setValue("sellingPrice", editedProduct?.sellingPrice);
@@ -319,6 +386,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
       setRemarks(editedProduct ? editedProduct?.productInfo : [""]);
       setValue("images", editedProduct?.images);
       setValue("returnPolicy", editedProduct?.returnPolicyData&&editedProduct?.returnPolicyData?._id || "");
+      setValue("warrantyPolicy", editedProduct?.warrantyPolicyData&&editedProduct?.warrantyPolicyData?._id || "");
 
       setselectedbrand({
         name: editedProduct.brandName,
@@ -423,7 +491,8 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
       tags: data?.tags,
       attributes: attributeid,
       delivery_type: data?.delivery_type,
-      returnPolicy: changePolicy?data?.returnPolicy:null,
+      returnPolicy: changeReturnPolicy ? data?.returnPolicy : null,
+      warrantyPolicy: changeWarrantyPolicy ? data?.warrantyPolicy : null,
     };
 
     
@@ -957,11 +1026,11 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                           switch
                           >
                           <Input
-                            className={ changePolicy ? "bg-success border-success" : ""}
+                            className={ changeReturnPolicy ? "bg-success border-success" : ""}
                             type="switch"
                             style={{ width: "40px", height: "20px" }}
-                            checked={changePolicy}
-                            onChange={handleChangePolicy}
+                            checked={changeReturnPolicy}
+                            onChange={handleChangeReturnPolicy}
                             />
                           
                         </FormGroup>
@@ -977,7 +1046,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                                   value={value}
                                   onChange={onChange}
                                   className={styles.inputfield}
-                                  disabled={!changePolicy}
+                                  disabled={!changeReturnPolicy}
                                 >
 
                                 <option value="">Select</option>
@@ -991,6 +1060,58 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                           />
                             {/* <Button color="primary">Edit</Button> */}
                             
+                          {errors?.rating ? (
+                            <div className={styles.errmsg}>{errors?.rating?.message}</div>
+                          ) : null}
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+
+                        <FormGroup>
+                        <div style={{display:"flex",alignItems:"center",gap:10, justifyContent:"space-between",marginBottom:"3px"}}>
+                          <Label for="warrantyPolicy" style={{margin:0}}>Warranty Policy </Label>
+                          <div style={{display:"flex",alignItems:"center",gap:10}}>
+
+                          <Label
+                            style={{ fontWeight:"lighter",color:"#737373",margin:0,fontSize:"12px"}}
+                            >
+                            change policy
+                          </Label>
+                          <FormGroup
+                          switch
+                          >
+                          <Input
+                            className={ changeWarrantyPolicy ? "bg-success border-success" : ""}
+                            type="switch"
+                            style={{ width: "40px", height: "20px" }}
+                            checked={changeWarrantyPolicy}
+                            onChange={handleChangeWarrantyPolicy}
+                            />
+
+                        </FormGroup>
+                            </div>
+                        </div>
+                          <Controller
+                            control={control}
+                            name="warrantyPolicy"
+                            render={({ field: { value, onChange } }) => (
+                              <>
+                                <Input
+                                  type="select"
+                                  id="warrantyPolicy"
+                                  value={value}
+                                  onChange={onChange}
+                                  className={styles.inputfield}
+                                  disabled={!changeWarrantyPolicy}
+                                >
+                                <option value="">Select warranty policy</option>
+                                {warrantyPoliciesDataResponse && warrantyPoliciesDataResponse?.getAllWarrantyPoliciesBySuperAdmin?.data?.map((item:any,index:any)=>(
+                                  <option key={index} value={item?._id}>{item?.name}</option>
+                                ))}
+                                </Input>
+                              </>
+                            )}
+                          />
                           {errors?.rating ? (
                             <div className={styles.errmsg}>{errors?.rating?.message}</div>
                           ) : null}
