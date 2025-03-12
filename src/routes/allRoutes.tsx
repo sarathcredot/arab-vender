@@ -103,7 +103,7 @@ const adminRoutes: Array<RouteProps> = [
 
 const authRoutes: Array<RouteProps> = [
   //Authentication pages
-  { path: "/vendor", component: <VendorWelcome /> },
+  { path: "/become-a-seller", component: <VendorWelcome /> },
   { path: "/login", component: <Login /> },
   { path: "/signup", component: <Signup /> },
 

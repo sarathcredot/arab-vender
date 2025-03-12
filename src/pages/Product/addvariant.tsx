@@ -64,6 +64,8 @@ interface ProductForm {
   brandId: string;
   media: any;
   images: any;
+  returnPolicy: string;
+  warrantyPolicy: string;
 }
 interface ProductData {
   _id: string;
@@ -220,6 +222,57 @@ const GET_BRAND = gql`
   }
 `;
 
+
+const GET_ALL_RETURN_POLICIES = gql`
+  query GetAllPoliciesBySuperAdmin($input: getAllPoliciesBySuperAdminInput) {
+  getAllPoliciesBySuperAdmin(input: $input) {
+    success
+    data {
+      _id
+      name
+      description
+      duration
+      isEnable
+      returnCharge
+      
+    }
+    maxRecords
+  }
+}
+`;
+const GET_ALL_WARRANTY_POLICIES = gql`
+  query GetAllWarrantyPoliciesBySuperAdmin($input: getAllWarrantyPoliciesBySuperAdminInput) {
+  getAllWarrantyPoliciesBySuperAdmin(input: $input) {
+    data {
+      _id
+      name
+    }
+  }
+}
+`;
+
+const GET_DEFAULT_WARRANTY_POLICY = gql`
+  query GetDefaultWarrantyPolicyVariantCreate($input: getDefaultWarrantyPolicyVariantCreateInput!) {
+    getDefaultWarrantyPolicyVariantCreate(input: $input) {
+      WarrantyPolicyData {
+        _id
+      }
+      policyGet
+    }
+  }
+`;
+const GET_DEFAULT_RETURN_POLICY = gql`
+  query GetDefaultReturnPolicyVariantCreate($input: getDefaultReturnPolicyVariantCreateInput!) {
+    getDefaultReturnPolicyVariantCreate(input: $input) {
+      ReturnPolicyData {
+        _id
+      }
+      policyGet
+    }
+  }
+`;
+
+
 const AddVariant = ({ }) => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -228,6 +281,64 @@ const AddVariant = ({ }) => {
   const productCode = searchParams.get("code");
   console.log(productCode)
   console.log(Productid);
+
+  const [changeReturnPolicy,setChangeReturnPolicy] = useState(false)
+  const [changeWarrantyPolicy,setChangeWarrantyPolicy] = useState(false)
+  const handleChangeReturnPolicy = (e:any)=>{
+    setChangeReturnPolicy(e.target.checked)
+  }
+  const handleChangeWarrantyPolicy = (e:any)=>{
+    setChangeWarrantyPolicy(e.target.checked)
+  }
+
+   // get all return policies
+   const {
+    loading: policiesLoading,
+    error: policiesError,
+    data: policiesDataResponse,
+    refetch: policiesRefetch,
+  } = useQuery(GET_ALL_RETURN_POLICIES, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        isEnable:true,
+      },
+    },
+  });
+
+  // get all warranty policies
+  const {
+    loading: warrantyPoliciesLoading,
+    error: warrantyPoliciesError,
+    data: warrantyPoliciesDataResponse,
+    refetch: warrantyPoliciesRefetch,
+  } = useQuery(GET_ALL_WARRANTY_POLICIES, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        isEnable:true,
+      },
+    },
+  });
+
+  const { 
+    data:DefaultWarrantyPolicy
+   } = useQuery(GET_DEFAULT_WARRANTY_POLICY, {
+    variables: { 
+      input: { 
+        productCode:productCode&& parseInt(productCode)
+      }
+    },
+  });
+  const { 
+    data:DefaultReturnPolicy
+   } = useQuery(GET_DEFAULT_RETURN_POLICY, {
+    variables: { 
+      input: { 
+        productCode:productCode&& parseInt(productCode)
+      }
+    },
+  });
 
   const { loading, error, data } = useQuery(GET_PRODUCTDETAIL, {
     variables: { input: { _id: Productid } },
@@ -369,6 +480,8 @@ const AddVariant = ({ }) => {
       // stock: parseInt(data1?.stock),
       tags: data?.tags,
       attributes: attributeid,
+      returnPolicy: changeReturnPolicy ? data1?.returnPolicy : DefaultReturnPolicy?.getDefaultReturnPolicyVariantCreate?.policyGet ? data1?.returnPolicy : null,
+      warrantyPolicy: changeWarrantyPolicy ? data1?.warrantyPolicy : DefaultWarrantyPolicy?.getDefaultWarrantyPolicyVariantCreate?.policyGet ? data1?.warrantyPolicy : null,
     };
 
     const file = data1?.images?.map((image: any) => image.file);
@@ -409,6 +522,19 @@ const AddVariant = ({ }) => {
   };
 
   console.log(errors)
+
+  useEffect(()=>{
+    console.log("WARRANTY POLICY = ",DefaultWarrantyPolicy)
+    if(DefaultWarrantyPolicy && !changeWarrantyPolicy){
+      setValue("warrantyPolicy",DefaultWarrantyPolicy?.getDefaultWarrantyPolicyVariantCreate?.WarrantyPolicyData?._id)
+    }
+  },[DefaultWarrantyPolicy,changeWarrantyPolicy])
+  useEffect(()=>{
+    console.log("RETURN POLICY = ",DefaultReturnPolicy)
+    if(DefaultReturnPolicy && !changeReturnPolicy){
+      setValue("returnPolicy",DefaultReturnPolicy?.getDefaultReturnPolicyVariantCreate?.ReturnPolicyData?._id)
+    }
+  },[DefaultReturnPolicy,changeReturnPolicy])
 
   const items = [
     { text: "Dashboard", link: `/` },
@@ -768,6 +894,107 @@ const AddVariant = ({ }) => {
                           </FormGroup>
                         ))}
                       </FormGroup>
+                    </Row>
+
+                    <Row style={{ marginBottom: "13px" }}>
+                      <Col md={6}>
+
+                        <FormGroup>
+                        <div style={{display:"flex",alignItems:"center",gap:10, justifyContent:"space-between",marginBottom:"3px"}}>
+                          <Label for="returnPolicy" style={{margin:0}}>Return Policy </Label>
+                          <div style={{display:"flex",alignItems:"center",gap:10}}>
+
+                          <Label
+                            style={{ fontWeight:"lighter",color:"#737373",margin:0,fontSize:"12px"}}
+                            >
+                            change policy
+                          </Label>
+                          <FormGroup
+                          switch
+                          >
+                          <Input
+                            className={ changeReturnPolicy ? "bg-success border-success" : ""}
+                            type="switch"
+                            style={{ width: "40px", height: "20px" }}
+                            checked={changeReturnPolicy}
+                            onChange={handleChangeReturnPolicy}
+                            />
+                          
+                        </FormGroup>
+                            </div>
+                        </div>
+                          <Controller
+                            control={control}
+                            name="returnPolicy"
+                            render={({ field: { value, onChange } }) => (
+                              <>
+                                <Input
+                                  type="select"
+                                  value={value}
+                                  onChange={onChange}
+                                  className={styles.inputfield}
+                                  disabled={!changeReturnPolicy}
+                                >
+
+                                <option value="">Select return policy</option>
+                                {policiesDataResponse && policiesDataResponse?.getAllPoliciesBySuperAdmin?.data?.map((item:any,index:any)=>(
+                                  <option key={index} value={item?._id}>{item?.name}</option>
+                                ))}
+                                </Input>
+                              </>
+                            )}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+
+                        <FormGroup>
+                        <div style={{display:"flex",alignItems:"center",gap:10, justifyContent:"space-between",marginBottom:"3px"}}>
+                          <Label for="warrantyPolicy" style={{margin:0}}>Warranty Policy </Label>
+                          <div style={{display:"flex",alignItems:"center",gap:10}}>
+
+                          <Label
+                            style={{ fontWeight:"lighter",color:"#737373",margin:0,fontSize:"12px"}}
+                            >
+                            change policy
+                          </Label>
+                          <FormGroup
+                          switch
+                          >
+                          <Input
+                            className={ changeWarrantyPolicy ? "bg-success border-success" : ""}
+                            type="switch"
+                            style={{ width: "40px", height: "20px" }}
+                            checked={changeWarrantyPolicy}
+                            onChange={handleChangeWarrantyPolicy}
+                            />
+
+                        </FormGroup>
+                            </div>
+                        </div>
+                          <Controller
+                            control={control}
+                            name="warrantyPolicy"
+                            render={({ field: { value, onChange } }) => (
+                              <>
+                                <Input
+                                  type="select"
+                                  id="warrantyPolicy"
+                                  value={value}
+                                  onChange={onChange}
+                                  className={styles.inputfield}
+                                  disabled={!changeWarrantyPolicy}
+                                >
+                                <option value="">Select warranty policy</option>
+                                {warrantyPoliciesDataResponse && warrantyPoliciesDataResponse?.getAllWarrantyPoliciesBySuperAdmin?.data?.map((item:any,index:any)=>(
+                                  <option key={index} value={item?._id}>{item?.name}</option>
+                                ))}
+                                </Input>
+                              </>
+                            )}
+                          />
+                        </FormGroup>
+                      </Col>
                     </Row>
 
                     {/* <FormGroup>
