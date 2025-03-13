@@ -236,7 +236,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
   const [remarks, setRemarks] = useState<any>([""]);
   const [attributeid, setattributeid] = useState<IAttribute[] | []>([]);
   const [selectedbrand, setselectedbrand] = useState<any>({});
-
+  console.log("categoryData = ",categoryData)
   const handleAttributesSelectChange = (selectedValues: IAttribute[]) => {
     setattributeid(selectedValues);
   };
@@ -278,7 +278,9 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
   } = useQuery(GET_ALL_RETURN_POLICIES, {
     fetchPolicy: "network-only",
     variables: {
-      input: {},
+      input: {
+        isEnable:true,
+      },
     },
   });
 
@@ -1056,13 +1058,7 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                                 </Input>
                               </>
                             )}
-                            // rules={fieldRules.rating}
                           />
-                            {/* <Button color="primary">Edit</Button> */}
-                            
-                          {errors?.rating ? (
-                            <div className={styles.errmsg}>{errors?.rating?.message}</div>
-                          ) : null}
                         </FormGroup>
                       </Col>
                       <Col md={6}>
@@ -1112,9 +1108,6 @@ const AddProduct: React.FC<AddProductProps> = ({ Edit = false, editedProduct }) 
                               </>
                             )}
                           />
-                          {errors?.rating ? (
-                            <div className={styles.errmsg}>{errors?.rating?.message}</div>
-                          ) : null}
                         </FormGroup>
                       </Col>
                     </Row>

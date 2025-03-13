@@ -89,6 +89,7 @@ const ProductDetails = () => {
   const params = new URLSearchParams(location.search);
   const productId = params.get("_id");
   const [product, setProduct] = useState<any>();
+  console.log("PRODUCT = ",product)
   const [productVariants, setProductVariants] = useState<IVariant[]>([]);
   const [selectedVSize, setSelectedVSize] = useState<string>("");
   const [selectedVColor, setSelectedVColor] = useState<string>("");

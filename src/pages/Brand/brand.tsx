@@ -130,10 +130,10 @@ const BrandList: React.FC = () => {
                           <Table id="tech-companies-1" className="table table-striped table-bordered">
                             <Thead>
                               <Tr>
-                                <Th>No</Th>
+                                <Th style={{width:20}}>#</Th>
                                 <Th>Brand Name</Th>
                                 <Th>Logo</Th>
-                                <Th>Status</Th>
+                                <Th style={{width:100,textAlign:"center"}}>Status</Th>
                                 {/* <Th>Action</Th> */}
                               </Tr>
                             </Thead>
@@ -152,7 +152,7 @@ const BrandList: React.FC = () => {
                                       />
                                     )}
                                   </Td>
-                                  <Td style={{width:150}}>
+                                  <Td>
                                     <div style={{ display: "flex", gap: "10px", alignItems: "center",justifyContent:"center" }}>
                                       <StatusIndicator status={brand.isBlocked ? "BLOCKED" : "ACTIVE"} />
                                     </div>

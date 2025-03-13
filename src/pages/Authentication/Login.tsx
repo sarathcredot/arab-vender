@@ -383,7 +383,7 @@ const Login = (props: any) => {
                     />
 
                   </div>
-                  {error && <div style={{ color: "red" }}>{error}</div>}
+                  {error && <div style={{ color: "red",margin:0,lineHeight:"normal" }}>{error}</div>}
                   <button
                     onClick={handleGetOtp}
                     style={{
@@ -391,7 +391,7 @@ const Login = (props: any) => {
                       height: "52px",
                       backgroundColor: "black",
                       color: "white",
-                      marginTop: "58px",
+                      marginTop: "30px",
                       border: "none",
                       outline: "none"
                     }}
