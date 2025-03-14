@@ -194,7 +194,7 @@ const UserProfile = () => {
           vendorRefetch();
           localStorage.setItem("ventorData", JSON.stringify("vendor updated"));
           toast.success("Successfully Updated Profile");
-          formik.resetForm();
+          // formik.resetForm();
         }
       } catch (error: any) {
         toast.error(error.message);
@@ -271,23 +271,6 @@ const UserProfile = () => {
                     className="form-group pt-2"
                     style={{ alignItems: "center", justifyContent: "center" }}
                   >
-                    <Label className="form-label">Email</Label>
-                    <Input
-                      style={{ backgroundColor: "white" }}
-                      name="email"
-                      className="form-control"
-                      placeholder="Enter new email"
-                      type="text"
-                      value={formik.values?.email}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    // required
-                    />
-
-                    {formik.touched.email && formik.errors.email && (
-                      <div className="text-danger">{formik.errors.email}</div>
-                    )}
-
                     <Label className="form-label pt-4">Full Name</Label>
                     <Input
                       style={{ backgroundColor: "white" }}
@@ -306,6 +289,24 @@ const UserProfile = () => {
                         {formik.errors.fullName}
                       </div>
                     )}
+                    <Label className="form-label">Email</Label>
+                    <Input
+                      style={{ backgroundColor: "white" }}
+                      name="email"
+                      className="form-control"
+                      placeholder="Enter new email"
+                      type="text"
+                      value={formik.values?.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    // required
+                    />
+
+                    {formik.touched.email && formik.errors.email && (
+                      <div className="text-danger">{formik.errors.email}</div>
+                    )}
+
+                    
                     <Label for="profileImage " className="pt-4">
                       Profile Pic
                     </Label>
