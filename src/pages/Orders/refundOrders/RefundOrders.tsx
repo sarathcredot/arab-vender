@@ -39,7 +39,16 @@ const RefundOrders = () => {
             <Col lg={12}>
               <div>
                 <Nav tabs>
-
+                <NavItem>
+                    <NavLink
+                      className={activeTab === "1" ? "tab-button active" : "tab-button"}
+                      onClick={() => {
+                        toggle("1");
+                      }}
+                    >
+                      ALL
+                    </NavLink>
+                  </NavItem>
                   <NavItem>
                     <NavLink
                       className={activeTab === "2" ? "tab-button active" : "tab-button"}
@@ -60,16 +69,7 @@ const RefundOrders = () => {
                       PAID
                     </NavLink>
                   </NavItem>
-                  <NavItem>
-                    <NavLink
-                      className={activeTab === "1" ? "tab-button active" : "tab-button"}
-                      onClick={() => {
-                        toggle("1");
-                      }}
-                    >
-                      All
-                    </NavLink>
-                  </NavItem>
+                 
                 </Nav>
                 <TabContent activeTab={activeTab}>
                   <TabPane tabId="1">

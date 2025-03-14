@@ -53,6 +53,16 @@ const AllOrders = () => {
                   <Nav tabs>
                     <NavItem>
                       <NavLink
+                        className={activeTab === "1" ? "tab-button active" : "tab-button"}
+                        onClick={() => {
+                          toggle("1");
+                        }}
+                      >
+                        ALL
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
                         className={activeTab === "2" ? "tab-button active" : "tab-button"}
                         onClick={() => {
                           toggle("2");
@@ -81,16 +91,7 @@ const AllOrders = () => {
                         COMPLETED
                       </NavLink>
                     </NavItem>
-                    <NavItem>
-                      <NavLink
-                        className={activeTab === "1" ? "tab-button active" : "tab-button"}
-                        onClick={() => {
-                          toggle("1");
-                        }}
-                      >
-                        All
-                      </NavLink>
-                    </NavItem>
+                    
                   </Nav>
                 </Col>
 

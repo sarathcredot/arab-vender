@@ -49,7 +49,16 @@ const ShippingOrders = () => {
                 <Col xs={12}>
 
                   <Nav tabs>
-
+                  <NavItem>
+                      <NavLink
+                        className={activeTab === "1" ? "tab-button active" : "tab-button"}
+                        onClick={() => {
+                          toggle("1");
+                        }}
+                      >
+                        ALL
+                      </NavLink>
+                    </NavItem>
                     <NavItem>
                       <NavLink
                         className={activeTab === "2" ? "tab-button active" : "tab-button"}
@@ -100,16 +109,7 @@ const ShippingOrders = () => {
                         CANCELED
                       </NavLink>
                     </NavItem>
-                    <NavItem>
-                      <NavLink
-                        className={activeTab === "1" ? "tab-button active" : "tab-button"}
-                        onClick={() => {
-                          toggle("1");
-                        }}
-                      >
-                        All
-                      </NavLink>
-                    </NavItem>
+                    
                   </Nav>
                 </Col>
 
