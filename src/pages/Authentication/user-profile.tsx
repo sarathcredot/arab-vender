@@ -210,6 +210,8 @@ const UserProfile = () => {
       vendorData?.getVendorRecordByVendor?.record
     ) {
       setData(vendorData?.getVendorRecordByVendor?.record);
+      formik.setFieldValue("fullName",vendorData?.getVendorRecordByVendor?.record?.fullName||"")
+      formik.setFieldValue("email",vendorData?.getVendorRecordByVendor?.record?.email||"")
     }
   }, [vendorData, vendorRefetch]);
 
