@@ -46,7 +46,7 @@ const RefundOrders = () => {
                         toggle("1");
                       }}
                     >
-                      ALL
+                      All
                     </NavLink>
                   </NavItem>
                   <NavItem>
@@ -56,7 +56,7 @@ const RefundOrders = () => {
                         toggle("2");
                       }}
                     >
-                      PENDING
+                      Pending
                     </NavLink>
                   </NavItem>
                   <NavItem>
@@ -66,7 +66,7 @@ const RefundOrders = () => {
                         toggle("3");
                       }}
                     >
-                      PAID
+                      Paid
                     </NavLink>
                   </NavItem>
                  

@@ -244,11 +244,11 @@ const CategoryList: React.FC<Props> = () => {
                           <Table id="tech-companies-1" className="table table-striped table-bordered">
                             <Thead>
                               <Tr>
-                                <Th>No</Th>
+                                <Th style={{width:"15px"}}>#</Th>
                                 <Th>Category Name</Th>
                                 <Th>Category Path</Th>
                                 {/* <Th>Size Chart Image</Th> */}
-                                <Th>Status</Th>
+                                <Th style={{width:"100px"}}>Status</Th>
                                 {/* <Th>Actions</Th> */}
                               </Tr>
                             </Thead>

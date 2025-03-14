@@ -334,7 +334,7 @@ const PendingOrders = () => {
                       >
                         <Thead>
                           <Tr>
-                            <Th>No</Th>
+                            <Th style={{width:"15px"}}>#</Th>
                             <Th> Order Date</Th>
 
                                                             <Th>Order Id</Th>
