@@ -9,6 +9,7 @@ import {
   FormFeedback,
   Label,
   Alert,
+  InputGroupText,
 } from "reactstrap";
 import { FaSortDown } from "react-icons/fa";
 import PropTypes from "prop-types";
@@ -150,6 +151,8 @@ const Login = (props: any) => {
       borderRadius: '0',
       height: '100%',
       outline: 'none',
+      // border:"0",
+      // borderRight:"1px solid #cdcdcd",
       // boxShadow: state.isFocused ? 'none' : provided.boxShadow,
       '&:selected': {
         border: 'none',
@@ -339,7 +342,7 @@ const Login = (props: any) => {
                   }}
                 >
 
-                  <div style={{ display: "flex", gap: "10px" }}>
+                  <div style={{ position:"relative",display: "flex", gap: "5px" }}>
 
                     <Select
                       options={countryOptions}
@@ -373,17 +376,20 @@ const Login = (props: any) => {
                       )}
                     />
 
-
+                    {/* <InputGroupText  style={{borderRadius:0,background:"#fff", border:"0",borderLeft:"1px solid #cdcdcd"}} className="custom-input-group-text">+968</InputGroupText> */}
+      
                     <Input
                       type="number"
                       placeholder="Enter Mobile Number"
                       className={styles.inputfield}
                       value={mobileNumber}
                       onChange={(e) => setMobileNumber(e.target.value)}
+                      style={{borderRadius:0,zIndex:"999",paddingLeft:"55px"}}
                     />
+                    <span className={styles.countryCode}>+968</span>
 
                   </div>
-                  {error && <div style={{ color: "red",margin:0,lineHeight:"normal" }}>{error}</div>}
+                  {error && <div style={{ color: "red",margin:0,marginTop:2,lineHeight:"normal" }}>{error}</div>}
                   <button
                     onClick={handleGetOtp}
                     style={{

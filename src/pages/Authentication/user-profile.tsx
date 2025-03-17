@@ -127,7 +127,7 @@ const UserProfile = () => {
     error: vendorError,
     data: vendorData,
     refetch: vendorRefetch,
-  } = useQuery(GET_VENDOR);
+  } = useQuery(GET_VENDOR,{fetchPolicy:"network-only"});
   // console.log("vendorData", vendorData);
 
   // useEffect(() => {
